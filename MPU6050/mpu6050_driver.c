@@ -1,14 +1,14 @@
 #include "main.h"
 
-//定义MPU6050内部地址
-#define	SMPLRT_DIV		0x19	//陀螺仪采样率 典型值 0X07 125Hz
-#define	CONFIG			0x1A	//低通滤波频率 典型值 0x00 
-#define	GYRO_CONFIG		0x1B	//陀螺仪自检及测量范围                 典型值 0x18 不自检 2000deg/s
-#define	ACCEL_CONFIG	0x1C	//加速度计自检及测量范围及高通滤波频率 典型值 0x01 不自检 2G 5Hz
+// Define the registers address for MPU6050
+#define	SMPLRT_DIV		0x19	// Gyroscope sampling rate  default 0X07 125Hz
+#define	CONFIG			0x1A	// Low-pass filter rate     default 0x00 
+#define	GYRO_CONFIG		0x1B	// Gyroscope self check and measurement range   default 0x18 Non self-check 2000deg/s
+#define	ACCEL_CONFIG	0x1C	// Accelerometer self-check and measurement range default 0x01 Non self-check 2G 5Hz
 
 #define INT_PIN_CFG     0x37
 #define INT_ENABLE      0x38
-#define INT_STATUS      0x3A    //只读
+#define INT_STATUS      0x3A    // Read-only
 
 
 #define	ACCEL_XOUT_H	0x3B
@@ -32,47 +32,47 @@
 #define	GYRO_ZOUT_H		0x47
 #define	GYRO_ZOUT_L		0x48
 
-#define	PWR_MGMT_1		0x6B	//电源管理 典型值 0x00 正常启用
-#define	WHO_AM_I		0x75	//只读  默认读出应该是 MPU6050_ID = 0x68
+#define	PWR_MGMT_1		0x6B	// Power management default 0x00 regular usage
+#define	WHO_AM_I		0x75	// read-only  default read-out should be MPU6050_ID = 0x68
 
 
 #define MPU6050_ID              0x68
 #define MPU6050_DEVICE_ADDRESS  0xD0
-#define MPU6050_DATA_START      ACCEL_XOUT_H   //由于数据存放地址是连续的，所以一并读出
+#define MPU6050_DATA_START      ACCEL_XOUT_H   // Since all data addresses are continuous, read them all 
 
 MPU6050_RAW_DATA    MPU6050_Raw_Data; 
 MPU6050_REAL_DATA   MPU6050_Real_Data;
 
 int gyroADC_X_offset=0,gyroADC_Y_offset=0,gyroADC_Z_offset=0;
 
-//MPU6050 初始化，成功返回0  失败返回 0xff
+//MPU6050 Initialzaiton, return 0 if success, otherwise return 0xff
 int MPU6050_Initialization(void)
 {
     unsigned char temp_data = 0x00;
 
-    IIC_GPIO_Init();  //初始化IIC接口
+    IIC_GPIO_Init();  //Initialize I2C port
     HEAT_Configuration();
     
-    if(IIC_ReadData(MPU6050_DEVICE_ADDRESS,WHO_AM_I ,&temp_data ,1)==0) //确定IIC总线上挂接的是否是MPU6050
+    if(IIC_ReadData(MPU6050_DEVICE_ADDRESS,WHO_AM_I ,&temp_data ,1)==0) // Check if MPU6050 is connected to I2C bus
     {
         if(temp_data != MPU6050_ID)
         {
             printf("error 1A\r\n");
-            return 0xff; //校验失败，返回0xff
+            return 0xff; // Check fail, return 0xff
         }
     }
     else
     {
         printf("error 1B\r\n");
-        return 0xff; //读取失败 返回0xff
+        return 0xff; // read fail, return 0xff
     }
     
-    if(IIC_WriteData(MPU6050_DEVICE_ADDRESS,PWR_MGMT_1,0x01) == 0xff)    //解除休眠状态
+    if(IIC_WriteData(MPU6050_DEVICE_ADDRESS,PWR_MGMT_1,0x01) == 0xff)    // wake up from sleep mode
     {
         printf("error 1C\r\n");
         return 0xff;
     }
-    if(IIC_WriteData(MPU6050_DEVICE_ADDRESS,SMPLRT_DIV,0x07) == 0xff)//cyq：07 更新频率1khz
+    if(IIC_WriteData(MPU6050_DEVICE_ADDRESS,SMPLRT_DIV,0x07) == 0xff)// cyq: 07 update frequency to 1kHz
     {
         printf("error 1D\r\n");
         return 0xff;
@@ -103,12 +103,12 @@ int MPU6050_Initialization(void)
         return 0xff;
     }
     
-    //MPU6050_Interrupt_Configuration(); //MPU6050中断初始化
+    //MPU6050_Interrupt_Configuration(); //MPU6050 interrupt initialization
     
     return 0;
 }
 
-//MPU6050  数据读取，成功返回0  失败返回 0xff
+//MPU6050  read data out, return 0 if success, return 0xff if fail
 int MPU6050_ReadData(void)
 {
     u8 buf[14];
@@ -120,7 +120,7 @@ int MPU6050_ReadData(void)
     }
     else
     {
-        //读取寄存器原生数据
+        // Read registers original data
            
         MPU6050_Raw_Data.Accel_X = (buf[0]<<8 | buf[1]);
         MPU6050_Raw_Data.Accel_Y = (buf[2]<<8 | buf[3]);
@@ -131,14 +131,14 @@ int MPU6050_ReadData(void)
         MPU6050_Raw_Data.Gyro_Z = (buf[12]<<8 | buf[13]);
 
        
-        //将原生数据转换为实际值，计算公式跟寄存器的配置有关
-        MPU6050_Real_Data.Accel_X = -(float)(MPU6050_Raw_Data.Accel_X)/8192.0; //见datasheet 30 of 47
-        MPU6050_Real_Data.Accel_Y = -(float)(MPU6050_Raw_Data.Accel_Y)/8192.0; //见datasheet 30 of 47
-        MPU6050_Real_Data.Accel_Z = (float)(MPU6050_Raw_Data.Accel_Z)/8192.0; //见datasheet 30 of 47
-        MPU6050_Real_Data.Temp =   (float)(MPU6050_Raw_Data.Temp)/340.0+36.53;//见datasheet 31 of 47
-        MPU6050_Real_Data.Gyro_X = -(float)(MPU6050_Raw_Data.Gyro_X - gyroADC_X_offset)/65.5;     //见datasheet 32 of 47
-        MPU6050_Real_Data.Gyro_Y = -(float)(MPU6050_Raw_Data.Gyro_Y - gyroADC_Y_offset)/65.5;     //见datasheet 32 of 47
-        MPU6050_Real_Data.Gyro_Z = (float)(MPU6050_Raw_Data.Gyro_Z - gyroADC_Z_offset)/65.5;     //见datasheet 32 of 47
+        // Convert origianl data to actual acceleration and gyro data, calculation formula related to the register settings
+        MPU6050_Real_Data.Accel_X = -(float)(MPU6050_Raw_Data.Accel_X)/8192.0; // read datasheet 30 of 47
+        MPU6050_Real_Data.Accel_Y = -(float)(MPU6050_Raw_Data.Accel_Y)/8192.0; // read datasheet 30 of 47
+        MPU6050_Real_Data.Accel_Z = (float)(MPU6050_Raw_Data.Accel_Z)/8192.0;  // read datasheet 30 of 47
+        MPU6050_Real_Data.Temp =   (float)(MPU6050_Raw_Data.Temp)/340.0+36.53; // read datasheet 31 of 47
+        MPU6050_Real_Data.Gyro_X = -(float)(MPU6050_Raw_Data.Gyro_X - gyroADC_X_offset)/65.5;     // read datasheet 32 of 47
+        MPU6050_Real_Data.Gyro_Y = -(float)(MPU6050_Raw_Data.Gyro_Y - gyroADC_Y_offset)/65.5;     // read datasheet 32 of 47
+        MPU6050_Real_Data.Gyro_Z = (float)(MPU6050_Raw_Data.Gyro_Z - gyroADC_Z_offset)/65.5;      // read datasheet 32 of 47
     } 
     
     return 0;

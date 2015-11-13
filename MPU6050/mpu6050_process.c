@@ -4,23 +4,23 @@ ACCEL_AVERAGE_DATA   Accel_Raw_Average_Data;
 GYRO_RADIAN_DATA     Gyro_Radian_Data;
 MPU6050_ANGLE        MPU6050_Angle;
 
-void MPU6050_Data_Filter(void)  // this*0.01 + (上一次用的)last *0.99 要改
+void MPU6050_Data_Filter(void)
 {
     unsigned int i=0;
     static unsigned int first_flag = 0;
-    static unsigned int filter_cnt = 0;    //计算加速度计滤波的次数
+    static unsigned int filter_cnt = 0;    // Counter for filters
     
-    long temp_accel_x = 0; //用来存放加速度计X轴原生数据的累加和
-    long temp_accel_y = 0; //用来存放加速度计Y轴原生数据的累加和
-    long temp_accel_z = 0; //用来存放加速度计Z轴原生数据的累加和
+    long temp_accel_x = 0; // Buffer for the sum of the original accelerometer X axis data
+    long temp_accel_y = 0; // Buffer for the sum of the original accelerometer Y axis data
+    long temp_accel_z = 0; // Buffer for the sum of the original accelerometer Z axis data
     
-    static short accel_x_buffer[10] = {0}; //用来存放加速度计X轴最近10个数据的数组
-    static short accel_y_buffer[10] = {0}; //用来存放加速度计Y轴最近10个数据的数组
-    static short accel_z_buffer[10] = {0}; //用来存放加速度计Z轴最近10个数据的数组
+    static short accel_x_buffer[10] = {0}; // Buffer for 10 recent original accelerometer X axis data
+    static short accel_y_buffer[10] = {0}; // Buffer for 10 recent original accelerometer Y axis data
+    static short accel_z_buffer[10] = {0}; // Buffer for 10 recent original accelerometer Z axis data
     
-    if(first_flag == 0) //如果第一次进来该函数，则对用来做平均的数组进行初始化
+    if(first_flag == 0) // If using this function for the first time, initialize buffers
     {
-        first_flag = 1; //以后不再进来
+        first_flag = 1; // Run this part only once
         for(i=0;i<10;i++)
         {
             accel_x_buffer[i] = MPU6050_Raw_Data.Accel_X;
@@ -28,7 +28,7 @@ void MPU6050_Data_Filter(void)  // this*0.01 + (上一次用的)last *0.99 要改
             accel_z_buffer[i] = MPU6050_Raw_Data.Accel_Z;
         }
     }
-    else  //如果不是第一次了
+    else  // After 10 time reading
     {
         accel_x_buffer[filter_cnt] = MPU6050_Raw_Data.Accel_X;
         accel_y_buffer[filter_cnt] = MPU6050_Raw_Data.Accel_Y;
@@ -75,20 +75,20 @@ void MPU6050_Angle_Calculate( float gyro_x,
     
     const float kp = 0.3; //
     const float ki = 0.00; //0.0;
-    const float halfT = 0.001; //计算周期的一半值
+    const float halfT = 0.001; // calculate the half period
     
-    float norm; //向量的模
+    float norm; // norm for the acceleration vector
     float vx,vy,vz;
     float ex,ey,ez;
 
-    float ax,ay,az; //加速度向量与模的比值 
-    float gx,gy,gz; //陀螺仪
+    float ax,ay,az; // acceleration vector over norm
+    float gx,gy,gz; // gyro vector
 
     static float pre_ax = 0;
     static float pre_ay = 0;
     static float pre_az = 0;
-    //加速度滤波
-    accel_x = accel_x *0.02 + pre_ax * 0.98;//cyq:0.02
+    // acceleration filter
+    accel_x = accel_x *0.02 + pre_ax * 0.98;
     pre_ax = accel_x;
     
     accel_y = accel_y *0.02 + pre_ay * 0.98;

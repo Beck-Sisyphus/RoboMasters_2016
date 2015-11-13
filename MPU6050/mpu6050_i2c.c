@@ -170,7 +170,7 @@ u8 IIC_ReadBit(void)
 	return Temp;
 }
 
-//写数据，成功返回0，失败返回0xff
+//write data, return 0 if success, return 0xff if fail
 int IIC_WriteData(u8 dev_addr,u8 reg_addr,u8 data)
 {
 	IIC_Start();
@@ -200,7 +200,7 @@ int IIC_WriteData(u8 dev_addr,u8 reg_addr,u8 data)
     return 0;
 }
 
-//读数据，成功返回0，失败返回0xff
+//read data out, return 0 if success, return 0xff if fail
 int IIC_ReadData(u8 dev_addr,u8 reg_addr,u8 *pdata,u8 count)
 {
 	u8 i;

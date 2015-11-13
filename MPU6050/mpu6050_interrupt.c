@@ -31,15 +31,16 @@ void MPU6050_Interrupt_Configuration(void)
     NVIC_Init(&nvic);
 }
 
-//MPU6050 外部中断处理函数
+//MPU6050 external interrupt handler
 void EXTI9_5_IRQHandler(void)
 {
     if(EXTI_GetITStatus(EXTI_Line5) == SET)
     {
         
-        //读取MPU6050数据,为了使云台的控制更平滑，
-        //使用MPU6050的陀螺仪输出作为速度环反馈
-        //单纯使用电调板返回机械角度值做速度环反馈，会有明显振荡现象
+        // Read MPU6050 data out to control the gimbal smoother
+        // USe MPU6050 gyro output as the close-loop feedback for speed
+        // If only use the mechanical angle from motor controller for feedback
+        // Significant oscillation occur
         MPU6050_ReadData();                                              
         
         EXTI_ClearFlag(EXTI_Line5);          
