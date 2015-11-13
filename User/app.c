@@ -3,8 +3,11 @@
 #define GAP 0.0
 
 /********************************************************************************
-   给电调板发送指令，ID号为0x200，只用两个电调板，数据回传ID为0x201和0x202
-	 cyq:更改为发送三个电调的指令。
+    Send signals to other motor controller board
+    ID for this board is 0x200
+    If only use two motor controller board, 
+        the data return ID are 0x201 and 0x202
+    Currently sending to three electronic speed control board
 *********************************************************************************/
 void Cmd_ESC(int16_t current_201,int16_t current_202,int16_t current_203)
 {
@@ -28,8 +31,9 @@ void Cmd_ESC(int16_t current_201,int16_t current_202,int16_t current_203)
 }
 
 /********************************************************************************
-                         pitch轴电调板的速度环控制
-                    输入 pitch轴当前速度 pitch轴目标速度
+@@ Description: Close loop control for the pitch axis speed on motor controller
+ @ Input      : Current speed from pitch axis
+ @ Output     : Target speed for pitch axis
 *********************************************************************************/
 float Velocity_Control_201(float current_velocity_201,float target_velocity_201)
 {
@@ -60,13 +64,14 @@ float Velocity_Control_201(float current_velocity_201,float target_velocity_201)
         output = -ESC_MAX;
     }
     
-    return -output;//cyq:for6015 反向
+    return -output;//cyq:for 6015 motor, negative feedback
 }
 
 
 /********************************************************************************
-                         pitch轴电调板的位置环控制 
-                    输入 pitch轴当前位置 pitch轴目标位置
+@@ Description: Close loop control for the pitch axis position on motor controller
+ @ Input      : Current position from pitch axis
+ @ Output     : Target position for pitch axis
 *********************************************************************************/
 float Position_Control_201(float current_position_201,float target_position_201)
 {
@@ -100,8 +105,9 @@ float Position_Control_201(float current_position_201,float target_position_201)
     return output;
 }
 /********************************************************************************
-                           yaw轴电调板的速度环控制
-                      输入 yaw轴当前速度 yaw轴目标速度
+@@ Description: Close loop control for the yaw axis speed on motor controller
+ @ Input      : Current speed from yaw axis
+ @ Output     : Target speed for yaw axis
 *********************************************************************************/
 float Velocity_Control_203(float current_velocity_203,float target_velocity_203)
 {
@@ -136,8 +142,9 @@ float Velocity_Control_203(float current_velocity_203,float target_velocity_203)
 }
 
 /********************************************************************************
-                           yaw轴电调板的位置环控制
-                      输入 yaw轴当前位置 yaw轴目标位置
+@@ Description: Close loop control for the yaw axis position on motor controller
+ @ Input      : Current position from yaw axis
+ @ Output     : Target position for yaw axis
 *********************************************************************************/
 float Position_Control_203(float current_position_203,float target_position_203)
 {

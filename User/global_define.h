@@ -1,9 +1,9 @@
 #ifndef __GLOBAL_DEFINE_H__
 #define __GLOBAL_DEFINE_H__
 
-//CAN设备基址
+//CAN Bus Base address
 #define CAN_BASE_ADDR 84
-//挂载模块个数上限
+//CAN Bus maximum module
 #define CAN_ADDR_MAX 7 
 
 
@@ -15,17 +15,17 @@
 extern int g_module_id;
 
 enum SYSTEM_STATE{
-    PLAYING,    //游戏进行中
-    IAP         //对薄弱点进行iap编程
+    PLAYING,    // in game
+    IAP         // perform IAP programming for weak points
 };
 
 extern enum SYSTEM_STATE ge_system_state;
-extern int g_hp;//血量
+extern int g_hp;// Blood
 
 extern CanRxMsg g_CAN_Rx_message[CAN_RX_BUFFER_SIZE];
 
-extern volatile unsigned char g_CAN_Rx_Provider;//can buffer 生产者
-extern volatile unsigned char g_CAN_Rx_Consumer;//can buffer 消费者
+extern volatile unsigned char g_CAN_Rx_Provider;//can buffer Provider
+extern volatile unsigned char g_CAN_Rx_Consumer;//can buffer Consumer
 
 
 #endif 
