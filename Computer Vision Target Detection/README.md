@@ -16,6 +16,7 @@ Based on the distance and color similarity between Connected Components, combine
 5. Shape and Size Filter
 Train on large number of enemy automaton graphs. Get enemy automaton’s shape information (such as length width ratio) and size information (area), and filter the unqualified region based on these data.
 After five operations above, we can preliminary get enemy automation’s position, size and shape information.
+
 ### Target Motion Tracking 
 Make motion tracking based on the detection solution form previous step.
 Status Estimate
@@ -25,6 +26,7 @@ Based on position and color information, correlate current automaton’s estimat
 Status update
 If the correlation is success in the last step, then update the current motion status.
 By making motion tracking on detection result, we can calculate enemy automation’s moving speed and moving direction.
+
 ### Pre-estimate advance quantity
 1. Estimate Time Latency
 Based on the actual debugging situation of our automaton, use the method that make large number of experience and collect the data to estimate the time latency between the time automaton receiving command to the time the shell (or bullet) is hitting the target (Include graphic operation time, Fall time and shell projectile time).
