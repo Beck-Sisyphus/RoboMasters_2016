@@ -27,8 +27,26 @@ The open source code running on the trapezoid board for STM32F405RGT6. Thanks fo
 	(1) Flash -> Configure Flash Tools...
 	(2) Under "Use Target Driver...", select ST-Link Debugger
 	(3) Next to the selection box, click Settings
-	(4) Select Erase Full Chip, and leave everything at default values
+	(4) Verify correct Settings
+			Erase Sectors Selected
+			Program, Verify, Reset and Run Checked
+			RAM for Algorithm
+				Start: 0x20000000
+				Size: 0x0800
+			Leave everything else at default values
+	(5) Click OK
+	(6) In Debug tab, select Use: ST-Link Debugger
+	(7) Connect the programmer, then click Settings
+	(8) Verify that it's connected
+	(9) Click OK, OK
 
 ## Program the Board
 	(1) Project -> Build Target
 	(2) Flash -> Download
+
+## Constants
+	CAN Address: 0x201 - 0x204
+	CAN Receive ID: 0x200
+	CAN Receiver ID: 0x1FF
+	Yaw: 0x205
+	Pitch: 0x206
