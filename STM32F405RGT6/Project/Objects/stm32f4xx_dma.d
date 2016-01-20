@@ -1,11 +1,11 @@
 .\objects\stm32f4xx_dma.o: ..\Libraries\stm32f4xx_dma.c
 .\objects\stm32f4xx_dma.o: ..\Libraries\stm32f4xx_dma.h
 .\objects\stm32f4xx_dma.o: ..\Libraries\stm32f4xx.h
-.\objects\stm32f4xx_dma.o: C:\Keil\ARM\CMSIS\Include\core_cm4.h
-.\objects\stm32f4xx_dma.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
-.\objects\stm32f4xx_dma.o: C:\Keil\ARM\CMSIS\Include\core_cmInstr.h
-.\objects\stm32f4xx_dma.o: C:\Keil\ARM\CMSIS\Include\core_cmFunc.h
-.\objects\stm32f4xx_dma.o: C:\Keil\ARM\CMSIS\Include\core_cm4_simd.h
+.\objects\stm32f4xx_dma.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4.h
+.\objects\stm32f4xx_dma.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\stm32f4xx_dma.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
+.\objects\stm32f4xx_dma.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
+.\objects\stm32f4xx_dma.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4_simd.h
 .\objects\stm32f4xx_dma.o: ..\Libraries\system_stm32f4xx.h
 .\objects\stm32f4xx_dma.o: ..\User\stm32f4xx_conf.h
 .\objects\stm32f4xx_dma.o: ..\Libraries\stm32f4xx_adc.h

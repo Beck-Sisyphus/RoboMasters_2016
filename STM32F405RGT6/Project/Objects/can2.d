@@ -1,11 +1,11 @@
 .\objects\can2.o: ..\BSP\can2.c
 .\objects\can2.o: ..\BSP\can2.h
 .\objects\can2.o: ..\Libraries\stm32f4xx.h
-.\objects\can2.o: C:\Keil\ARM\CMSIS\Include\core_cm4.h
-.\objects\can2.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
-.\objects\can2.o: C:\Keil\ARM\CMSIS\Include\core_cmInstr.h
-.\objects\can2.o: C:\Keil\ARM\CMSIS\Include\core_cmFunc.h
-.\objects\can2.o: C:\Keil\ARM\CMSIS\Include\core_cm4_simd.h
+.\objects\can2.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4.h
+.\objects\can2.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\can2.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
+.\objects\can2.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
+.\objects\can2.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4_simd.h
 .\objects\can2.o: ..\Libraries\system_stm32f4xx.h
 .\objects\can2.o: ..\User\stm32f4xx_conf.h
 .\objects\can2.o: ..\Libraries\stm32f4xx_adc.h

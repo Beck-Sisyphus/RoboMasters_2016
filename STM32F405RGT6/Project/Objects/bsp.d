@@ -1,11 +1,11 @@
 .\objects\bsp.o: ..\BSP\bsp.c
 .\objects\bsp.o: ..\BSP\bsp.h
 .\objects\bsp.o: ..\Libraries\stm32f4xx.h
-.\objects\bsp.o: C:\Keil\ARM\CMSIS\Include\core_cm4.h
-.\objects\bsp.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
-.\objects\bsp.o: C:\Keil\ARM\CMSIS\Include\core_cmInstr.h
-.\objects\bsp.o: C:\Keil\ARM\CMSIS\Include\core_cmFunc.h
-.\objects\bsp.o: C:\Keil\ARM\CMSIS\Include\core_cm4_simd.h
+.\objects\bsp.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4.h
+.\objects\bsp.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\bsp.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
+.\objects\bsp.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
+.\objects\bsp.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4_simd.h
 .\objects\bsp.o: ..\Libraries\system_stm32f4xx.h
 .\objects\bsp.o: ..\User\stm32f4xx_conf.h
 .\objects\bsp.o: ..\Libraries\stm32f4xx_adc.h
@@ -28,6 +28,6 @@
 .\objects\bsp.o: ..\BSP\led.h
 .\objects\bsp.o: ..\BSP\usart2.h
 .\objects\bsp.o: ..\BSP\usart1.h
-.\objects\bsp.o: C:\Keil\ARM\ARMCC\bin\..\include\stdio.h
+.\objects\bsp.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\bsp.o: ..\BSP\pwm.h
 .\objects\bsp.o: ..\User\global_define.h

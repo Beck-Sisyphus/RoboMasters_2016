@@ -1,11 +1,11 @@
 .\objects\usart2.o: ..\BSP\usart2.c
 .\objects\usart2.o: ..\BSP\usart2.h
 .\objects\usart2.o: ..\Libraries\stm32f4xx.h
-.\objects\usart2.o: C:\Keil\ARM\CMSIS\Include\core_cm4.h
-.\objects\usart2.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
-.\objects\usart2.o: C:\Keil\ARM\CMSIS\Include\core_cmInstr.h
-.\objects\usart2.o: C:\Keil\ARM\CMSIS\Include\core_cmFunc.h
-.\objects\usart2.o: C:\Keil\ARM\CMSIS\Include\core_cm4_simd.h
+.\objects\usart2.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4.h
+.\objects\usart2.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\usart2.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
+.\objects\usart2.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
+.\objects\usart2.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4_simd.h
 .\objects\usart2.o: ..\Libraries\system_stm32f4xx.h
 .\objects\usart2.o: ..\User\stm32f4xx_conf.h
 .\objects\usart2.o: ..\Libraries\stm32f4xx_adc.h

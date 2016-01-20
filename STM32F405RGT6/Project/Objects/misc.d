@@ -1,11 +1,11 @@
 .\objects\misc.o: ..\Libraries\misc.c
 .\objects\misc.o: ..\Libraries\misc.h
 .\objects\misc.o: ..\Libraries\stm32f4xx.h
-.\objects\misc.o: C:\Keil\ARM\CMSIS\Include\core_cm4.h
-.\objects\misc.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
-.\objects\misc.o: C:\Keil\ARM\CMSIS\Include\core_cmInstr.h
-.\objects\misc.o: C:\Keil\ARM\CMSIS\Include\core_cmFunc.h
-.\objects\misc.o: C:\Keil\ARM\CMSIS\Include\core_cm4_simd.h
+.\objects\misc.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4.h
+.\objects\misc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\misc.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
+.\objects\misc.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
+.\objects\misc.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4_simd.h
 .\objects\misc.o: ..\Libraries\system_stm32f4xx.h
 .\objects\misc.o: ..\User\stm32f4xx_conf.h
 .\objects\misc.o: ..\Libraries\stm32f4xx_adc.h

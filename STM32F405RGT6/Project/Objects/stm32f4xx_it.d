@@ -1,11 +1,11 @@
 .\objects\stm32f4xx_it.o: ..\User\stm32f4xx_it.c
 .\objects\stm32f4xx_it.o: ..\User\stm32f4xx_it.h
 .\objects\stm32f4xx_it.o: ..\Libraries\stm32f4xx.h
-.\objects\stm32f4xx_it.o: C:\Keil\ARM\CMSIS\Include\core_cm4.h
-.\objects\stm32f4xx_it.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
-.\objects\stm32f4xx_it.o: C:\Keil\ARM\CMSIS\Include\core_cmInstr.h
-.\objects\stm32f4xx_it.o: C:\Keil\ARM\CMSIS\Include\core_cmFunc.h
-.\objects\stm32f4xx_it.o: C:\Keil\ARM\CMSIS\Include\core_cm4_simd.h
+.\objects\stm32f4xx_it.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4.h
+.\objects\stm32f4xx_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\stm32f4xx_it.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
+.\objects\stm32f4xx_it.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
+.\objects\stm32f4xx_it.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4_simd.h
 .\objects\stm32f4xx_it.o: ..\Libraries\system_stm32f4xx.h
 .\objects\stm32f4xx_it.o: ..\User\stm32f4xx_conf.h
 .\objects\stm32f4xx_it.o: ..\Libraries\stm32f4xx_adc.h
@@ -29,5 +29,5 @@
 .\objects\stm32f4xx_it.o: ..\BSP\led.h
 .\objects\stm32f4xx_it.o: ..\BSP\usart2.h
 .\objects\stm32f4xx_it.o: ..\BSP\usart1.h
-.\objects\stm32f4xx_it.o: C:\Keil\ARM\ARMCC\bin\..\include\stdio.h
+.\objects\stm32f4xx_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\stm32f4xx_it.o: ..\BSP\pwm.h

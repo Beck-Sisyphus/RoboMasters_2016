@@ -1,11 +1,11 @@
 .\objects\usart1.o: ..\BSP\usart1.c
 .\objects\usart1.o: ..\BSP\usart1.h
 .\objects\usart1.o: ..\Libraries\stm32f4xx.h
-.\objects\usart1.o: C:\Keil\ARM\CMSIS\Include\core_cm4.h
-.\objects\usart1.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
-.\objects\usart1.o: C:\Keil\ARM\CMSIS\Include\core_cmInstr.h
-.\objects\usart1.o: C:\Keil\ARM\CMSIS\Include\core_cmFunc.h
-.\objects\usart1.o: C:\Keil\ARM\CMSIS\Include\core_cm4_simd.h
+.\objects\usart1.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4.h
+.\objects\usart1.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\usart1.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
+.\objects\usart1.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
+.\objects\usart1.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4_simd.h
 .\objects\usart1.o: ..\Libraries\system_stm32f4xx.h
 .\objects\usart1.o: ..\User\stm32f4xx_conf.h
 .\objects\usart1.o: ..\Libraries\stm32f4xx_adc.h
@@ -21,5 +21,5 @@
 .\objects\usart1.o: ..\Libraries\stm32f4xx_tim.h
 .\objects\usart1.o: ..\Libraries\stm32f4xx_usart.h
 .\objects\usart1.o: ..\Libraries\misc.h
-.\objects\usart1.o: C:\Keil\ARM\ARMCC\bin\..\include\stdio.h
+.\objects\usart1.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\usart1.o: ..\BSP\laser.h
