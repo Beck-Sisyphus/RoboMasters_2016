@@ -138,7 +138,6 @@ void CAN1_TX_IRQHandler(void) //CAN TX
 /*************************************************************************
                           CAN1_RX0_IRQHandler
  Description: Receipt of Head Motor's CAN Data is broken
- 描述：云台电机的CAN数据接收中断
 *************************************************************************/
 void CAN1_RX0_IRQHandler(void)
 {
@@ -288,34 +287,34 @@ void Motor_Init(int Motor_ID,int Motor_Mode)
 
 /*************************************************************************
                            MOTOR_PWM_Set
-描述：PWM模式下驱动器的设置
-传入参数： int Motor_ID     可选参数： MOTOR_NUM1   MOTOR_NUM2  
+Description：The driver set=up under PWM Mode 
+Input Parameters： int Motor_ID     Optional Parameters： MOTOR_NUM1   MOTOR_NUM2  
                                        MOTOR_NUM3   MOTOR_NUM4
                                        MOTOR_NUM5   MOTOR_NUM6
                                        MOTOR_NUM7   MOTOR_NUM8
-传入参数： int Give_PWM   范围 -5000 -- 0 -- 5000
+Input Parameters： int Give_PWM   Range -5000 -- 0 -- 5000
 *************************************************************************/
 void Motor_PWM_Set(int Motor_ID,int Give_PWM)
 {
     CanTxMsg tx_message;
     
-    tx_message.RTR = CAN_RTR_DATA;  //数据帧
-    tx_message.IDE = CAN_ID_STD;    //标准帧
-    tx_message.DLC = 0x04;          //帧长度为4    
+    tx_message.RTR = CAN_RTR_DATA;  //Data Frame
+    tx_message.IDE = CAN_ID_STD;    //Standard Frame
+    tx_message.DLC = 0x04;          //Frame length is 4    
   
     switch (Motor_ID)
     {
-        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_PWM_MODE; break; //如果选定电机1，PWM模式下帧ID为0x11
-        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_PWM_MODE; break; //如果选定电机2，PWM模式下帧ID为0x21
-        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_PWM_MODE; break; //如果选定电机3，PWM模式下帧ID为0x31
-        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_PWM_MODE; break; //如果选定电机4，PWM模式下帧ID为0x41
-        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_PWM_MODE; break; //如果选定电机5，PWM模式下帧ID为0x51
-        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_PWM_MODE; break; //如果选定电机6，PWM模式下帧ID为0x61
-        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_PWM_MODE; break; //如果选定电机7，PWM模式下帧ID为0x71
-        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_PWM_MODE; break; //如果选定电机8，PWM模式下帧ID为0x81
+        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_PWM_MODE; break; //If Motor1 is chosen, Frame ID  is 0x11 under PWM Mode
+        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_PWM_MODE; break; //If Motor2 is chosen, Frame ID  is 0x21 under PWM Mode
+        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_PWM_MODE; break; //If Motor3 is chosen, Frame ID  is 0x31 under PWM Mode
+        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_PWM_MODE; break; //If Motor4 is chosen, Frame ID  is 0x41 under PWM Mode
+        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_PWM_MODE; break; //If Motor5 is chosen, Frame ID  is 0x51 under PWM Mode
+        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_PWM_MODE; break; //If Motor6 is chosen, Frame ID  is 0x61 under PWM Mode
+        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_PWM_MODE; break; //If Motor7 is chosen, Frame ID  is 0x71 under PWM Mode
+        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_PWM_MODE; break; //If Motor8 is chosen, Frame ID  is 0x81 under PWM Mode
         default: 
         {
-            while(1)      //如果选的电机的范围超过了8，就蜂鸣器报错
+            while(1)      //If the Number of the Motor that been chosen is largger than 8, the buzzer will sound for warning
             {
                 delay_ms(200);
                 #ifdef __DEBUG
@@ -347,34 +346,34 @@ void Motor_PWM_Set(int Motor_ID,int Give_PWM)
 
 /*************************************************************************
                            MOTOR_Speed_Set
-描述：Speed模式下驱动器的设置
-传入参数： int Motor_ID     可选参数： MOTOR_NUM1   MOTOR_NUM2  
+Description：Driver Set-up under Speed Mode 
+Input Parameters： int Motor_ID     Optional Parameters： MOTOR_NUM1   MOTOR_NUM2  
                                        MOTOR_NUM3   MOTOR_NUM4
                                        MOTOR_NUM5   MOTOR_NUM6
                                        MOTOR_NUM7   MOTOR_NUM8
-传入参数： int Give_Speed  -500 -- 0 -- 500
+Input Parameters： int Give_Speed  -500 -- 0 -- 500
 *************************************************************************/
 void Motor_Speed_Set(int Motor_ID,int Give_Speed)
 {
     CanTxMsg tx_message;
     
-    tx_message.RTR = CAN_RTR_DATA;  //数据帧
-    tx_message.IDE = CAN_ID_STD;    //标准帧
-    tx_message.DLC = 0x04;          //帧长度为4    
+    tx_message.RTR = CAN_RTR_DATA;  //Data Frame
+    tx_message.IDE = CAN_ID_STD;    //Standard Frame
+    tx_message.DLC = 0x04;          //Frame Length is 4   
   
     switch (Motor_ID)
     {
-        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_SPEED_MODE; break; //如果选定电机1，Speed模式下帧ID为0x12
-        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_SPEED_MODE; break; //如果选定电机2，Speed模式下帧ID为0x22
-        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_SPEED_MODE; break; //如果选定电机3，Speed模式下帧ID为0x32
-        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_SPEED_MODE; break; //如果选定电机4，Speed模式下帧ID为0x42
-        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_SPEED_MODE; break; //如果选定电机5，Speed模式下帧ID为0x52
-        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_SPEED_MODE; break; //如果选定电机6，Speed模式下帧ID为0x62
-        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_SPEED_MODE; break; //如果选定电机7，Speed模式下帧ID为0x72
-        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_SPEED_MODE; break; //如果选定电机8，Speed模式下帧ID为0x82
+        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_SPEED_MODE; break; //If Motor1 is chosen, Frame ID  is 0x12 under Speed Mode
+        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_SPEED_MODE; break; //If Motor2 is chosen, Frame ID  is 0x22 under Speed Mode
+        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_SPEED_MODE; break; //If Motor3 is chosen, Frame ID  is 0x32 under Speed Mode
+        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_SPEED_MODE; break; //If Motor4 is chosen, Frame ID  is 0x42 under Speed Mode
+        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_SPEED_MODE; break; //If Motor5 is chosen, Frame ID  is 0x52 under Speed Mode
+        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_SPEED_MODE; break; //If Motor6 is chosen, Frame ID  is 0x62 under Speed Mode
+        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_SPEED_MODE; break; //If Motor7 is chosen, Frame ID  is 0x72 under Speed Mode
+        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_SPEED_MODE; break; //If Motor8 is chosen, Frame ID  is 0x82 under Speed Mode
         default: 
         {
-            while(1)      //如果选的电机的范围超过了8，就蜂鸣器报错
+            while(1)      //If the Number of the Motor that been chosen is largger than 8, the buzzer will sound for warning
             {
                 delay_ms(200);
                 #ifdef __DEBUG
@@ -406,35 +405,36 @@ void Motor_Speed_Set(int Motor_ID,int Give_Speed)
 
 /*************************************************************************
                          MOTOR_PWM_Location_Set
-描述：在基于PWM的位置环模式下驱动器的设置
-传入参数： int Motor_ID     可选参数： MOTOR_NUM1   MOTOR_NUM2  
+Description：在基于PWM的位置环模式下驱动器的设置
+Description: Driver Set-up under PWM
+Input Parameters： int Motor_ID     Optional Parameters： MOTOR_NUM1   MOTOR_NUM2  
                                        MOTOR_NUM3   MOTOR_NUM4
                                        MOTOR_NUM5   MOTOR_NUM6
                                        MOTOR_NUM7   MOTOR_NUM8
-传入参数： int Give_PWM      0 -- 5000
-传入参数： int Give_PWM_Location  
+Input parameters： int Give_PWM      0 -- 5000
+Input parameters： int Give_PWM_Location  
 *************************************************************************/
 void Motor_PWM_Location_Set(int Motor_ID,int Give_PWM,int Give_PWM_Location)
 {
     CanTxMsg tx_message;
     
-    tx_message.RTR = CAN_RTR_DATA;  //数据帧
-    tx_message.IDE = CAN_ID_STD;    //标准帧
-    tx_message.DLC = 0x08;          //帧长度为4    
+    tx_message.RTR = CAN_RTR_DATA;  //Data Frame
+    tx_message.IDE = CAN_ID_STD;    //Standard Frame
+    tx_message.DLC = 0x08;          //Frame length is 8   
   
     switch (Motor_ID)
     {
-        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_PWM_LOCATION_MODE; break; //如果选定电机1，PWM_LOCATION模式下帧ID为0x13
-        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_PWM_LOCATION_MODE; break; //如果选定电机2，PWM_LOCATION模式下帧ID为0x23
-        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_PWM_LOCATION_MODE; break; //如果选定电机3，PWM_LOCATION模式下帧ID为0x33
-        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_PWM_LOCATION_MODE; break; //如果选定电机4，PWM_LOCATION模式下帧ID为0x43
-        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_PWM_LOCATION_MODE; break; //如果选定电机5，PWM_LOCATION模式下帧ID为0x53
-        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_PWM_LOCATION_MODE; break; //如果选定电机6，PWM_LOCATION模式下帧ID为0x63
-        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_PWM_LOCATION_MODE; break; //如果选定电机7，PWM_LOCATION模式下帧ID为0x73
-        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_PWM_LOCATION_MODE; break; //如果选定电机8，PWM_LOCATION模式下帧ID为0x83     
+        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_PWM_LOCATION_MODE; break; //If Motor1 is chosen, Frame ID  is 0x13 under PWM_LOCATION Mode
+        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_PWM_LOCATION_MODE; break; //If Motor2 is chosen, Frame ID  is 0x23 under PWM_LOCATION Mode
+        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_PWM_LOCATION_MODE; break; //If Motor3 is chosen, Frame ID  is 0x33 under PWM_LOCATION Mode
+        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_PWM_LOCATION_MODE; break; //If Motor4 is chosen, Frame ID  is 0x43 under PWM_LOCATION Mode
+        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_PWM_LOCATION_MODE; break; //If Motor5 is chosen, Frame ID  is 0x53 under PWM_LOCATION Mode
+        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_PWM_LOCATION_MODE; break; //If Motor6 is chosen, Frame ID  is 0x63 under PWM_LOCATION Mode
+        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_PWM_LOCATION_MODE; break; //If Motor7 is chosen, Frame ID  is 0x73 under PWM_LOCATION Mode
+        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_PWM_LOCATION_MODE; break; //If Motor8 is chosen, Frame ID  is 0x83 under PWM_LOCATION Mode    
         default: 
         {
-            while(1)      //如果选的电机的范围超过了8，就蜂鸣器报错
+            while(1)      //If the Number of the Motor that been chosen is largger than 8, the buzzer will sound for warning
             {
                 delay_ms(200);
                 #ifdef __DEBUG
@@ -468,34 +468,34 @@ void Motor_PWM_Location_Set(int Motor_ID,int Give_PWM,int Give_PWM_Location)
 /*************************************************************************
                         Motor_Speed_Location_Set
 描述：在基于Speed的位置环模式下驱动器的设置
-传入参数： int Motor_ID     可选参数： MOTOR_NUM1   MOTOR_NUM2  
+Input Parameters： int Motor_ID    Optional Parameters： MOTOR_NUM1   MOTOR_NUM2  
                                        MOTOR_NUM3   MOTOR_NUM4
                                        MOTOR_NUM5   MOTOR_NUM6
                                        MOTOR_NUM7   MOTOR_NUM8
-传入参数： int Give_Speed   0 - 500
-传入参数： int Give_Speed_Location 
+Input Parameters： int Give_Speed   0 - 500
+Input Parameters： int Give_Speed_Location 
 *************************************************************************/
 void Motor_Speed_Location_Set(int Motor_ID,int Give_Speed,int Give_Speed_Location)
 {
     CanTxMsg tx_message;
     
-    tx_message.RTR = CAN_RTR_DATA;  //数据帧
-    tx_message.IDE = CAN_ID_STD;    //标准帧
-    tx_message.DLC = 0x08;          //帧长度为8 
+    tx_message.RTR = CAN_RTR_DATA;  //Data Frame
+    tx_message.IDE = CAN_ID_STD;    //Standard Frame
+    tx_message.DLC = 0x08;          //Frame Legnth is 8
   
     switch (Motor_ID)
     {
-        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_SPEED_LOCATION_MODE; break; //若选定电机1，Speed_LOCATION模式帧ID=0x14
-        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_SPEED_LOCATION_MODE; break; //若选定电机2，Speed_LOCATION模式帧ID=0x24
-        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_SPEED_LOCATION_MODE; break; //若选定电机3，Speed_LOCATION模式帧ID=0x34
-        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_SPEED_LOCATION_MODE; break; //若选定电机4，Speed_LOCATION模式帧ID=0x44
-        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_SPEED_LOCATION_MODE; break; //若选定电机5，Speed_LOCATION模式帧ID=0x54
-        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_SPEED_LOCATION_MODE; break; //若选定电机6，Speed_LOCATION模式帧ID=0x64
-        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_SPEED_LOCATION_MODE; break; //若选定电机7，Speed_LOCATION模式帧ID=0x74
-        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_SPEED_LOCATION_MODE; break; //若选定电机8，Speed_LOCATION模式帧ID=0x84   
+        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_SPEED_LOCATION_MODE; break; //If Motor1 is chosen, Frame ID  is 0x14 under Speed_LOCATION Mode
+        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_SPEED_LOCATION_MODE; break; //If Motor2 is chosen, Frame ID  is 0x24 under Speed_LOCATION Mode
+        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_SPEED_LOCATION_MODE; break; //If Motor3 is chosen, Frame ID  is 0x34 under Speed_LOCATION Mode
+        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_SPEED_LOCATION_MODE; break; //If Motor4 is chosen, Frame ID  is 0x44 under Speed_LOCATION Mode
+        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_SPEED_LOCATION_MODE; break; //If Motor5 is chosen, Frame ID  is 0x54 under Speed_LOCATION Mode
+        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_SPEED_LOCATION_MODE; break; //If Motor6 is chosen, Frame ID  is 0x64 under Speed_LOCATION Mode
+        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_SPEED_LOCATION_MODE; break; //If Motor7 is chosen, Frame ID  is 0x74 under Speed_LOCATION Mode
+        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_SPEED_LOCATION_MODE; break; //If Motor8 is chosen, Frame ID  is 0x84 under Speed_LOCATION Mode
         default: 
         {
-            while(1)      //如果选的电机的范围超过了8，就蜂鸣器报错
+            while(1)      //If the Number of the Motor that been chosen is largger than 8, the buzzer will sound for warning
             {
                 delay_ms(200);
                 #ifdef __DEBUG
