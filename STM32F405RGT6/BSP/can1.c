@@ -5,7 +5,7 @@
 
 /*************************************************************************
                           CAN1_Configuration
-ÃèÊö£º³õÊ¼»¯CAN1ÅäÖÃÎª1M²¨ÌØÂÊ
+Descriptionï¼šInitiate CAN1 configuration to be 1M Baud åˆå§‹åŒ–CAN1é…ç½®ä¸º1Mæ³¢ç‰¹ç‡
 *************************************************************************/
 void CAN1_Configuration(void)
 {
@@ -68,9 +68,9 @@ void CAN1_Configuration(void)
 }
 
 
-//Èç¹ûÖĞ¶Ï¿ªÆô£¬Ôò1ms½øÈë¸Ãº¯ÊıÒ»´Î
-#define CurrTempNUM 100 //»ı·ÖµÄÊ±¼äÖÜÆÚ
-#define CurrLimit 13000 //µçÁ÷ÉÏÏŞ12000 for 6025
+//If Break, enter this function one time per minute å¦‚æœä¸­æ–­å¼€å¯ï¼Œåˆ™1msè¿›å…¥è¯¥å‡½æ•°ä¸€æ¬¡
+#define CurrTempNUM 100 //integraled time period ç§¯åˆ†çš„æ—¶é—´å‘¨æœŸ
+#define CurrLimit 13000 //Current limited to 12000 for 6025
 
 static uint16_t Can1_CNT = 0;
 
@@ -92,7 +92,7 @@ void CurrentProtect(void)
     int32_t currtemp_202 = 0;
     if(Can1_CNT%20 == 0)
     {
-        // 201µçÁ÷±£»¤
+        // 201Current protection
         CurrTemp_201[CurrCnt_201] = current_201;
         CurrCnt_201++;
         
@@ -104,7 +104,7 @@ void CurrentProtect(void)
             currtemp_201 += CurrTemp_201[i];
             CurrInt_201 = currtemp_201/CurrTempNUM;
         }
-        // 202µçÁ÷±£»¤
+        // 202Current protection
         CurrTemp_202[CurrCnt_202] = current_202;
         CurrCnt_202++;
         
@@ -137,7 +137,8 @@ void CAN1_TX_IRQHandler(void) //CAN TX
 
 /*************************************************************************
                           CAN1_RX0_IRQHandler
-ÃèÊö£ºÔÆÌ¨µç»úµÄCANÊı¾İ½ÓÊÕÖĞ¶Ï
+ Description: Receipt of Head Motor's CAN Data is broken
+ æè¿°ï¼šäº‘å°ç”µæœºçš„CANæ•°æ®æ¥æ”¶ä¸­æ–­
 *************************************************************************/
 void CAN1_RX0_IRQHandler(void)
 {
@@ -150,15 +151,15 @@ void CAN1_RX0_IRQHandler(void)
                 
         if(rx_message.StdId == 0x201)
         {             
-             //»ñµÃÔÆÌ¨µç»ú0x201µÄÂëÅÌÖµ                 
+             //Acquire Head Motor 0x201's Encoding disk value è·å¾—äº‘å°ç”µæœº0x201çš„ç ç›˜å€¼                 
         }
         if(rx_message.StdId == 0x202)
         { 
-             //»ñµÃÔÆÌ¨µç»ú0x202µÄÂëÅÌÖµ           
+             //Acquire Head Motor 0x202's Encoding disk value è·å¾—äº‘å°ç”µæœº0x202çš„ç ç›˜å€¼           
         }		
         if(rx_message.StdId == 0x203)
         { 
-             //»ñµÃÔÆÌ¨µç»ú0x203µÄÂëÅÌÖµ  
+             //Acquire Head Motor 0x203's Encoding disk value è·å¾—äº‘å°ç”µæœº0x203çš„ç ç›˜å€¼  
         }
         Can1_CNT++;		
     }
@@ -168,8 +169,8 @@ void CAN1_RX0_IRQHandler(void)
 
 /*************************************************************************
                             Motor_Reset
-ÃèÊö£º½«¹Ò½ÓÔÚÖ÷¿Ø°åÉÏµÄÇı¶¯Æ÷¸´Î»
-´«Èë²ÎÊı£º int Motor_ID     ¿ÉÑ¡²ÎÊı£º MOTOR_NUM1   MOTOR_NUM2  
+Descriptionï¼šReset the driver that connected to the main control board 
+Input parameterï¼š int Motor_ID     Optional parameterï¼š MOTOR_NUM1   MOTOR_NUM2  
                                        MOTOR_NUM3   MOTOR_NUM4
                                        MOTOR_NUM5   MOTOR_NUM6
                                        MOTOR_NUM7   MOTOR_NUM8
@@ -177,24 +178,24 @@ void CAN1_RX0_IRQHandler(void)
 void Motor_Reset(int Motor_ID)
 {
     CanTxMsg tx_message;
-    tx_message.IDE = CAN_ID_STD;    //±ê×¼Ö¡
-    tx_message.RTR = CAN_RTR_DATA;  //Êı¾İÖ¡
-    tx_message.DLC = 0x01;          //Ö¡³¤¶ÈÎª1
-    tx_message.StdId = 0x00;        //Ö¡IDÎª0x00
+    tx_message.IDE = CAN_ID_STD;    //Standard Frame
+    tx_message.RTR = CAN_RTR_DATA;  //Data Frame
+    tx_message.DLC = 0x01;          //Frame length is 1
+    tx_message.StdId = 0x00;        //Fram ID is 0x00
 
     switch (Motor_ID)
     {
-        case MOTOR_NUM1: tx_message.Data[0] = ID_MOTOR1_CHOOSE_MODE; break;  //Èç¹ûÑ¡ÔñÁËµç»ú1: Êı¾İ0Îª0x10
-        case MOTOR_NUM2: tx_message.Data[0] = ID_MOTOR2_CHOOSE_MODE; break;  //Èç¹ûÑ¡ÔñÁËµç»ú2: Êı¾İ0Îª0x20
-        case MOTOR_NUM3: tx_message.Data[0] = ID_MOTOR3_CHOOSE_MODE; break;  //Èç¹ûÑ¡ÔñÁËµç»ú3: Êı¾İ0Îª0x30
-        case MOTOR_NUM4: tx_message.Data[0] = ID_MOTOR4_CHOOSE_MODE; break;  //Èç¹ûÑ¡ÔñÁËµç»ú4: Êı¾İ0Îª0x40
-        case MOTOR_NUM5: tx_message.Data[0] = ID_MOTOR5_CHOOSE_MODE; break;  //Èç¹ûÑ¡ÔñÁËµç»ú5: Êı¾İ0Îª0x50
-        case MOTOR_NUM6: tx_message.Data[0] = ID_MOTOR6_CHOOSE_MODE; break;  //Èç¹ûÑ¡ÔñÁËµç»ú6: Êı¾İ0Îª0x60
-        case MOTOR_NUM7: tx_message.Data[0] = ID_MOTOR7_CHOOSE_MODE; break;  //Èç¹ûÑ¡ÔñÁËµç»ú7: Êı¾İ0Îª0x70
-        case MOTOR_NUM8: tx_message.Data[0] = ID_MOTOR8_CHOOSE_MODE; break;  //Èç¹ûÑ¡ÔñÁËµç»ú8: Êı¾İ0Îª0x80
+        case MOTOR_NUM1: tx_message.Data[0] = ID_MOTOR1_CHOOSE_MODE; break;  //If Motor1 is chosen, Data0 is 0x10
+        case MOTOR_NUM2: tx_message.Data[0] = ID_MOTOR2_CHOOSE_MODE; break;  //If Motor2 is chosen, Data0 is 0x20
+        case MOTOR_NUM3: tx_message.Data[0] = ID_MOTOR3_CHOOSE_MODE; break;  //If Motor3 is chosen, Data0 is 0x30
+        case MOTOR_NUM4: tx_message.Data[0] = ID_MOTOR4_CHOOSE_MODE; break;  //If Motor4 is chosen, Data0 is 0x40
+        case MOTOR_NUM5: tx_message.Data[0] = ID_MOTOR5_CHOOSE_MODE; break;  //If Motor5 is chosen, Data0 is 0x50
+        case MOTOR_NUM6: tx_message.Data[0] = ID_MOTOR6_CHOOSE_MODE; break;  //If Motor6 is chosen, Data0 is 0x60
+        case MOTOR_NUM7: tx_message.Data[0] = ID_MOTOR7_CHOOSE_MODE; break;  //If Motor7 is chosen, Data0 is 0x70
+        case MOTOR_NUM8: tx_message.Data[0] = ID_MOTOR8_CHOOSE_MODE; break;  //If Motor8 is chosen, Data0 is 0x80
         default: 
         {
-            while(1)      //Èç¹ûÑ¡µÄµç»úµÄ·¶Î§³¬¹ıÁË8£¬¾Í·äÃùÆ÷±¨´í
+            while(1)      //If the Number of the Motor that been chosen is largger than 8, the buzzer will sound for warning
             {
                 delay_ms(200);
                 #ifdef __DEBUG
@@ -211,12 +212,12 @@ void Motor_Reset(int Motor_ID)
 
 /*************************************************************************
                             Motor_Init
-ÃèÊö£º½«¹Ò½ÓÔÚÖ÷¿Ø°åÉÏµÄÇı¶¯Æ÷³õÊ¼»¯
-´«Èë²ÎÊı£º int Motor_ID     ¿ÉÑ¡²ÎÊı£º MOTOR_NUM1   MOTOR_NUM2  
+Descriptionï¼šReset the driver that connected to the main control board
+Input parametersï¼š int Motor_ID     Optional parametersï¼š MOTOR_NUM1   MOTOR_NUM2  
                                        MOTOR_NUM3   MOTOR_NUM4
                                        MOTOR_NUM5   MOTOR_NUM6
                                        MOTOR_NUM7   MOTOR_NUM8
-´«Èë²ÎÊı£º int Motor_Mode   ¿ÉÑ¡²ÎÊı£º PWM_MODE 
+ä¼ å…¥å‚æ•°ï¼š int Motor_Mode   å¯é€‰å‚æ•°ï¼š PWM_MODE 
                                        SPEED_MODE 
                                        PWM_LOCATION_MODE 
                                        SPEED_LOCATION_MODE
@@ -225,26 +226,26 @@ void Motor_Init(int Motor_ID,int Motor_Mode)
 {
     CanTxMsg tx_message;
     
-    tx_message.RTR = CAN_RTR_DATA;  //Êı¾İÖ¡
-    tx_message.IDE = CAN_ID_STD;    //±ê×¼Ö¡
-    tx_message.DLC = 0x04;          //Ö¡³¤¶ÈÎª4      
+    tx_message.RTR = CAN_RTR_DATA;  //æ•°æ®å¸§
+    tx_message.IDE = CAN_ID_STD;    //æ ‡å‡†å¸§
+    tx_message.DLC = 0x04;          //å¸§é•¿åº¦ä¸º4      
     
     tx_message.Data[0] = 0x59;
     tx_message.Data[3] = 0xae;
     
     switch (Motor_ID)
     {
-        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_CHOOSE_MODE; break; //Èç¹ûÑ¡¶¨µç»ú1: Ö¡IDÎª0x10
-        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_CHOOSE_MODE; break; //Èç¹ûÑ¡¶¨µç»ú2: Ö¡IDÎª0x20
-        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_CHOOSE_MODE; break; //Èç¹ûÑ¡¶¨µç»ú3: Ö¡IDÎª0x30
-        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_CHOOSE_MODE; break; //Èç¹ûÑ¡¶¨µç»ú4: Ö¡IDÎª0x40
-        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_CHOOSE_MODE; break; //Èç¹ûÑ¡¶¨µç»ú5: Ö¡IDÎª0x50
-        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_CHOOSE_MODE; break; //Èç¹ûÑ¡¶¨µç»ú6: Ö¡IDÎª0x60
-        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_CHOOSE_MODE; break; //Èç¹ûÑ¡¶¨µç»ú7: Ö¡IDÎª0x70
-        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_CHOOSE_MODE; break; //Èç¹ûÑ¡¶¨µç»ú8: Ö¡IDÎª0x80
+        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_CHOOSE_MODE; break; //å¦‚æœé€‰å®šç”µæœº1: å¸§IDä¸º0x10
+        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_CHOOSE_MODE; break; //å¦‚æœé€‰å®šç”µæœº2: å¸§IDä¸º0x20
+        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_CHOOSE_MODE; break; //å¦‚æœé€‰å®šç”µæœº3: å¸§IDä¸º0x30
+        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_CHOOSE_MODE; break; //å¦‚æœé€‰å®šç”µæœº4: å¸§IDä¸º0x40
+        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_CHOOSE_MODE; break; //å¦‚æœé€‰å®šç”µæœº5: å¸§IDä¸º0x50
+        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_CHOOSE_MODE; break; //å¦‚æœé€‰å®šç”µæœº6: å¸§IDä¸º0x60
+        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_CHOOSE_MODE; break; //å¦‚æœé€‰å®šç”µæœº7: å¸§IDä¸º0x70
+        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_CHOOSE_MODE; break; //å¦‚æœé€‰å®šç”µæœº8: å¸§IDä¸º0x80
         default: 
         {
-            while(1)      //Èç¹ûÑ¡µÄµç»úµÄ·¶Î§³¬¹ıÁË8£¬¾Í·äÃùÆ÷±¨´í
+            while(1)      //å¦‚æœé€‰çš„ç”µæœºçš„èŒƒå›´è¶…è¿‡äº†8ï¼Œå°±èœ‚é¸£å™¨æŠ¥é”™
             {
                 delay_ms(200);
                 #ifdef __DEBUG
@@ -256,21 +257,21 @@ void Motor_Init(int Motor_ID,int Motor_Mode)
     
     switch (Motor_Mode)
     {
-        case PWM_MODE:              tx_message.Data[1] = 0x56; //Èç¹ûÑ¡¶¨µÄÄ£Ê½ÊÇ PWM_MODE
-                                    tx_message.Data[2] = 0xab; //Êı¾İ1Îª0x56£¬Êı¾İ2Îª0xab
+        case PWM_MODE:              tx_message.Data[1] = 0x56; //å¦‚æœé€‰å®šçš„æ¨¡å¼æ˜¯ PWM_MODE
+                                    tx_message.Data[2] = 0xab; //æ•°æ®1ä¸º0x56ï¼Œæ•°æ®2ä¸º0xab
                                     break;
-        case SPEED_MODE:            tx_message.Data[1] = 0x55; //Èç¹ûÑ¡¶¨µÄÄ£Ê½ÊÇ SPEED_MODE
-                                    tx_message.Data[2] = 0xaa; //Êı¾İ1Îª0x55£¬Êı¾İ2Îª0xaa
+        case SPEED_MODE:            tx_message.Data[1] = 0x55; //å¦‚æœé€‰å®šçš„æ¨¡å¼æ˜¯ SPEED_MODE
+                                    tx_message.Data[2] = 0xaa; //æ•°æ®1ä¸º0x55ï¼Œæ•°æ®2ä¸º0xaa
                                     break;
-        case PWM_LOCATION_MODE:     tx_message.Data[1] = 0x58; //Èç¹ûÑ¡¶¨µÄÄ£Ê½ÊÇ PWM_LOCATION_MODE
-                                    tx_message.Data[2] = 0xad; //Êı¾İ1Îª0x58£¬Êı¾İ2Îª0xad
+        case PWM_LOCATION_MODE:     tx_message.Data[1] = 0x58; //å¦‚æœé€‰å®šçš„æ¨¡å¼æ˜¯ PWM_LOCATION_MODE
+                                    tx_message.Data[2] = 0xad; //æ•°æ®1ä¸º0x58ï¼Œæ•°æ®2ä¸º0xad
                                     break;
-        case SPEED_LOCATION_MODE:   tx_message.Data[1] = 0x57; //Èç¹ûÑ¡¶¨µÄÄ£Ê½ÊÇ SPEED_LOCATION_MODE
-                                    tx_message.Data[2] = 0xac; //Êı¾İ1Îª0x57£¬Êı¾İ2Îª0xac
+        case SPEED_LOCATION_MODE:   tx_message.Data[1] = 0x57; //å¦‚æœé€‰å®šçš„æ¨¡å¼æ˜¯ SPEED_LOCATION_MODE
+                                    tx_message.Data[2] = 0xac; //æ•°æ®1ä¸º0x57ï¼Œæ•°æ®2ä¸º0xac
                                     break;
         default:
         {
-            while(1)      //Èç¹ûÑ¡µÄµç»úÄ£Ê½µÄ·¶Î§³¬¹ıÁË4£¬¾Í·äÃùÆ÷±¨´í
+            while(1)      //å¦‚æœé€‰çš„ç”µæœºæ¨¡å¼çš„èŒƒå›´è¶…è¿‡äº†4ï¼Œå°±èœ‚é¸£å™¨æŠ¥é”™
             {
                 delay_ms(200);
                 #ifdef __DEBUG
@@ -287,34 +288,34 @@ void Motor_Init(int Motor_ID,int Motor_Mode)
 
 /*************************************************************************
                            MOTOR_PWM_Set
-ÃèÊö£ºPWMÄ£Ê½ÏÂÇı¶¯Æ÷µÄÉèÖÃ
-´«Èë²ÎÊı£º int Motor_ID     ¿ÉÑ¡²ÎÊı£º MOTOR_NUM1   MOTOR_NUM2  
+æè¿°ï¼šPWMæ¨¡å¼ä¸‹é©±åŠ¨å™¨çš„è®¾ç½®
+ä¼ å…¥å‚æ•°ï¼š int Motor_ID     å¯é€‰å‚æ•°ï¼š MOTOR_NUM1   MOTOR_NUM2  
                                        MOTOR_NUM3   MOTOR_NUM4
                                        MOTOR_NUM5   MOTOR_NUM6
                                        MOTOR_NUM7   MOTOR_NUM8
-´«Èë²ÎÊı£º int Give_PWM   ·¶Î§ -5000 -- 0 -- 5000
+ä¼ å…¥å‚æ•°ï¼š int Give_PWM   èŒƒå›´ -5000 -- 0 -- 5000
 *************************************************************************/
 void Motor_PWM_Set(int Motor_ID,int Give_PWM)
 {
     CanTxMsg tx_message;
     
-    tx_message.RTR = CAN_RTR_DATA;  //Êı¾İÖ¡
-    tx_message.IDE = CAN_ID_STD;    //±ê×¼Ö¡
-    tx_message.DLC = 0x04;          //Ö¡³¤¶ÈÎª4    
+    tx_message.RTR = CAN_RTR_DATA;  //æ•°æ®å¸§
+    tx_message.IDE = CAN_ID_STD;    //æ ‡å‡†å¸§
+    tx_message.DLC = 0x04;          //å¸§é•¿åº¦ä¸º4    
   
     switch (Motor_ID)
     {
-        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_PWM_MODE; break; //Èç¹ûÑ¡¶¨µç»ú1£¬PWMÄ£Ê½ÏÂÖ¡IDÎª0x11
-        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_PWM_MODE; break; //Èç¹ûÑ¡¶¨µç»ú2£¬PWMÄ£Ê½ÏÂÖ¡IDÎª0x21
-        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_PWM_MODE; break; //Èç¹ûÑ¡¶¨µç»ú3£¬PWMÄ£Ê½ÏÂÖ¡IDÎª0x31
-        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_PWM_MODE; break; //Èç¹ûÑ¡¶¨µç»ú4£¬PWMÄ£Ê½ÏÂÖ¡IDÎª0x41
-        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_PWM_MODE; break; //Èç¹ûÑ¡¶¨µç»ú5£¬PWMÄ£Ê½ÏÂÖ¡IDÎª0x51
-        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_PWM_MODE; break; //Èç¹ûÑ¡¶¨µç»ú6£¬PWMÄ£Ê½ÏÂÖ¡IDÎª0x61
-        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_PWM_MODE; break; //Èç¹ûÑ¡¶¨µç»ú7£¬PWMÄ£Ê½ÏÂÖ¡IDÎª0x71
-        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_PWM_MODE; break; //Èç¹ûÑ¡¶¨µç»ú8£¬PWMÄ£Ê½ÏÂÖ¡IDÎª0x81
+        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_PWM_MODE; break; //å¦‚æœé€‰å®šç”µæœº1ï¼ŒPWMæ¨¡å¼ä¸‹å¸§IDä¸º0x11
+        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_PWM_MODE; break; //å¦‚æœé€‰å®šç”µæœº2ï¼ŒPWMæ¨¡å¼ä¸‹å¸§IDä¸º0x21
+        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_PWM_MODE; break; //å¦‚æœé€‰å®šç”µæœº3ï¼ŒPWMæ¨¡å¼ä¸‹å¸§IDä¸º0x31
+        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_PWM_MODE; break; //å¦‚æœé€‰å®šç”µæœº4ï¼ŒPWMæ¨¡å¼ä¸‹å¸§IDä¸º0x41
+        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_PWM_MODE; break; //å¦‚æœé€‰å®šç”µæœº5ï¼ŒPWMæ¨¡å¼ä¸‹å¸§IDä¸º0x51
+        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_PWM_MODE; break; //å¦‚æœé€‰å®šç”µæœº6ï¼ŒPWMæ¨¡å¼ä¸‹å¸§IDä¸º0x61
+        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_PWM_MODE; break; //å¦‚æœé€‰å®šç”µæœº7ï¼ŒPWMæ¨¡å¼ä¸‹å¸§IDä¸º0x71
+        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_PWM_MODE; break; //å¦‚æœé€‰å®šç”µæœº8ï¼ŒPWMæ¨¡å¼ä¸‹å¸§IDä¸º0x81
         default: 
         {
-            while(1)      //Èç¹ûÑ¡µÄµç»úµÄ·¶Î§³¬¹ıÁË8£¬¾Í·äÃùÆ÷±¨´í
+            while(1)      //å¦‚æœé€‰çš„ç”µæœºçš„èŒƒå›´è¶…è¿‡äº†8ï¼Œå°±èœ‚é¸£å™¨æŠ¥é”™
             {
                 delay_ms(200);
                 #ifdef __DEBUG
@@ -346,34 +347,34 @@ void Motor_PWM_Set(int Motor_ID,int Give_PWM)
 
 /*************************************************************************
                            MOTOR_Speed_Set
-ÃèÊö£ºSpeedÄ£Ê½ÏÂÇı¶¯Æ÷µÄÉèÖÃ
-´«Èë²ÎÊı£º int Motor_ID     ¿ÉÑ¡²ÎÊı£º MOTOR_NUM1   MOTOR_NUM2  
+æè¿°ï¼šSpeedæ¨¡å¼ä¸‹é©±åŠ¨å™¨çš„è®¾ç½®
+ä¼ å…¥å‚æ•°ï¼š int Motor_ID     å¯é€‰å‚æ•°ï¼š MOTOR_NUM1   MOTOR_NUM2  
                                        MOTOR_NUM3   MOTOR_NUM4
                                        MOTOR_NUM5   MOTOR_NUM6
                                        MOTOR_NUM7   MOTOR_NUM8
-´«Èë²ÎÊı£º int Give_Speed  -500 -- 0 -- 500
+ä¼ å…¥å‚æ•°ï¼š int Give_Speed  -500 -- 0 -- 500
 *************************************************************************/
 void Motor_Speed_Set(int Motor_ID,int Give_Speed)
 {
     CanTxMsg tx_message;
     
-    tx_message.RTR = CAN_RTR_DATA;  //Êı¾İÖ¡
-    tx_message.IDE = CAN_ID_STD;    //±ê×¼Ö¡
-    tx_message.DLC = 0x04;          //Ö¡³¤¶ÈÎª4    
+    tx_message.RTR = CAN_RTR_DATA;  //æ•°æ®å¸§
+    tx_message.IDE = CAN_ID_STD;    //æ ‡å‡†å¸§
+    tx_message.DLC = 0x04;          //å¸§é•¿åº¦ä¸º4    
   
     switch (Motor_ID)
     {
-        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_SPEED_MODE; break; //Èç¹ûÑ¡¶¨µç»ú1£¬SpeedÄ£Ê½ÏÂÖ¡IDÎª0x12
-        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_SPEED_MODE; break; //Èç¹ûÑ¡¶¨µç»ú2£¬SpeedÄ£Ê½ÏÂÖ¡IDÎª0x22
-        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_SPEED_MODE; break; //Èç¹ûÑ¡¶¨µç»ú3£¬SpeedÄ£Ê½ÏÂÖ¡IDÎª0x32
-        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_SPEED_MODE; break; //Èç¹ûÑ¡¶¨µç»ú4£¬SpeedÄ£Ê½ÏÂÖ¡IDÎª0x42
-        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_SPEED_MODE; break; //Èç¹ûÑ¡¶¨µç»ú5£¬SpeedÄ£Ê½ÏÂÖ¡IDÎª0x52
-        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_SPEED_MODE; break; //Èç¹ûÑ¡¶¨µç»ú6£¬SpeedÄ£Ê½ÏÂÖ¡IDÎª0x62
-        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_SPEED_MODE; break; //Èç¹ûÑ¡¶¨µç»ú7£¬SpeedÄ£Ê½ÏÂÖ¡IDÎª0x72
-        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_SPEED_MODE; break; //Èç¹ûÑ¡¶¨µç»ú8£¬SpeedÄ£Ê½ÏÂÖ¡IDÎª0x82
+        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_SPEED_MODE; break; //å¦‚æœé€‰å®šç”µæœº1ï¼ŒSpeedæ¨¡å¼ä¸‹å¸§IDä¸º0x12
+        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_SPEED_MODE; break; //å¦‚æœé€‰å®šç”µæœº2ï¼ŒSpeedæ¨¡å¼ä¸‹å¸§IDä¸º0x22
+        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_SPEED_MODE; break; //å¦‚æœé€‰å®šç”µæœº3ï¼ŒSpeedæ¨¡å¼ä¸‹å¸§IDä¸º0x32
+        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_SPEED_MODE; break; //å¦‚æœé€‰å®šç”µæœº4ï¼ŒSpeedæ¨¡å¼ä¸‹å¸§IDä¸º0x42
+        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_SPEED_MODE; break; //å¦‚æœé€‰å®šç”µæœº5ï¼ŒSpeedæ¨¡å¼ä¸‹å¸§IDä¸º0x52
+        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_SPEED_MODE; break; //å¦‚æœé€‰å®šç”µæœº6ï¼ŒSpeedæ¨¡å¼ä¸‹å¸§IDä¸º0x62
+        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_SPEED_MODE; break; //å¦‚æœé€‰å®šç”µæœº7ï¼ŒSpeedæ¨¡å¼ä¸‹å¸§IDä¸º0x72
+        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_SPEED_MODE; break; //å¦‚æœé€‰å®šç”µæœº8ï¼ŒSpeedæ¨¡å¼ä¸‹å¸§IDä¸º0x82
         default: 
         {
-            while(1)      //Èç¹ûÑ¡µÄµç»úµÄ·¶Î§³¬¹ıÁË8£¬¾Í·äÃùÆ÷±¨´í
+            while(1)      //å¦‚æœé€‰çš„ç”µæœºçš„èŒƒå›´è¶…è¿‡äº†8ï¼Œå°±èœ‚é¸£å™¨æŠ¥é”™
             {
                 delay_ms(200);
                 #ifdef __DEBUG
@@ -405,35 +406,35 @@ void Motor_Speed_Set(int Motor_ID,int Give_Speed)
 
 /*************************************************************************
                          MOTOR_PWM_Location_Set
-ÃèÊö£ºÔÚ»ùÓÚPWMµÄÎ»ÖÃ»·Ä£Ê½ÏÂÇı¶¯Æ÷µÄÉèÖÃ
-´«Èë²ÎÊı£º int Motor_ID     ¿ÉÑ¡²ÎÊı£º MOTOR_NUM1   MOTOR_NUM2  
+æè¿°ï¼šåœ¨åŸºäºPWMçš„ä½ç½®ç¯æ¨¡å¼ä¸‹é©±åŠ¨å™¨çš„è®¾ç½®
+ä¼ å…¥å‚æ•°ï¼š int Motor_ID     å¯é€‰å‚æ•°ï¼š MOTOR_NUM1   MOTOR_NUM2  
                                        MOTOR_NUM3   MOTOR_NUM4
                                        MOTOR_NUM5   MOTOR_NUM6
                                        MOTOR_NUM7   MOTOR_NUM8
-´«Èë²ÎÊı£º int Give_PWM      0 -- 5000
-´«Èë²ÎÊı£º int Give_PWM_Location  
+ä¼ å…¥å‚æ•°ï¼š int Give_PWM      0 -- 5000
+ä¼ å…¥å‚æ•°ï¼š int Give_PWM_Location  
 *************************************************************************/
 void Motor_PWM_Location_Set(int Motor_ID,int Give_PWM,int Give_PWM_Location)
 {
     CanTxMsg tx_message;
     
-    tx_message.RTR = CAN_RTR_DATA;  //Êı¾İÖ¡
-    tx_message.IDE = CAN_ID_STD;    //±ê×¼Ö¡
-    tx_message.DLC = 0x08;          //Ö¡³¤¶ÈÎª4    
+    tx_message.RTR = CAN_RTR_DATA;  //æ•°æ®å¸§
+    tx_message.IDE = CAN_ID_STD;    //æ ‡å‡†å¸§
+    tx_message.DLC = 0x08;          //å¸§é•¿åº¦ä¸º4    
   
     switch (Motor_ID)
     {
-        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_PWM_LOCATION_MODE; break; //Èç¹ûÑ¡¶¨µç»ú1£¬PWM_LOCATIONÄ£Ê½ÏÂÖ¡IDÎª0x13
-        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_PWM_LOCATION_MODE; break; //Èç¹ûÑ¡¶¨µç»ú2£¬PWM_LOCATIONÄ£Ê½ÏÂÖ¡IDÎª0x23
-        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_PWM_LOCATION_MODE; break; //Èç¹ûÑ¡¶¨µç»ú3£¬PWM_LOCATIONÄ£Ê½ÏÂÖ¡IDÎª0x33
-        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_PWM_LOCATION_MODE; break; //Èç¹ûÑ¡¶¨µç»ú4£¬PWM_LOCATIONÄ£Ê½ÏÂÖ¡IDÎª0x43
-        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_PWM_LOCATION_MODE; break; //Èç¹ûÑ¡¶¨µç»ú5£¬PWM_LOCATIONÄ£Ê½ÏÂÖ¡IDÎª0x53
-        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_PWM_LOCATION_MODE; break; //Èç¹ûÑ¡¶¨µç»ú6£¬PWM_LOCATIONÄ£Ê½ÏÂÖ¡IDÎª0x63
-        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_PWM_LOCATION_MODE; break; //Èç¹ûÑ¡¶¨µç»ú7£¬PWM_LOCATIONÄ£Ê½ÏÂÖ¡IDÎª0x73
-        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_PWM_LOCATION_MODE; break; //Èç¹ûÑ¡¶¨µç»ú8£¬PWM_LOCATIONÄ£Ê½ÏÂÖ¡IDÎª0x83     
+        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_PWM_LOCATION_MODE; break; //å¦‚æœé€‰å®šç”µæœº1ï¼ŒPWM_LOCATIONæ¨¡å¼ä¸‹å¸§IDä¸º0x13
+        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_PWM_LOCATION_MODE; break; //å¦‚æœé€‰å®šç”µæœº2ï¼ŒPWM_LOCATIONæ¨¡å¼ä¸‹å¸§IDä¸º0x23
+        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_PWM_LOCATION_MODE; break; //å¦‚æœé€‰å®šç”µæœº3ï¼ŒPWM_LOCATIONæ¨¡å¼ä¸‹å¸§IDä¸º0x33
+        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_PWM_LOCATION_MODE; break; //å¦‚æœé€‰å®šç”µæœº4ï¼ŒPWM_LOCATIONæ¨¡å¼ä¸‹å¸§IDä¸º0x43
+        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_PWM_LOCATION_MODE; break; //å¦‚æœé€‰å®šç”µæœº5ï¼ŒPWM_LOCATIONæ¨¡å¼ä¸‹å¸§IDä¸º0x53
+        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_PWM_LOCATION_MODE; break; //å¦‚æœé€‰å®šç”µæœº6ï¼ŒPWM_LOCATIONæ¨¡å¼ä¸‹å¸§IDä¸º0x63
+        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_PWM_LOCATION_MODE; break; //å¦‚æœé€‰å®šç”µæœº7ï¼ŒPWM_LOCATIONæ¨¡å¼ä¸‹å¸§IDä¸º0x73
+        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_PWM_LOCATION_MODE; break; //å¦‚æœé€‰å®šç”µæœº8ï¼ŒPWM_LOCATIONæ¨¡å¼ä¸‹å¸§IDä¸º0x83     
         default: 
         {
-            while(1)      //Èç¹ûÑ¡µÄµç»úµÄ·¶Î§³¬¹ıÁË8£¬¾Í·äÃùÆ÷±¨´í
+            while(1)      //å¦‚æœé€‰çš„ç”µæœºçš„èŒƒå›´è¶…è¿‡äº†8ï¼Œå°±èœ‚é¸£å™¨æŠ¥é”™
             {
                 delay_ms(200);
                 #ifdef __DEBUG
@@ -466,35 +467,35 @@ void Motor_PWM_Location_Set(int Motor_ID,int Give_PWM,int Give_PWM_Location)
 
 /*************************************************************************
                         Motor_Speed_Location_Set
-ÃèÊö£ºÔÚ»ùÓÚSpeedµÄÎ»ÖÃ»·Ä£Ê½ÏÂÇı¶¯Æ÷µÄÉèÖÃ
-´«Èë²ÎÊı£º int Motor_ID     ¿ÉÑ¡²ÎÊı£º MOTOR_NUM1   MOTOR_NUM2  
+æè¿°ï¼šåœ¨åŸºäºSpeedçš„ä½ç½®ç¯æ¨¡å¼ä¸‹é©±åŠ¨å™¨çš„è®¾ç½®
+ä¼ å…¥å‚æ•°ï¼š int Motor_ID     å¯é€‰å‚æ•°ï¼š MOTOR_NUM1   MOTOR_NUM2  
                                        MOTOR_NUM3   MOTOR_NUM4
                                        MOTOR_NUM5   MOTOR_NUM6
                                        MOTOR_NUM7   MOTOR_NUM8
-´«Èë²ÎÊı£º int Give_Speed   0 - 500
-´«Èë²ÎÊı£º int Give_Speed_Location 
+ä¼ å…¥å‚æ•°ï¼š int Give_Speed   0 - 500
+ä¼ å…¥å‚æ•°ï¼š int Give_Speed_Location 
 *************************************************************************/
 void Motor_Speed_Location_Set(int Motor_ID,int Give_Speed,int Give_Speed_Location)
 {
     CanTxMsg tx_message;
     
-    tx_message.RTR = CAN_RTR_DATA;  //Êı¾İÖ¡
-    tx_message.IDE = CAN_ID_STD;    //±ê×¼Ö¡
-    tx_message.DLC = 0x08;          //Ö¡³¤¶ÈÎª8 
+    tx_message.RTR = CAN_RTR_DATA;  //æ•°æ®å¸§
+    tx_message.IDE = CAN_ID_STD;    //æ ‡å‡†å¸§
+    tx_message.DLC = 0x08;          //å¸§é•¿åº¦ä¸º8 
   
     switch (Motor_ID)
     {
-        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_SPEED_LOCATION_MODE; break; //ÈôÑ¡¶¨µç»ú1£¬Speed_LOCATIONÄ£Ê½Ö¡ID=0x14
-        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_SPEED_LOCATION_MODE; break; //ÈôÑ¡¶¨µç»ú2£¬Speed_LOCATIONÄ£Ê½Ö¡ID=0x24
-        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_SPEED_LOCATION_MODE; break; //ÈôÑ¡¶¨µç»ú3£¬Speed_LOCATIONÄ£Ê½Ö¡ID=0x34
-        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_SPEED_LOCATION_MODE; break; //ÈôÑ¡¶¨µç»ú4£¬Speed_LOCATIONÄ£Ê½Ö¡ID=0x44
-        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_SPEED_LOCATION_MODE; break; //ÈôÑ¡¶¨µç»ú5£¬Speed_LOCATIONÄ£Ê½Ö¡ID=0x54
-        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_SPEED_LOCATION_MODE; break; //ÈôÑ¡¶¨µç»ú6£¬Speed_LOCATIONÄ£Ê½Ö¡ID=0x64
-        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_SPEED_LOCATION_MODE; break; //ÈôÑ¡¶¨µç»ú7£¬Speed_LOCATIONÄ£Ê½Ö¡ID=0x74
-        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_SPEED_LOCATION_MODE; break; //ÈôÑ¡¶¨µç»ú8£¬Speed_LOCATIONÄ£Ê½Ö¡ID=0x84   
+        case MOTOR_NUM1: tx_message.StdId = ID_MOTOR1_SPEED_LOCATION_MODE; break; //è‹¥é€‰å®šç”µæœº1ï¼ŒSpeed_LOCATIONæ¨¡å¼å¸§ID=0x14
+        case MOTOR_NUM2: tx_message.StdId = ID_MOTOR2_SPEED_LOCATION_MODE; break; //è‹¥é€‰å®šç”µæœº2ï¼ŒSpeed_LOCATIONæ¨¡å¼å¸§ID=0x24
+        case MOTOR_NUM3: tx_message.StdId = ID_MOTOR3_SPEED_LOCATION_MODE; break; //è‹¥é€‰å®šç”µæœº3ï¼ŒSpeed_LOCATIONæ¨¡å¼å¸§ID=0x34
+        case MOTOR_NUM4: tx_message.StdId = ID_MOTOR4_SPEED_LOCATION_MODE; break; //è‹¥é€‰å®šç”µæœº4ï¼ŒSpeed_LOCATIONæ¨¡å¼å¸§ID=0x44
+        case MOTOR_NUM5: tx_message.StdId = ID_MOTOR5_SPEED_LOCATION_MODE; break; //è‹¥é€‰å®šç”µæœº5ï¼ŒSpeed_LOCATIONæ¨¡å¼å¸§ID=0x54
+        case MOTOR_NUM6: tx_message.StdId = ID_MOTOR6_SPEED_LOCATION_MODE; break; //è‹¥é€‰å®šç”µæœº6ï¼ŒSpeed_LOCATIONæ¨¡å¼å¸§ID=0x64
+        case MOTOR_NUM7: tx_message.StdId = ID_MOTOR7_SPEED_LOCATION_MODE; break; //è‹¥é€‰å®šç”µæœº7ï¼ŒSpeed_LOCATIONæ¨¡å¼å¸§ID=0x74
+        case MOTOR_NUM8: tx_message.StdId = ID_MOTOR8_SPEED_LOCATION_MODE; break; //è‹¥é€‰å®šç”µæœº8ï¼ŒSpeed_LOCATIONæ¨¡å¼å¸§ID=0x84   
         default: 
         {
-            while(1)      //Èç¹ûÑ¡µÄµç»úµÄ·¶Î§³¬¹ıÁË8£¬¾Í·äÃùÆ÷±¨´í
+            while(1)      //å¦‚æœé€‰çš„ç”µæœºçš„èŒƒå›´è¶…è¿‡äº†8ï¼Œå°±èœ‚é¸£å™¨æŠ¥é”™
             {
                 delay_ms(200);
                 #ifdef __DEBUG
