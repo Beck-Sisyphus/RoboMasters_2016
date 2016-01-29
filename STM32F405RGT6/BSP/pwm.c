@@ -12,18 +12,18 @@ void PWM_Configuration(void)
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB,ENABLE);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 
-    gpio.GPIO_Pin = GPIO_Pin_3;
+    gpio.GPIO_Pin = GPIO_Pin_1;
     gpio.GPIO_Mode = GPIO_Mode_AF;
     gpio.GPIO_Speed = GPIO_Speed_100MHz;
-    GPIO_Init(GPIOB,&gpio);
+    GPIO_Init(GPIOA,&gpio);
     
-    gpio.GPIO_Pin = GPIO_Pin_15;
+    gpio.GPIO_Pin = GPIO_Pin_0;
     gpio.GPIO_Mode = GPIO_Mode_AF;
     gpio.GPIO_Speed = GPIO_Speed_100MHz;
     GPIO_Init(GPIOA,&gpio);
 
-    GPIO_PinAFConfig(GPIOB,GPIO_PinSource3, GPIO_AF_TIM2);
-    GPIO_PinAFConfig(GPIOA,GPIO_PinSource15,GPIO_AF_TIM2);    
+    GPIO_PinAFConfig(GPIOA,GPIO_PinSource1, GPIO_AF_TIM2);
+    GPIO_PinAFConfig(GPIOA,GPIO_PinSource0,GPIO_AF_TIM2);    
     
     tim.TIM_Prescaler = 84-1;
     tim.TIM_CounterMode = TIM_CounterMode_Up;
