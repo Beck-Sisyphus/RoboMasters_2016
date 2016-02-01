@@ -23,7 +23,7 @@ void LASER_Configuration(void)//cyq
 
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA,ENABLE);
 		
-	gpio.GPIO_Pin = GPIO_Pin_1;	
+	gpio.GPIO_Pin = GPIO_Pin_8;	
     gpio.GPIO_Mode = GPIO_Mode_OUT;
 	gpio.GPIO_OType = GPIO_OType_PP;
 	gpio.GPIO_Speed = GPIO_Speed_100MHz;
