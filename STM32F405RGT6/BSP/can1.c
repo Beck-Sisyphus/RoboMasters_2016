@@ -1,5 +1,7 @@
 #include "can1.h"
 
+//comment
+
 //VP230---CAN_TX---PA12(CANTX) 
 //VP230---CAN_RX---PA11(CANRX) 
 
