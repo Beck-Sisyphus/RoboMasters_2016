@@ -28,7 +28,7 @@ void LASER_Configuration(void)//cyq
 	gpio.GPIO_OType = GPIO_OType_PP;
 	gpio.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_Init(GPIOA, &gpio);
-	GPIO_SetBits(GPIOA,GPIO_Pin_1);//cyq
+	GPIO_SetBits(GPIOA,GPIO_Pin_8);//cyq
 }
 
 /*-H1--(PB8--TIM4_CH3)--*/
