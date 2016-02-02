@@ -7,14 +7,14 @@ void MPU6050_Interrupt_Configuration(void)
     EXTI_InitTypeDef    exti;
  
 	  RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,  ENABLE);   
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA,  ENABLE);   
  
-	  gpio.GPIO_Pin = GPIO_Pin_5;
+	  gpio.GPIO_Pin = GPIO_Pin_4;
     gpio.GPIO_Mode = GPIO_Mode_IN;
     gpio.GPIO_OType = GPIO_OType_PP;
     gpio.GPIO_PuPd = GPIO_PuPd_UP;
     gpio.GPIO_Speed = GPIO_Speed_50MHz;
-	  GPIO_Init(GPIOB, &gpio);
+	  GPIO_Init(GPIOA, &gpio);
     
     SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOB,GPIO_PinSource5); 
     
