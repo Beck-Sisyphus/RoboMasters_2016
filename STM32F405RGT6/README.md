@@ -44,9 +44,10 @@ The open source code running on the trapezoid board for STM32F405RGT6. Thanks fo
 	(1) Project -> Build Target
 	(2) Flash -> Download
 
-## Constants
-	CAN Address: 0x201 - 0x204
-	CAN Receive ID: 0x200
-	CAN Receiver ID: 0x1FF
-	Yaw: 0x205
-	Pitch: 0x206
+## CAN Addresses
+	chassis motors: 0x201-0x204
+	receiving a command ID: 0x200
+
+	yaw motor: 0x205
+	pitch motor: 0x206
+	receiving a command ID: 0x1FF
