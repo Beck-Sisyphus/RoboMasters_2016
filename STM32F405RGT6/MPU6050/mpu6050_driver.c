@@ -51,7 +51,8 @@ int MPU6050_Initialization(void)
     unsigned char temp_data = 0x00;
 
     IIC_GPIO_Init();  //Initialize I2C port
-    HEAT_Configuration();
+    // new code
+    //HEAT_Configuration();
     
     if(IIC_ReadData(MPU6050_DEVICE_ADDRESS,WHO_AM_I ,&temp_data ,1)==0) // Check if MPU6050 is connected to I2C bus
     {
