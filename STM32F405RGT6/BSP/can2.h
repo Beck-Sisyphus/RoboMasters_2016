@@ -11,6 +11,8 @@
 void CAN2_Configuration(void);
 void GYRO_RST(void);
 void Encoder_sent(float encoder_angle);
+void Motor_Test_Can_2(void);
+void RX_Test_Can_2(void);
 extern float YAW_Angle;
 extern float dipan_gyro_angle;
 extern uint8_t shooting_flag;

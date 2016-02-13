@@ -81,4 +81,7 @@ void Motor_Speed_Set(int Motor_ID,int Give_Speed);
 void Motor_PWM_Location_Set(int Motor_ID,int Give_PWM,int Give_PWM_Location);
 void Motor_Speed_Location_Set(int Motor_ID,int Give_Speed,int Give_Speed_Location);
 
+void RX_Test_Can_1(void);
+void Motor_Test_Can_1(void);
+
 #endif 
