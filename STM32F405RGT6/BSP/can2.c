@@ -144,8 +144,7 @@ float target_yaw_angle;
 
 /*************************************************************************
                           CAN2_RX0_IRQHandler
-Description: Interrupt receive for chassis CAN bus data and single axis gyroscope
-æè¿°ï¼šå•è½´é™€èºä»ªã€åº•ç›˜ä¸»æ§CANæ•°æ®æ¥æ”¶ä¸­æ–­
+ÃèÊö£ºµ¥ÖáÍÓÂİÒÇ¡¢µ×ÅÌÖ÷¿ØCANÊı¾İ½ÓÊÕÖĞ¶Ï
 *************************************************************************/
 void CAN2_RX0_IRQHandler(void)
 {
@@ -155,8 +154,8 @@ void CAN2_RX0_IRQHandler(void)
        CAN_ClearITPendingBit(CAN2, CAN_IT_FMP0);
        CAN_Receive(CAN2, CAN_FIFO0, &rx_message);
        
-        //Single axis gyroscope data å•è½´é™€èºä»ªæ•°æ®
-        if(rx_message.StdId == 0x401)
+       //µ¥ÖáÍÓÂİÒÇÊı¾İ
+       if(rx_message.StdId == 0x401)
         { 
             gyro_ok_flag = 1;
             temp_yaw_angle = (int32_t)(rx_message.Data[0]<<24)|(int32_t)(rx_message.Data[1]<<16) 
@@ -166,39 +165,39 @@ void CAN2_RX0_IRQHandler(void)
             this_yaw_angle = -((float)temp_yaw_angle*0.01);            
         }
         
-        //Remote controller, mouse, and turret channel é¥æ§å™¨ é¼ æ ‡  äº‘å°é€šé“
+        //Ò£¿ØÆ÷ Êó±ê  ÔÆÌ¨Í¨µÀ
         if(rx_message.StdId == 0x402)
         { 
             temp_yaw = (uint16_t)(rx_message.Data[0]<<8)|(uint16_t)(rx_message.Data[1]);
             temp_pitch = (uint16_t)(rx_message.Data[2]<<8)|(uint16_t)(rx_message.Data[3]);
             shooting_flag = (uint8_t)rx_message.Data[4];   
-            mode_flag = (uint8_t)rx_message.Data[6];//S2 switch
+			      mode_flag = (uint8_t)rx_message.Data[6];//S2 ¿ª¹Ø
             
             //for mouse            
-            if(shooting_flag == 1)				//cyq: trigger shoot
+            if(shooting_flag == 1)				//cyq:¿ªÇ¹
             {	
-				if(ShootFlag == 1)
-				{						
-					Motor_PWM_Set(MOTOR_NUM1,-1000);	
-					ShootFlag=0;
-				}                  
+							  if(ShootFlag == 1)
+								{						
+										Motor_PWM_Set(MOTOR_NUM1,-1000);	
+									  ShootFlag=0;
+								}                  
             }
             else 
             {	      
-				if(ShootFlag == 0)
-				{   
-					ShootFlag=1;
-				}              					 
+								if(ShootFlag == 0)
+								{   
+										ShootFlag=1;
+								}              					 
             }
             if (mode_flag == 1)
             {
-                target_pitch_angle += (temp_pitch - 1024)/66.0;//remote control
+                target_pitch_angle += (temp_pitch - 1024)/66.0;//Ò£¸Ğ
                 target_yaw_angle += (temp_yaw - 1024)/600.0 ;//cyq                                
             }
             else
             {
-                target_pitch_angle -= (temp_pitch - 1024)/10.0;//cyq: mouse
-                target_yaw_angle += (temp_yaw - 1024)/10.0 ;//cyq: target new program
+                target_pitch_angle -= (temp_pitch - 1024)/10.0;//cyq µçÄÔÊó±ê
+                target_yaw_angle += (temp_yaw - 1024)/10.0 ;//cyq:Õë¶ÔĞÂµÄ³ÌĞò
             }
             if(target_pitch_angle > pitch_max)
             {
@@ -210,144 +209,4 @@ void CAN2_RX0_IRQHandler(void)
             }
         }  
     }
-}
-
-void RX_Test_Can_2(void) {
-    CanRxMsg rx_message;
-    if (CAN_GetITStatus(CAN2,CAN_IT_FMP0)!= RESET) 
-    {
-       CAN_ClearITPendingBit(CAN2, CAN_IT_FMP0);
-       CAN_Receive(CAN2, CAN_FIFO0, &rx_message);
-       
-       //ÂµÂ¥Ã–Ã¡ÃÃ“Ã‚ÃÃ’Ã‡ÃŠÃ½Â¾Ã
-       //if(rx_message.StdId == 0x201)
-       // { 
-            /*        
-            gyro_ok_flag = 1;
-            temp_yaw_angle = (int32_t)(rx_message.Data[0]<<24)|(int32_t)(rx_message.Data[1]<<16) 
-            | (int32_t)(rx_message.Data[2]<<8) | (int32_t)(rx_message.Data[3]);
-            
-            last_yaw_angle = this_yaw_angle;
-            this_yaw_angle = -((float)temp_yaw_angle*0.01);    
-            */        
-            // if(rx_message.Data[0] > 0x00) {
-            //     LED1_TOGGLE();
-            // } else {
-            //     LED2_TOGGLE();
-            // }
-        //}
-
-        if(rx_message.StdId == 0x201)
-        {      
-             //Acquire Head Motor 0x201's Encoding disk value è·å¾—äº‘å°ç”µæœº0x201çš„ç ç›˜å€¼
-             if(rx_message.Data[0] > 0x00) {
-                LED1_TOGGLE();
-            } else {
-                LED2_TOGGLE();
-            }                 
-        }       
-        if(rx_message.StdId == 0x202)
-        { 
-             //Acquire Head Motor 0x202's Encoding disk value è·å¾—äº‘å°ç”µæœº0x202çš„ç ç›˜å€¼
-             if(rx_message.Data[0] > 0x00) {
-                LED1_TOGGLE();
-            } else {
-                LED2_TOGGLE();
-            }           
-        }       
-        if(rx_message.StdId == 0x203)
-        { 
-             //Acquire Head Motor 0x203's Encoding disk value è·å¾—äº‘å°ç”µæœº0x203çš„ç ç›˜å€¼
-             if(rx_message.Data[0] > 0x00) {
-                LED1_TOGGLE();
-            } else {
-                LED2_TOGGLE();
-            }  
-        }
-    }
-}
-
-void Motor_Test_Can_2(void) {
-
-/*****************************
-    Controls wheels
-*******************************/
-    // CanTxMsg tx_message1;
-
-    // tx_message1.StdId = 0x200;
-    // tx_message1.DLC = 0x08;
-    // tx_message1.RTR = CAN_RTR_Data;
-    // tx_message1.IDE = CAN_Id_Standard;
-
-/*
-    Data 0 and 1 -> Front right wheel
-    Data 2 and 3 -> Front left wheel
-    Data 4 and 5 -> Rear left wheel
-    Data 6 and 7 -> Rear right wheel
-
-    data is sent in little endian
-    positive values -> counter clockwise rotation
-    negative values -> clockwise rotation
-
-    I tested:
-    +500 to right front wheel. +500 = 0x01F4 in little endian so: 
-    tx_message1.Data[0] = 0x01;
-    tx_message1.Data[1] = 0xF4;
-
-
-    -500 to right front wheel. -500 = 0xFE0C in little endian so:: 
-    tx_message1.Data[0] = 0xFE;
-    tx_message1.Data[1] = 0x0C;
-*/  
-    // tx_message1.Data[0] = 0x00;
-    // tx_message1.Data[1] = 0x00;
-    // tx_message1.Data[2] = 0x00;
-    // tx_message1.Data[3] = 0x00;
-    // tx_message1.Data[4] = 0x00;
-    // tx_message1.Data[5] = 0x00;
-    // tx_message1.Data[6] = 0x00;
-    // tx_message1.Data[7] = 0x00;
-
-
-/*****************************
-    Controls pitch and yaw
-*******************************/
-
-
-    // CanTxMsg tx_message2;      
-
-    // tx_message2.StdId = 0x1FF;
-    // tx_message2.DLC = 0x08;
-    // tx_message2.RTR = CAN_RTR_Data;
-    // tx_message2.IDE = CAN_Id_Standard;
-
-/*
-    Data 0 and 1 -> yaw (side to side)
-    Data 2 and 3 -> pitch (up, down)
-   
-
-    data is sent in little endian
-    positive values -> yaw right turn        pitch up
-    negative values -> yaw left turn        pitch down
-
-    +1000 to right front wheel. +1000 = 0xE803 in little endian so: 
-    tx_message1.Data[0] = 0xE8;
-    tx_message1.Data[1] = 0x03;
-
-
-    -1000 to right front wheel. -1000 = 0x18FC in little endian so:: 
-    tx_message1.Data[0] = 0x18;
-    tx_message1.Data[1] = 0xFC;
-*/
-    // tx_message2.Data[0] = 0x00;
-    // tx_message2.Data[1] = 0x00;
-    // tx_message2.Data[2] = 0x00;
-    // tx_message2.Data[3] = 0x00;
-    // tx_message2.Data[4] = 0x00;
-    // tx_message2.Data[5] = 0x00;
-    // tx_message2.Data[6] = 0x00;
-    // tx_message2.Data[7] = 0x00;
-
-    // //CAN_Transmit(CAN2,&tx_message1);
-    // CAN_Transmit(CAN2,&tx_message2);
 }
