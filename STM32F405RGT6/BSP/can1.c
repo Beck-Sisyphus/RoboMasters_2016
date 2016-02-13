@@ -1,8 +1,9 @@
 #include "can1.h"
+#include "led.h"
 
 //VP230---CAN_TX---PA12(CANTX) 
 //VP230---CAN_RX---PA11(CANRX) 
-
+int i = 0;
 /*************************************************************************
                           CAN1_Configuration
 Description：Initiate CAN1 configuration to be 1M Baud 初始化CAN1配置为1M波特率
@@ -137,29 +138,102 @@ void CAN1_TX_IRQHandler(void) //CAN TX
 
 /*************************************************************************
                           CAN1_RX0_IRQHandler
- Description: Receipt of Head Motor's CAN Data is broken
+ Description: Interrupt receive from CAN bus data at turret motors
 *************************************************************************/
 void CAN1_RX0_IRQHandler(void)
 {
     CanRxMsg rx_message;    
-    
+
     if (CAN_GetITStatus(CAN1,CAN_IT_FMP0)!= RESET) 
 	{
         CAN_ClearITPendingBit(CAN1, CAN_IT_FMP0);
-        CAN_Receive(CAN1, CAN_FIFO0, &rx_message);       
+        CAN_Receive(CAN1, CAN_FIFO0, &rx_message);   
+
+        // if(rx_message.StdId == 0x203) {
+        //     if(rx_message.Data[0] << 8 | rx_message.Data[1] < 0x0FA0) {
+        //         LED1_TOGGLE(); 
+        //    } else {
+        //         LED2_TOGGLE(); 
+        //    }
+        // }
+
+
+        // if(rx_message.StdId == 0x200)
+        // {         
+        //     if(rx_message.Data[0] > 0x05) {
+        //         LED1_TOGGLE();
+        //     }  else {
+        //         LED2_TOGGLE();
+        //     }
+        //      //Acquire Head Motor 0x201's Encoding disk value 获得云台电机0x201的码盘值                 
+        // }
+        // if(rx_message.StdId == 0x201)
+        // {         
+        //     if(rx_message.Data[0] > 0x05) {
+        //         LED1_TOGGLE();
+        //     }  else {
+        //         LED2_TOGGLE();
+        //     }
+        //      //Acquire Head Motor 0x201's Encoding disk value 获得云台电机0x201的码盘值                 
+        // }
+        // if(rx_message.StdId == 0x202)
+        // { 
+        //     if(rx_message.Data[0] > 0x05) {
+        //         LED1_TOGGLE();
+        //     }  else {
+        //         LED2_TOGGLE();
+        //     }
+        //      //Acquire Head Motor 0x202's Encoding disk value 获得云台电机0x202的码盘值           
+        // }       
+        // if(rx_message.StdId == 0x203)
+        // { 
+        //     if(rx_message.Data[0] > 0x05) {
+        //         LED1_TOGGLE();
+        //     }  else {
+        //         LED2_TOGGLE();
+        //     }
+        //      //Acquire Head Motor 0x203's Encoding disk value 获得云台电机0x203的码盘值  
+        // }
                 
-        if(rx_message.StdId == 0x201)
-        {             
-             //Acquire Head Motor 0x201's Encoding disk value 获得云台电机0x201的码盘值                 
-        }
-        if(rx_message.StdId == 0x202)
-        { 
-             //Acquire Head Motor 0x202's Encoding disk value 获得云台电机0x202的码盘值           
-        }		
-        if(rx_message.StdId == 0x203)
-        { 
-             //Acquire Head Motor 0x203's Encoding disk value 获得云台电机0x203的码盘值  
-        }
+        // if(rx_message.StdId == 0x204)
+        // {         
+        //     if(rx_message.Data[0] > 0x05) {
+        //         LED1_TOGGLE();
+        //     }  else {
+        //         LED2_TOGGLE();
+        //     }
+        //      //Acquire Head Motor 0x201's Encoding disk value 获得云台电机0x201的码盘值                 
+        // }
+        // if(rx_message.StdId == 0x205)
+        // { 
+        //     if(rx_message.Data[0] > 0x05) {
+        //         LED1_TOGGLE();
+        //     }  else {
+        //         LED2_TOGGLE();
+        //     }
+        //      //Acquire Head Motor 0x202's Encoding disk value 获得云台电机0x202的码盘值           
+        // }		
+        // if(rx_message.StdId == 0x206)
+        // { 
+        //     if(rx_message.Data[0] > 0x05) {
+        //         LED1_TOGGLE();
+        //     }  else {
+        //         LED2_TOGGLE();
+        //     }
+        //      //Acquire Head Motor 0x203's Encoding disk value 获得云台电机0x203的码盘值  
+        // }
+
+
+        // if(rx_message.StdId == 0x1FF)
+        // { 
+        //     if(rx_message.Data[0] > 0x05) {
+        //         LED1_TOGGLE();
+        //     }  else {
+        //         LED2_TOGGLE();
+        //     }
+        //      //Acquire Head Motor 0x203's Encoding disk value 获得云台电机0x203的码盘值  
+        // }
+
         Can1_CNT++;		
     }
 }
@@ -527,55 +601,6 @@ void Motor_Speed_Location_Set(int Motor_ID,int Give_Speed,int Give_Speed_Locatio
 }
 
 
-void RX_Test_Can_1(void) {
-
-    CanRxMsg rx_message;    
-    
-    if (CAN_GetITStatus(CAN1,CAN_IT_FMP0)!= RESET) 
-    {
-        CAN_ClearITPendingBit(CAN1, CAN_IT_FMP0);
-        CAN_Receive(CAN1, CAN_FIFO0, &rx_message);       
-                
-        if(rx_message.StdId == 0x201)
-        {      
-             //Acquire Head Motor 0x201's Encoding disk value 获得云台电机0x201的码盘值                 
-        }       
-        if(rx_message.StdId == 0x202)
-        { 
-             //Acquire Head Motor 0x202's Encoding disk value 获得云台电机0x202的码盘值           
-        }       
-        if(rx_message.StdId == 0x203)
-        { 
-             //Acquire Head Motor 0x203's Encoding disk value 获得云台电机0x203的码盘值  
-        }
-        Can1_CNT++;     
-    }
-}
-
-
-void Motor_Test_Can_1(void) {
-    CanTxMsg tx_message;
-
-    tx_message.StdId = 0x1FF;
-    tx_message.RTR = CAN_RTR_DATA;
-    tx_message.IDE = CAN_ID_STD;
-    tx_message.DLC = 0x08;
-
-    // assemble the packet
-    // want to send 500 = 0x01F4 to the pitch motor (ID 0x201)
-    tx_message.Data[0] = 0x07;
-    tx_message.Data[1] = 0xD0;
-    tx_message.Data[2] = 0x07;
-    tx_message.Data[3] = 0xD0;
-    tx_message.Data[4] = 0x07;
-    tx_message.Data[5] = 0xD0;
-    tx_message.Data[6] = 0x07;
-    tx_message.Data[7] = 0xD0;
-
-    //can_tx_success_flag = 0;
-    CAN_Transmit(CAN1,&tx_message);
-    //while(can_tx_success_flag == 0);
-}
 
 
 

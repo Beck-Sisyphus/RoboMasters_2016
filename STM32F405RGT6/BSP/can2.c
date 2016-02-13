@@ -154,6 +154,88 @@ void CAN2_RX0_IRQHandler(void)
     {
        CAN_ClearITPendingBit(CAN2, CAN_IT_FMP0);
        CAN_Receive(CAN2, CAN_FIFO0, &rx_message);
+
+
+
+        // if(rx_message.StdId == 0x200)
+        // {         
+        //     if(rx_message.Data[0] > 0x05) {
+        //         LED1_TOGGLE();
+        //     }  else {
+        //         LED2_TOGGLE();
+        //     }
+        //      //Acquire Head Motor 0x201's Encoding disk value 获得云台电机0x201的码盘值                 
+        // }
+        // if(rx_message.StdId == 0x201)
+        // {         
+        //     if(rx_message.Data[0] > 0x05) {
+        //         LED1_TOGGLE();
+        //     }  else {
+        //         LED2_TOGGLE();
+        //     }
+        //      //Acquire Head Motor 0x201's Encoding disk value 获得云台电机0x201的码盘值                 
+        // }
+        // if(rx_message.StdId == 0x202)
+        // { 
+        //     if(rx_message.Data[0] > 0x05) {
+        //         LED1_TOGGLE();
+        //     }  else {
+        //         LED2_TOGGLE();
+        //     }
+        //      //Acquire Head Motor 0x202's Encoding disk value 获得云台电机0x202的码盘值           
+        // }       
+        // if(rx_message.StdId == 0x203)
+        // { 
+        //     if(rx_message.Data[0] > 0x05) {
+        //         LED1_TOGGLE();
+        //     }  else {
+        //         LED2_TOGGLE();
+        //     }
+        //      //Acquire Head Motor 0x203's Encoding disk value 获得云台电机0x203的码盘值  
+        // }
+                
+        // if(rx_message.StdId == 0x204)
+        // {         
+        //     if(rx_message.Data[0] > 0x05) {
+        //         LED1_TOGGLE();
+        //     }  else {
+        //         LED2_TOGGLE();
+        //     }
+        //      //Acquire Head Motor 0x201's Encoding disk value 获得云台电机0x201的码盘值                 
+        // }
+
+        // yaw
+        if(rx_message.StdId == 0x205)
+        { 
+            if(rx_message.Data[0] > 0x05) {
+                LED1_ON(); // red
+            }  else {
+                LED1_OFF();
+            }
+             //Acquire Head Motor 0x202's Encoding disk value 获得云台电机0x202的码盘值           
+        }
+
+        // pitch       
+        if(rx_message.StdId == 0x206)
+        { 
+            if(rx_message.Data[0] < 0x10) {
+                LED2_ON(); // green
+            }  else {
+                LED2_OFF();;
+            }
+             //Acquire Head Motor 0x203's Encoding disk value 获得云台电机0x203的码盘值  
+        }
+
+
+        // if(rx_message.StdId == 0x1FF)
+        // { 
+        //     if(rx_message.Data[0] > 0x05) {
+        //         LED1_TOGGLE();
+        //     }  else {
+        //         LED2_TOGGLE();
+        //     }
+        //      //Acquire Head Motor 0x203's Encoding disk value 获得云台电机0x203的码盘值  
+        // }
        
         //Single axis gyroscope data 单轴陀螺仪数据
         if(rx_message.StdId == 0x401)
@@ -163,7 +245,13 @@ void CAN2_RX0_IRQHandler(void)
             | (int32_t)(rx_message.Data[2]<<8) | (int32_t)(rx_message.Data[3]);
             
             last_yaw_angle = this_yaw_angle;
-            this_yaw_angle = -((float)temp_yaw_angle*0.01);            
+            this_yaw_angle = -((float)temp_yaw_angle*0.01);
+
+            // if(rx_message.Data[0] > 0x05) {
+            //     LED1_TOGGLE();
+            // }  else {
+            //     LED2_TOGGLE();
+            // }            
         }
         
         //Remote controller, mouse, and turret channel 遥控器 鼠标  云台通道
@@ -173,6 +261,13 @@ void CAN2_RX0_IRQHandler(void)
             temp_pitch = (uint16_t)(rx_message.Data[2]<<8)|(uint16_t)(rx_message.Data[3]);
             shooting_flag = (uint8_t)rx_message.Data[4];   
             mode_flag = (uint8_t)rx_message.Data[6];//S2 switch
+
+
+            // if(rx_message.Data[0] > 0x05) {
+            //     LED1_TOGGLE();
+            // }  else {
+            //     LED2_TOGGLE();
+            // }
             
             //for mouse            
             if(shooting_flag == 1)				//cyq: trigger shoot
@@ -209,61 +304,6 @@ void CAN2_RX0_IRQHandler(void)
                 target_pitch_angle = -pitch_max;
             }
         }  
-    }
-}
-
-void RX_Test_Can_2(void) {
-    CanRxMsg rx_message;
-    if (CAN_GetITStatus(CAN2,CAN_IT_FMP0)!= RESET) 
-    {
-       CAN_ClearITPendingBit(CAN2, CAN_IT_FMP0);
-       CAN_Receive(CAN2, CAN_FIFO0, &rx_message);
-       
-       //µ¥ÖáÍÓÂÝÒÇÊý¾Ý
-       //if(rx_message.StdId == 0x201)
-       // { 
-            /*        
-            gyro_ok_flag = 1;
-            temp_yaw_angle = (int32_t)(rx_message.Data[0]<<24)|(int32_t)(rx_message.Data[1]<<16) 
-            | (int32_t)(rx_message.Data[2]<<8) | (int32_t)(rx_message.Data[3]);
-            
-            last_yaw_angle = this_yaw_angle;
-            this_yaw_angle = -((float)temp_yaw_angle*0.01);    
-            */        
-            // if(rx_message.Data[0] > 0x00) {
-            //     LED1_TOGGLE();
-            // } else {
-            //     LED2_TOGGLE();
-            // }
-        //}
-
-        if(rx_message.StdId == 0x201)
-        {      
-             //Acquire Head Motor 0x201's Encoding disk value 获得云台电机0x201的码盘值
-             if(rx_message.Data[0] > 0x00) {
-                LED1_TOGGLE();
-            } else {
-                LED2_TOGGLE();
-            }                 
-        }       
-        if(rx_message.StdId == 0x202)
-        { 
-             //Acquire Head Motor 0x202's Encoding disk value 获得云台电机0x202的码盘值
-             if(rx_message.Data[0] > 0x00) {
-                LED1_TOGGLE();
-            } else {
-                LED2_TOGGLE();
-            }           
-        }       
-        if(rx_message.StdId == 0x203)
-        { 
-             //Acquire Head Motor 0x203's Encoding disk value 获得云台电机0x203的码盘值
-             if(rx_message.Data[0] > 0x00) {
-                LED1_TOGGLE();
-            } else {
-                LED2_TOGGLE();
-            }  
-        }
     }
 }
 
