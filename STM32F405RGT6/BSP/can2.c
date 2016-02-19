@@ -144,18 +144,19 @@ float target_yaw_angle;
 
 /*************************************************************************
                           CAN2_RX0_IRQHandler
-ÃèÊö£ºµ¥ÖáÍÓÂİÒÇ¡¢µ×ÅÌÖ÷¿ØCANÊı¾İ½ÓÊÕÖĞ¶Ï
+Description: Interrupt receive for chassis CAN bus data and single axis gyroscope
+æè¿°ï¼šå•è½´é™€èºä»ªã€åº•ç›˜ä¸»æ§CANæ•°æ®æ¥æ”¶ä¸­æ–­
 *************************************************************************/
 void CAN2_RX0_IRQHandler(void)
 {
     CanRxMsg rx_message;
     if (CAN_GetITStatus(CAN2,CAN_IT_FMP0)!= RESET) 
     {
-       CAN_ClearITPendingBit(CAN2, CAN_IT_FMP0);
-       CAN_Receive(CAN2, CAN_FIFO0, &rx_message);
+        CAN_ClearITPendingBit(CAN2, CAN_IT_FMP0);
+        CAN_Receive(CAN2, CAN_FIFO0, &rx_message);
        
-       //µ¥ÖáÍÓÂİÒÇÊı¾İ
-       if(rx_message.StdId == 0x401)
+        //Single axis gyroscope data å•è½´é™€èºä»ªæ•°æ®
+        if(rx_message.StdId == 0x401)
         { 
             gyro_ok_flag = 1;
             temp_yaw_angle = (int32_t)(rx_message.Data[0]<<24)|(int32_t)(rx_message.Data[1]<<16) 
@@ -165,39 +166,39 @@ void CAN2_RX0_IRQHandler(void)
             this_yaw_angle = -((float)temp_yaw_angle*0.01);            
         }
         
-        //Ò£¿ØÆ÷ Êó±ê  ÔÆÌ¨Í¨µÀ
+        // Remote controller, mouse, turret channel é¥æ§å™¨ é¼ æ ‡ äº‘å°é€šé“
         if(rx_message.StdId == 0x402)
         { 
             temp_yaw = (uint16_t)(rx_message.Data[0]<<8)|(uint16_t)(rx_message.Data[1]);
             temp_pitch = (uint16_t)(rx_message.Data[2]<<8)|(uint16_t)(rx_message.Data[3]);
             shooting_flag = (uint8_t)rx_message.Data[4];   
-			      mode_flag = (uint8_t)rx_message.Data[6];//S2 ¿ª¹Ø
+			mode_flag = (uint8_t)rx_message.Data[6];//S2 switch
             
             //for mouse            
-            if(shooting_flag == 1)				//cyq:¿ªÇ¹
+            if(shooting_flag == 1)				// trigger start
             {	
-							  if(ShootFlag == 1)
-								{						
-										Motor_PWM_Set(MOTOR_NUM1,-1000);	
-									  ShootFlag=0;
-								}                  
+                if(ShootFlag == 1)
+                {						
+                    Motor_PWM_Set(MOTOR_NUM1,-1000);	
+                    ShootFlag=0;
+                }                  
             }
             else 
             {	      
-								if(ShootFlag == 0)
-								{   
-										ShootFlag=1;
-								}              					 
+                if(ShootFlag == 0)
+                    {   
+                    ShootFlag=1;
+                }              					 
             }
             if (mode_flag == 1)
             {
-                target_pitch_angle += (temp_pitch - 1024)/66.0;//Ò£¸Ğ
-                target_yaw_angle += (temp_yaw - 1024)/600.0 ;//cyq                                
+                target_pitch_angle += (temp_pitch - 1024)/66.0;//remote sensing é¥æ„Ÿ
+                target_yaw_angle += (temp_yaw - 1024)/600.0 ;                              
             }
             else
             {
-                target_pitch_angle -= (temp_pitch - 1024)/10.0;//cyq µçÄÔÊó±ê
-                target_yaw_angle += (temp_yaw - 1024)/10.0 ;//cyq:Õë¶ÔĞÂµÄ³ÌĞò
+                target_pitch_angle -= (temp_pitch - 1024)/10.0;//for computer mouse ç”µè„‘é¼ æ ‡
+                target_yaw_angle += (temp_yaw - 1024)/10.0 ;//New program
             }
             if(target_pitch_angle > pitch_max)
             {

@@ -137,7 +137,7 @@ void CAN1_TX_IRQHandler(void) //CAN TX
 
 /*************************************************************************
                           CAN1_RX0_IRQHandler
- Description: Receipt of Head Motor's CAN Data is broken
+Description: Interrupt receive for chassis CAN bus data
 *************************************************************************/
 void CAN1_RX0_IRQHandler(void)
 {

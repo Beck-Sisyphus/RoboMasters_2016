@@ -6,7 +6,7 @@
 #include "can1.h"
 
 #define pitch_max 15.0
-#define yaw_max 720.0				//cyq:ÔÆÌ¨½Ç¶ÈµÄ·¶Î§
+#define yaw_max 720.0				
 
 void CAN2_Configuration(void);
 void GYRO_RST(void);
