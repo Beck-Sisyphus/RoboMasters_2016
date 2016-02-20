@@ -127,12 +127,14 @@ void Radio_Sent(const uint16_t * radio_channel)
 int8_t gyro_ok_flag = 0;
 
 float YAW_Angle;
+float PITCH_Angle;
+
 float this_yaw_angle;
 float last_yaw_angle;
 int32_t turn_cnt = 0;
 float dipan_gyro_angle = 0.0;
 int32_t temp_dipan_gyro = 0;
-float temp_yaw_angle;
+
 float temp_pitch = 0;
 float temp_yaw = 0;
 uint8_t shooting_flag = 0;
@@ -141,6 +143,10 @@ uint8_t ShootFlag=0;
 
 float target_pitch_angle;
 float target_yaw_angle;
+
+// yaw and pitch angle rx messages from CAN
+uint32_t temp_yaw_angle;
+uint32_t temp_pitch_angle;
 
 /*************************************************************************
                           CAN2_RX0_IRQHandler
@@ -155,88 +161,57 @@ void CAN2_RX0_IRQHandler(void)
        CAN_ClearITPendingBit(CAN2, CAN_IT_FMP0);
        CAN_Receive(CAN2, CAN_FIFO0, &rx_message);
 
-
-
-        // if(rx_message.StdId == 0x200)
-        // {         
-        //     if(rx_message.Data[0] > 0x05) {
-        //         LED1_TOGGLE();
-        //     }  else {
-        //         LED2_TOGGLE();
-        //     }
-        //      //Acquire Head Motor 0x201's Encoding disk value 获得云台电机0x201的码盘值                 
-        // }
-        // if(rx_message.StdId == 0x201)
-        // {         
-        //     if(rx_message.Data[0] > 0x05) {
-        //         LED1_TOGGLE();
-        //     }  else {
-        //         LED2_TOGGLE();
-        //     }
-        //      //Acquire Head Motor 0x201's Encoding disk value 获得云台电机0x201的码盘值                 
-        // }
-        // if(rx_message.StdId == 0x202)
-        // { 
-        //     if(rx_message.Data[0] > 0x05) {
-        //         LED1_TOGGLE();
-        //     }  else {
-        //         LED2_TOGGLE();
-        //     }
-        //      //Acquire Head Motor 0x202's Encoding disk value 获得云台电机0x202的码盘值           
-        // }       
-        // if(rx_message.StdId == 0x203)
-        // { 
-        //     if(rx_message.Data[0] > 0x05) {
-        //         LED1_TOGGLE();
-        //     }  else {
-        //         LED2_TOGGLE();
-        //     }
-        //      //Acquire Head Motor 0x203's Encoding disk value 获得云台电机0x203的码盘值  
-        // }
-                
-        // if(rx_message.StdId == 0x204)
-        // {         
-        //     if(rx_message.Data[0] > 0x05) {
-        //         LED1_TOGGLE();
-        //     }  else {
-        //         LED2_TOGGLE();
-        //     }
-        //      //Acquire Head Motor 0x201's Encoding disk value 获得云台电机0x201的码盘值                 
-        // }
-
-        // yaw
+        /************ YAW ************/
+        // Yaw angle range is: [0, around 4770]
+        // 0 is right-most yaw position
+        // around 4770 is left-most yaw position
         if(rx_message.StdId == 0x205)
         { 
-            if(rx_message.Data[0] > 0x05) {
+
+            // construct message from data[0] and data[1]
+            uint16_t yaw_data0 = rx_message.Data[0] << 8;
+            uint16_t yaw_data1 = rx_message.Data[1];
+            temp_yaw_angle = (yaw_data0)|(yaw_data1);
+
+            // normalize angle range since default angle range is werid
+            if(temp_yaw_angle > 6000 && temp_yaw_angle < 8200) {
+                temp_yaw_angle = temp_yaw_angle - 6060;
+            } else {
+                temp_yaw_angle = temp_yaw_angle + 2130;
+            }
+
+            // Testing
+            if(temp_yaw_angle > 1000) {
                 LED1_ON(); // red
             }  else {
                 LED1_OFF();
-            }
-             //Acquire Head Motor 0x202's Encoding disk value 获得云台电机0x202的码盘值           
+            }  
+
+
         }
 
-        // pitch       
+        /************ PITCH ************/
+        // pitch angle range is [around 3520, around 4500]
+        // around 3520 is highest pitch position
+        // around 4500 is lowest pitch position     
         if(rx_message.StdId == 0x206)
         { 
-            if(rx_message.Data[0] < 0x10) {
+            // construct message from data[0] and data[1]
+            uint16_t pitch_data0 = rx_message.Data[0] << 8;
+            uint16_t pitch_data1 = rx_message.Data[1];
+            temp_pitch_angle = (pitch_data0)|(pitch_data1);
+            
+            // Testing
+            if(temp_pitch_angle > 3750) {
                 LED2_ON(); // green
             }  else {
                 LED2_OFF();;
             }
-             //Acquire Head Motor 0x203's Encoding disk value 获得云台电机0x203的码盘值  
         }
 
 
-        // if(rx_message.StdId == 0x1FF)
-        // { 
-        //     if(rx_message.Data[0] > 0x05) {
-        //         LED1_TOGGLE();
-        //     }  else {
-        //         LED2_TOGGLE();
-        //     }
-        //      //Acquire Head Motor 0x203's Encoding disk value 获得云台电机0x203的码盘值  
-        // }
-       
+        // Rest of IRQHandler is provided old code I didn't use     
+        
         //Single axis gyroscope data 单轴陀螺仪数据
         if(rx_message.StdId == 0x401)
         { 
@@ -245,13 +220,7 @@ void CAN2_RX0_IRQHandler(void)
             | (int32_t)(rx_message.Data[2]<<8) | (int32_t)(rx_message.Data[3]);
             
             last_yaw_angle = this_yaw_angle;
-            this_yaw_angle = -((float)temp_yaw_angle*0.01);
-
-            // if(rx_message.Data[0] > 0x05) {
-            //     LED1_TOGGLE();
-            // }  else {
-            //     LED2_TOGGLE();
-            // }            
+            this_yaw_angle = -((float)temp_yaw_angle*0.01);         
         }
         
         //Remote controller, mouse, and turret channel 遥控器 鼠标  云台通道
@@ -261,13 +230,6 @@ void CAN2_RX0_IRQHandler(void)
             temp_pitch = (uint16_t)(rx_message.Data[2]<<8)|(uint16_t)(rx_message.Data[3]);
             shooting_flag = (uint8_t)rx_message.Data[4];   
             mode_flag = (uint8_t)rx_message.Data[6];//S2 switch
-
-
-            // if(rx_message.Data[0] > 0x05) {
-            //     LED1_TOGGLE();
-            // }  else {
-            //     LED2_TOGGLE();
-            // }
             
             //for mouse            
             if(shooting_flag == 1)				//cyq: trigger shoot
@@ -307,6 +269,9 @@ void CAN2_RX0_IRQHandler(void)
     }
 }
 
+// turn wheels, pitch and yaw
+// tx_message1 for wheels
+// tx_message2 for pitch and yaw
 void Motor_Test_Can_2(void) {
 
 /*****************************

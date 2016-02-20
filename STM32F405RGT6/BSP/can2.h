@@ -13,6 +13,13 @@ void GYRO_RST(void);
 void Encoder_sent(float encoder_angle);
 void Motor_Test_Can_2(void);
 extern float YAW_Angle;
+extern float PITCH_Angle;
+
+// yaw and pitch angle rx messages from CAN
+extern uint32_t temp_yaw_angle;
+extern uint32_t temp_pitch_angle;
+
+
 extern float dipan_gyro_angle;
 extern uint8_t shooting_flag;
 extern int8_t gyro_ok_flag;
