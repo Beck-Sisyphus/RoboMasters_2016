@@ -387,3 +387,4 @@ void Motor_Test_Can_2(void) {
     //delay_ms(10);
     CAN_Transmit(CAN2,&tx_message2);
 }
+
