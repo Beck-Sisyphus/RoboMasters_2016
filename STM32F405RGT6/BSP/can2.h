@@ -16,8 +16,11 @@ extern float YAW_Angle;
 extern float PITCH_Angle;
 
 // yaw and pitch angle rx messages from CAN
-extern uint32_t temp_yaw_angle;
-extern uint32_t temp_pitch_angle;
+extern uint16_t temp_yaw_angle;
+extern uint16_t temp_pitch_angle;
+
+extern uint16_t temp_yaw_current;
+extern uint16_t temp_pitch_current;
 
 
 extern float dipan_gyro_angle;
