@@ -126,14 +126,14 @@ void Radio_Sent(const uint16_t * radio_channel)
 
 int8_t gyro_ok_flag = 0;
 
-float YAW_Angle;
-float PITCH_Angle;
+// float YAW_Angle;
+// float PITCH_Angle;
 
 float this_yaw_angle;
 float last_yaw_angle;
-int32_t turn_cnt = 0;
-float dipan_gyro_angle = 0.0;
-int32_t temp_dipan_gyro = 0;
+// int32_t turn_cnt = 0;
+// float dipan_gyro_angle = 0.0;
+// int32_t temp_dipan_gyro = 0;
 
 float temp_pitch = 0;
 float temp_yaw = 0;
@@ -249,7 +249,8 @@ void CAN2_RX0_IRQHandler(void)
 
         
         // Rest of IRQHandler is provided old code I didn't use     
-        
+        // Beck: Checked with old control diagram, these are the control data 
+        //       that are no longer used
         //Single axis gyroscope data 单轴陀螺仪数据
         if(rx_message.StdId == 0x401)
         { 
@@ -261,7 +262,7 @@ void CAN2_RX0_IRQHandler(void)
             this_yaw_angle = -((float)temp_yaw_angle*0.01);         
         }
         
-        //Remote controller, mouse, and turret channel 遥控器 鼠标  云台通道
+        //Remote control and mouse reading from turret channel 遥控器 鼠标  云台通道
         if(rx_message.StdId == 0x402)
         { 
             temp_yaw = (uint16_t)(rx_message.Data[0]<<8)|(uint16_t)(rx_message.Data[1]);
