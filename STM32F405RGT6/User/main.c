@@ -6,6 +6,7 @@
 
 char id[3];
 unsigned char USART_BUF[24] = {0};
+extern RC_Ctl_t RC_Ctl_usart_3;
 
 int main(void)
 {
@@ -41,13 +42,18 @@ int main(void)
     delay_ms(1000);
     
     // initialize the motor controller for bullets sending motor
-    Motor_Reset(MOTOR_NUM1);    
-    delay_ms(30);       
-    Motor_Init(MOTOR_NUM1,PWM_MODE);
-    delay_ms(30);	
+    // Motor_Reset(MOTOR_NUM1);    
+    // delay_ms(30);       
+    // Motor_Init(MOTOR_NUM1,PWM_MODE);
+    // delay_ms(30);	
     
     while(1)
     {
         CurrentProtect(); // Overcurrent protection for motor controller
+        if (RC_Ctl_usart_3.rc.s1 == RC_SW_UP) {
+            LED2_ON();
+        } else {
+            LED2_OFF();
+        }
     }
 }

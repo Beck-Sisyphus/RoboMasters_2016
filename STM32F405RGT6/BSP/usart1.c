@@ -3,7 +3,7 @@
 
 volatile unsigned char sbus_rx_buffer[25]; 
 DMA_InitTypeDef dma; 
-static RC_Ctl_t RC_Ctl;
+RC_Ctl_t RC_Ctl;
 
 /*-----USART1_TX-----NC-----*/
 /*-----USART1_RX-----PB7----*/

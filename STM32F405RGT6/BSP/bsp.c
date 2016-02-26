@@ -11,7 +11,8 @@ void BSP_Init(void){
     LASER_Configuration();
     CAN1_Configuration();        
     CAN2_Configuration(); 
-    USART1_Configuration(); 
+    //USART1_Configuration(); 
+    USART3_Configuration();
 }
 
 

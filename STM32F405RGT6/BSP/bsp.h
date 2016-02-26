@@ -10,6 +10,7 @@
 #include "delay.h"
 #include "pwm.h"
 #include "laser.h"
+#include "usart3.h"
 
 void BSP_Init(void);
 
