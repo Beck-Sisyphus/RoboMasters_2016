@@ -46,9 +46,17 @@
 //     } key;
 // } RC_Ctl_t;
 
+typedef struct {
+    struct { 
+        uint8_t p1;
+        uint8_t p2;
+        // uint16_t p3;
+    } packet;
+} arduino_data;
+
 /**** forward declarations ****/
 void USART3_Configuration(void);
-void USART3_SendChar(unsigned char b);
+void USART3_SendChar(unsigned char);
 void RS232_Print( USART_TypeDef*, u8* );
-void RS232_VisualScope( USART_TypeDef*, u8*, u16 );
+void RS232_VisualScope_USART3( USART_TypeDef*, u8*, u16 );
 #endif
