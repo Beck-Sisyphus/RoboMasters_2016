@@ -1,11 +1,12 @@
 .\objects\global_varialbe.o: ..\User\global_varialbe.c
 .\objects\global_varialbe.o: ..\User\global_define.h
 .\objects\global_varialbe.o: ..\Libraries\stm32f4xx.h
-.\objects\global_varialbe.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4.h
-.\objects\global_varialbe.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\global_varialbe.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
-.\objects\global_varialbe.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
-.\objects\global_varialbe.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4_simd.h
+.\objects\global_varialbe.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h
+.\objects\global_varialbe.o: E:\MDK-ARM\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\global_varialbe.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmInstr.h
+.\objects\global_varialbe.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\cmsis_armcc.h
+.\objects\global_varialbe.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmFunc.h
+.\objects\global_varialbe.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmSimd.h
 .\objects\global_varialbe.o: ..\Libraries\system_stm32f4xx.h
 .\objects\global_varialbe.o: ..\User\stm32f4xx_conf.h
 .\objects\global_varialbe.o: ..\Libraries\stm32f4xx_adc.h

@@ -1,6 +1,10 @@
 #ifndef __MPU6050_DRIVER_H__
 #define __MPU6050_DRIVER_H__
 
+#define ACCELEROMETER_SENSITIVITY 8192.0
+#define GYROSCOPE_SENSITIVITY 65.536
+#define dt 0.01							// 10 ms sample rate!    
+
 typedef struct __MPU6050_RAW_Data__
 {
     short Accel_X;  // Original register value for X axis acceleration 
@@ -29,5 +33,6 @@ extern MPU6050_REAL_DATA   MPU6050_Real_Data;
 int MPU6050_Initialization(void);
 int MPU6050_ReadData(void);
 void MPU6050_Gyro_calibration(void);
+void ComplementaryFilter(short accData[3], short gyrData[3], float *pitch, float *roll);
 
 #endif

@@ -855,12 +855,14 @@ ARM Macro Assembler    Page 14
   432 0000001C                 END
               00000000 
               00000000 
-Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4 --apcs=interw
-ork --depend=.\objects\startup_stm32f4xx.d -o.\objects\startup_stm32f4xx.o -IC:
-\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\Inc\ST\ST
-M32F4xx --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --predefine
-="__UVISION_VERSION SETA 517" --list=.\listings\startup_stm32f4xx.lst ..\Librar
-ies\startup_stm32f4xx.s
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\objects\startup_stm32f4xx.d -o.\objects\startup_stm32f4xx.o -
+IF:\UW\ѧϰ\EE448\RoboMasters_2016_Open_Source\STM32F405RGT6\Project\RTE -IE:\M
+DK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include -IE:\MDK-ARM\Keil\STM32F4xx_DFP\2.7.0\Driv
+ers\CMSIS\Device\ST\STM32F4xx\Include --predefine="__EVAL SETA 1" --predefine="
+__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 517" --predefine="_RTE_ 
+SETA 1" --predefine="STM32F405xx SETA 1" --list=.\listings\startup_stm32f4xx.ls
+t ..\Libraries\startup_stm32f4xx.s
 
 
 
@@ -1954,4 +1956,4 @@ Symbol: __main
       At line 184 in file ..\Libraries\startup_stm32f4xx.s
 Comment: __main used once
 2 symbols
-444 symbols in table
+447 symbols in table

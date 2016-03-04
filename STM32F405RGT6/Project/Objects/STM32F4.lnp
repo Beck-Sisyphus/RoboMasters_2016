@@ -1,4 +1,4 @@
---cpu Cortex-M4
+--cpu Cortex-M4.fp
 ".\objects\stm32f4xx_it.o"
 ".\objects\app.o"
 ".\objects\global_varialbe.o"
@@ -30,6 +30,7 @@
 ".\objects\stm32f4xx_wwdg.o"
 ".\objects\stm32f4xx_flash.o"
 ".\objects\stm32f4xx_dma.o"
+".\objects\hmc5883l.o"
 --library_type=microlib --strict --scatter ".\Objects\STM32F4.sct"
 --summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

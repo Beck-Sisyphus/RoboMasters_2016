@@ -1,11 +1,12 @@
 .\objects\can1.o: ..\BSP\can1.c
 .\objects\can1.o: ..\BSP\can1.h
 .\objects\can1.o: ..\Libraries\stm32f4xx.h
-.\objects\can1.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4.h
-.\objects\can1.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\can1.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
-.\objects\can1.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
-.\objects\can1.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4_simd.h
+.\objects\can1.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h
+.\objects\can1.o: E:\MDK-ARM\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\can1.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmInstr.h
+.\objects\can1.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\cmsis_armcc.h
+.\objects\can1.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmFunc.h
+.\objects\can1.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmSimd.h
 .\objects\can1.o: ..\Libraries\system_stm32f4xx.h
 .\objects\can1.o: ..\User\stm32f4xx_conf.h
 .\objects\can1.o: ..\Libraries\stm32f4xx_adc.h
