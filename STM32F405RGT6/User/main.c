@@ -7,6 +7,17 @@
 char id[3];
 unsigned char USART_BUF[24] = {0};
 extern RC_Ctl_t RC_Ctl_usart_3;
+extern arduino_data data_usart_3;
+
+extern uint16_t temp_yaw_angle;
+extern uint16_t temp_pitch_angle;
+
+extern uint16_t temp_yaw_current;
+extern uint16_t temp_pitch_current;
+
+char greeting[6] = {'H', 'E', 'L', 'L', 'O', '\0'};
+char ay = 'a';
+
 
 int main(void)
 {
@@ -21,11 +32,11 @@ int main(void)
         {
             /*while(i <= 11) 
             {
-								i++;
+                                i++;
                 LED1_TOGGLE();
                 delay_ms(50);
-								
-						
+                                
+                        
                 
             }*/
         }  
@@ -45,15 +56,31 @@ int main(void)
     // Motor_Reset(MOTOR_NUM1);    
     // delay_ms(30);       
     // Motor_Init(MOTOR_NUM1,PWM_MODE);
-    // delay_ms(30);	
-    
+    // delay_ms(30);    
+    LED1_OFF();
+    LED2_OFF();
+    Motor_Reset_Can_2();
     while(1)
     {
         CurrentProtect(); // Overcurrent protection for motor controller
-        if (RC_Ctl_usart_3.rc.s1 == RC_SW_UP) {
-            LED2_ON();
-        } else {
-            LED2_OFF();
-        }
+
+        // Motor_Current_Send(2, -1000);
+        Motor_ManSet_Can_2(); 
+        // Motor_Current_Send(2, -1000);
+        // LED1_ON();
+        // delay_ms(1000);
+        // LED1_OFF();
+        // Motor_Current_Send(4, -1000);
+        // delay_ms(1000);
+
+        // printf("Pitch angle: %i", temp_pitch_angle);
+        // delay_ms(1000);
+        // printf("Pitch current: %i", temp_pitch_current);
+        // delay_ms(1000);
+        // printf("Yaw angle: %i", temp_yaw_angle);
+        // delay_ms(1000);
+        // printf("Yaw current: %i", temp_yaw_current);
+        // delay_ms(1000);
+
     }
 }
