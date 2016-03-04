@@ -1,6 +1,9 @@
 #include "can2.h"
 #include "led.h"
 
+///Turns on Beck's trying for PID controller 
+#define PID true
+
 
 /*----CAN2_TX-----PB13----*/
 /*----CAN2_RX-----PB12----*/
@@ -153,6 +156,13 @@ uint16_t temp_pitch_angle;
 uint16_t temp_yaw_current;
 uint16_t temp_pitch_current;
 
+#if PID
+    // Beck read from the datasheet, and guess it is the measured current
+    // yaw and pitch measured current rx messages from CAN
+    uint16_t measure_yaw_current;
+    uint16_t measure_pitch_current;
+#endif
+
 /*************************************************************************
                           CAN2_RX0_IRQHandler
 Description: Interrupt receive for chassis CAN bus data and single axis gyroscope
@@ -191,7 +201,11 @@ void CAN2_RX0_IRQHandler(void)
             temp_yaw_current = (yaw_data4)<<8|(yaw_data5);
 
 
-
+            #if PID
+                uint16_t yaw_data2 = rx_message.Data[2];
+                uint16_t yaw_data3 = rx_message.Data[3];
+                measure_yaw_current = (pitch_data2)<<8|(pitch_data3);
+            #endif
 
             // normalize angle range since default angle range is werid
             if(temp_yaw_angle > 6060 && temp_yaw_angle < 8200) {
@@ -226,67 +240,12 @@ void CAN2_RX0_IRQHandler(void)
 
             temp_pitch_current = (pitch_data4)<<8|(pitch_data5);
 
+            #if PID
+                uint16_t pitch_data2 = rx_message.Data[2];
+                uint16_t pitch_data3 = rx_message.Data[3];
+                measure_pitch_current = (pitch_data2)<<8|(pitch_data3);
+            #endif
         }
-
-
-        
-        // Rest of IRQHandler is provided old code I didn't use     
-        // Beck: Checked with old control diagram, these are the control data 
-        //       that are no longer used
-        //Single axis gyroscope data 单轴陀螺仪数据
-        if(rx_message.StdId == 0x401)
-        { 
-            gyro_ok_flag = 1;
-            temp_yaw_angle = (int32_t)(rx_message.Data[0]<<24)|(int32_t)(rx_message.Data[1]<<16) 
-            | (int32_t)(rx_message.Data[2]<<8) | (int32_t)(rx_message.Data[3]);
-            
-            last_yaw_angle = this_yaw_angle;
-            this_yaw_angle = -((float)temp_yaw_angle*0.01);         
-        }
-        
-        //Remote control and mouse reading from turret channel 遥控器 鼠标  云台通道
-        if(rx_message.StdId == 0x402)
-        { 
-            temp_yaw = (uint16_t)(rx_message.Data[0]<<8)|(uint16_t)(rx_message.Data[1]);
-            temp_pitch = (uint16_t)(rx_message.Data[2]<<8)|(uint16_t)(rx_message.Data[3]);
-            shooting_flag = (uint8_t)rx_message.Data[4];   
-            mode_flag = (uint8_t)rx_message.Data[6];//S2 switch
-            
-            //for mouse            
-            if(shooting_flag == 1)              //cyq: trigger shoot
-            {   
-                if(ShootFlag == 1)
-                {                       
-                    Motor_PWM_Set(MOTOR_NUM1,-1000);    
-                    ShootFlag=0;
-                }                  
-            }
-            else 
-            {         
-                if(ShootFlag == 0)
-                {   
-                    ShootFlag=1;
-                }                                
-            }
-            if (mode_flag == 1)
-            {
-                target_pitch_angle += (temp_pitch - 1024)/66.0;//remote control
-                target_yaw_angle += (temp_yaw - 1024)/600.0 ;//cyq                                
-            }
-            else
-            {
-                target_pitch_angle -= (temp_pitch - 1024)/10.0;//cyq: mouse
-                target_yaw_angle += (temp_yaw - 1024)/10.0 ;//cyq: target new program
-            }
-            if(target_pitch_angle > pitch_max)
-            {
-                target_pitch_angle = pitch_max;
-            }
-            else if(target_pitch_angle < -pitch_max)
-            {
-                target_pitch_angle = -pitch_max;
-            }
-        }  
     }
 }
 
