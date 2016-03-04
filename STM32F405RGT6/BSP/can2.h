@@ -8,10 +8,13 @@
 #define pitch_max 15.0
 #define yaw_max 720.0				//cyq:ÔÆÌ¨½Ç¶ÈµÄ·¶Î§
 
-void CAN2_Configuration(void);
-void GYRO_RST(void);
-void Encoder_sent(float encoder_angle);
-void Motor_Test_Can_2(void);
+#define MOTOR_YAW 				1
+#define MOTOR_PITCH 			2
+#define MOTOR_FRONT_RIGHT 		3
+#define MOTOR_FRONT_LEFT 		4
+#define MOTOR_BACK_LEFT 		5
+#define MOTOR_BACK_RIGHT 		6
+
 extern float YAW_Angle;
 extern float PITCH_Angle;
 
@@ -26,5 +29,18 @@ extern uint16_t temp_pitch_current;
 extern float dipan_gyro_angle;
 extern uint8_t shooting_flag;
 extern int8_t gyro_ok_flag;
+
+void CAN2_Configuration(void);
+void GYRO_RST(void);
+void Encoder_sent(float encoder_angle);
+void Motor_Reset_Can_2(void);
+void Motor_Current_Send(int, int);
+
+void PitchYaw_Address_Setup(CanTxMsg);
+void Wheels_Address_Setup(CanTxMsg);
+void Set_PitchYaw_Current(CanTxMsg);
+void Set_Wheels_Current(CanTxMsg);
+
+void Motor_ManSet_Can_2(void);
 
 #endif 
