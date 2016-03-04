@@ -1,11 +1,12 @@
 .\objects\tim6.o: ..\BSP\tim6.c
 .\objects\tim6.o: ..\BSP\tim6.h
 .\objects\tim6.o: ..\Libraries\stm32f4xx.h
-.\objects\tim6.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4.h
-.\objects\tim6.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\tim6.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
-.\objects\tim6.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
-.\objects\tim6.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4_simd.h
+.\objects\tim6.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h
+.\objects\tim6.o: E:\MDK-ARM\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\tim6.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmInstr.h
+.\objects\tim6.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\cmsis_armcc.h
+.\objects\tim6.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmFunc.h
+.\objects\tim6.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmSimd.h
 .\objects\tim6.o: ..\Libraries\system_stm32f4xx.h
 .\objects\tim6.o: ..\User\stm32f4xx_conf.h
 .\objects\tim6.o: ..\Libraries\stm32f4xx_adc.h

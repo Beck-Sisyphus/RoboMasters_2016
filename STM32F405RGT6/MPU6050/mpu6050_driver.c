@@ -1,5 +1,5 @@
 #include "main.h"
-
+// code credit of complementary filter to Pieter-Jan Van de Maele
 // Define the registers address for MPU6050
 #define	SMPLRT_DIV		0x19	// Gyroscope sampling rate  default 0X07 125Hz
 #define	CONFIG			0x1A	// Low-pass filter rate     default 0x00 
@@ -39,12 +39,19 @@
 #define MPU6050_ID              0x68
 #define MPU6050_DEVICE_ADDRESS  0xD0
 #define MPU6050_DATA_START      ACCEL_XOUT_H   // Since all data addresses are continuous, read them all 
-
+#define M_PI 3.14159265358979323846 
+#define Alpha	0.98
+#define TimeSlice	0.01
 MPU6050_RAW_DATA    MPU6050_Raw_Data; 
 MPU6050_REAL_DATA   MPU6050_Real_Data;
-
+const float RADIAN_TO_ANGLE = 180/M_PI;
 int gyroADC_X_offset=0,gyroADC_Y_offset=0,gyroADC_Z_offset=0;
+unsigned char offset = 136;
+float gyro_angle_x = 0;
+float gyro_angle_y = 0;
+float gyro_angle_z = 0;
 
+float gyro_rate_x = 0;
 //MPU6050 Initialzaiton, return 0 if success, otherwise return 0xff
 int MPU6050_Initialization(void)
 {
@@ -130,7 +137,7 @@ int MPU6050_ReadData(void)
         MPU6050_Raw_Data.Gyro_X = (buf[8]<<8 | buf[9]);
         MPU6050_Raw_Data.Gyro_Y = (buf[10]<<8 | buf[11]);
         MPU6050_Raw_Data.Gyro_Z = (buf[12]<<8 | buf[13]);
-
+				
        
         // Convert origianl data to actual acceleration and gyro data, calculation formula related to the register settings
         MPU6050_Real_Data.Accel_X = -(float)(MPU6050_Raw_Data.Accel_X)/8192.0; // read datasheet 30 of 47
@@ -140,7 +147,15 @@ int MPU6050_ReadData(void)
         MPU6050_Real_Data.Gyro_X = -(float)(MPU6050_Raw_Data.Gyro_X - gyroADC_X_offset)/65.5;     // read datasheet 32 of 47
         MPU6050_Real_Data.Gyro_Y = -(float)(MPU6050_Raw_Data.Gyro_Y - gyroADC_Y_offset)/65.5;     // read datasheet 32 of 47
         MPU6050_Real_Data.Gyro_Z = (float)(MPU6050_Raw_Data.Gyro_Z - gyroADC_Z_offset)/65.5;      // read datasheet 32 of 47
-    } 
+				
+				float mpu6050_angle_x = RADIAN_TO_ANGLE*atan(MPU6050_Real_Data.Accel_X/sqrt(MPU6050_Real_Data.Accel_Y*MPU6050_Real_Data.Accel_Y+MPU6050_Real_Data.Accel_Z*MPU6050_Real_Data.Accel_Z));
+				float mpu6050_angle_y = RADIAN_TO_ANGLE*atan(MPU6050_Real_Data.Accel_Y/sqrt(MPU6050_Real_Data.Accel_X*MPU6050_Real_Data.Accel_X+MPU6050_Real_Data.Accel_Z*MPU6050_Real_Data.Accel_Z));
+				float mpu6050_angle_z = RADIAN_TO_ANGLE*atan(sqrt(MPU6050_Real_Data.Accel_X*MPU6050_Real_Data.Accel_X+MPU6050_Real_Data.Accel_Y*MPU6050_Real_Data.Accel_Y)/MPU6050_Real_Data.Accel_Z);
+				// Complementary Filter 
+				float angle_x_filtered = Alpha*(mpu6050_angle_x + MPU6050_Real_Data.Gyro_X * TimeSlice) + (1-Alpha)*MPU6050_Real_Data.Accel_X;
+				float angle_y_filtered = Alpha*(mpu6050_angle_y + MPU6050_Real_Data.Gyro_Y * TimeSlice) + (1-Alpha)*MPU6050_Real_Data.Accel_Y;
+				float angle_z_filtered = Alpha*(mpu6050_angle_z + MPU6050_Real_Data.Gyro_Z * TimeSlice) + (1-Alpha)*MPU6050_Real_Data.Accel_Z;
+		} 
     
     return 0;
 }

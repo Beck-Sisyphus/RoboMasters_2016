@@ -1,10 +1,11 @@
 .\objects\system_stm32f4xx.o: ..\Libraries\system_stm32f4xx.c
 .\objects\system_stm32f4xx.o: ..\Libraries\stm32f4xx.h
-.\objects\system_stm32f4xx.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4.h
-.\objects\system_stm32f4xx.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\system_stm32f4xx.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
-.\objects\system_stm32f4xx.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
-.\objects\system_stm32f4xx.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4_simd.h
+.\objects\system_stm32f4xx.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h
+.\objects\system_stm32f4xx.o: E:\MDK-ARM\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\system_stm32f4xx.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmInstr.h
+.\objects\system_stm32f4xx.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\cmsis_armcc.h
+.\objects\system_stm32f4xx.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmFunc.h
+.\objects\system_stm32f4xx.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmSimd.h
 .\objects\system_stm32f4xx.o: ..\Libraries\system_stm32f4xx.h
 .\objects\system_stm32f4xx.o: ..\User\stm32f4xx_conf.h
 .\objects\system_stm32f4xx.o: ..\Libraries\stm32f4xx_adc.h
