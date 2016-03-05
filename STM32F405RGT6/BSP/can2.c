@@ -298,119 +298,125 @@ void CAN2_RX0_IRQHandler(void)
 Description: Motor_Current_Send(int Motor_ID, int current)
 *************************************************************************/
 
-uint16_t MOTOR_YAW_CUR;                 
-uint16_t MOTOR_PITCH_CUR;           
-uint16_t MOTOR_FRONT_RIGHT_CUR;     
-uint16_t MOTOR_FRONT_LEFT_CUR;      
-uint16_t MOTOR_BACK_LEFT_CUR;       
-uint16_t MOTOR_BACK_RIGHT_CUR;
+// global variables to store current state in every motor
+uint16_t motor_yaw_cur;                 
+uint16_t motor_pitch_cur;           
+uint16_t motor_front_right_cur;     
+uint16_t motor_front_left_cur;      
+uint16_t motor_back_left_cur;       
+uint16_t motor_back_right_cur;
 
-void PitchYaw_Address_Setup(CanTxMsg tx_message) {
-    tx_message.StdId = 0x1FF;
-    tx_message.DLC = 0x08;
-    tx_message.RTR = CAN_RTR_Data;
-    tx_message.IDE = CAN_Id_Standard;
+// different CAN messages for pitch/yaw and wheel motors
+CanTxMsg tx_pitchyaw_message;
+CanTxMsg tx_wheels_message;
+
+// sets up pitch and yaw address for tx
+void PitchYaw_Address_Setup() {
+    tx_pitchyaw_message.StdId = 0x1FF;
+    tx_pitchyaw_message.DLC = 0x08;
+    tx_pitchyaw_message.RTR = CAN_RTR_Data;
+    tx_pitchyaw_message.IDE = CAN_Id_Standard;
 }
 
-void Wheels_Address_Setup(CanTxMsg tx_message) {
-    tx_message.StdId = 0x200;
-    tx_message.DLC = 0x08;
-    tx_message.RTR = CAN_RTR_Data;
-    tx_message.IDE = CAN_Id_Standard;
+// sets up wheel address for tx
+void Wheels_Address_Setup() {
+    tx_wheels_message.StdId = 0x200;
+    tx_wheels_message.DLC = 0x08;
+    tx_wheels_message.RTR = CAN_RTR_Data;
+    tx_wheels_message.IDE = CAN_Id_Standard;
 }
 
-
-void Set_PitchYaw_Current(CanTxMsg tx_message) {
-    tx_message.Data[0] = MOTOR_YAW_CUR >> 8;
-    tx_message.Data[1] = MOTOR_YAW_CUR & 0xFF;
-    tx_message.Data[2] = MOTOR_PITCH_CUR >> 8;
-    tx_message.Data[3] = MOTOR_PITCH_CUR & 0xFF;
-    tx_message.Data[4] = 0x00;
-    tx_message.Data[5] = 0x00;
-    tx_message.Data[6] = 0x00;
-    tx_message.Data[7] = 0x00;
-    CAN_Transmit(CAN2,&tx_message);
+// prepares whole 0x1FF pitch/yaw CAN message for tx
+void Set_PitchYaw_Current() {
+    tx_pitchyaw_message.Data[0] = motor_yaw_cur & 0xFF;
+    tx_pitchyaw_message.Data[1] = motor_yaw_cur >> 8;
+    tx_pitchyaw_message.Data[2] = motor_pitch_cur & 0xFF;
+    tx_pitchyaw_message.Data[3] = motor_pitch_cur >> 8;
+    tx_pitchyaw_message.Data[4] = 0x00;
+    tx_pitchyaw_message.Data[5] = 0x00;
+    tx_pitchyaw_message.Data[6] = 0x00;
+    tx_pitchyaw_message.Data[7] = 0x00;
 }
 
-void Set_Wheels_Current(CanTxMsg tx_message) {
-    tx_message.Data[0] = MOTOR_FRONT_RIGHT_CUR >> 8;
-    tx_message.Data[1] = MOTOR_FRONT_RIGHT_CUR & 0xFF;
-    tx_message.Data[2] = MOTOR_FRONT_LEFT_CUR >> 8;
-    tx_message.Data[3] = MOTOR_FRONT_LEFT_CUR & 0xFF;
-    tx_message.Data[4] = MOTOR_BACK_LEFT_CUR >> 8;
-    tx_message.Data[5] = MOTOR_BACK_LEFT_CUR & 0xFF;
-    tx_message.Data[6] = MOTOR_BACK_RIGHT_CUR >> 8;
-    tx_message.Data[7] = MOTOR_BACK_RIGHT_CUR & 0xFF;
-    CAN_Transmit(CAN2,&tx_message);
+// prepares whole 0x200 wheel CAN message for tx
+void Set_Wheels_Current() {
+    tx_wheels_message.Data[0] = motor_front_right_cur & 0xFF;
+    tx_wheels_message.Data[1] = motor_front_right_cur >> 8;
+    tx_wheels_message.Data[2] = motor_front_left_cur & 0xFF;
+    tx_wheels_message.Data[3] = motor_front_left_cur >> 8;
+    tx_wheels_message.Data[4] = motor_back_left_cur & 0xFF;
+    tx_wheels_message.Data[5] = motor_back_left_cur >> 8;
+    tx_wheels_message.Data[6] = motor_back_right_cur & 0xFF;
+    tx_wheels_message.Data[7] = motor_back_right_cur >> 8;
 }
 
+// Sends specified current value to motor specified by Motor_ID
+// Motor_ID mapping is in can2.h
 void Motor_Current_Send(int Motor_ID, int current) {
 
+    //tx_message.StdId = 0x1FF for pitch and yaw
+    // Data 0 and 1 -> yaw (side to side)           Motor_ID 1
+    // Data 2 and 3 -> pitch (up, down)             Motor_ID 2
+
     // tx_message.StdId = 0x200 for wheels
-    // Data 0 and 1 -> Front right wheel
-    // Data 2 and 3 -> Front left wheel
-    // Data 4 and 5 -> Rear left wheel
-    // Data 6 and 7 -> Rear right wheel
-
-    //tx_message.StdId = 0x200 for pitch and yaw
-    // Data 0 and 1 -> yaw (side to side)
-    // Data 2 and 3 -> pitch (up, down)
-
-        CanTxMsg tx_message;
-        // CanTxMsg tx_message1;
-        // CanTxMsg tx_message2;
-        // tx_message1.StdId = 0x200;
-        // tx_message1.DLC = 0x08;
-        // tx_message1.RTR = CAN_RTR_Data;
-        // tx_message1.IDE = CAN_Id_Standard;
-
-        // tx_message2.StdId = 0x1FF;
-        // tx_message2.DLC = 0x08;
-        // tx_message2.RTR = CAN_RTR_Data;
-        // tx_message2.IDE = CAN_Id_Standard;
+    // Data 0 and 1 -> Front right wheel            Motor_ID 3
+    // Data 2 and 3 -> Front left wheel             Motor_ID 4
+    // Data 4 and 5 -> Rear left wheel              Motor_ID 5
+    // Data 6 and 7 -> Rear right wheel             Motor_ID 6
 
         switch (Motor_ID)
     {
-        case MOTOR_YAW:         PitchYaw_Address_Setup(tx_message);
-                                MOTOR_YAW_CUR = current;
-                                Set_PitchYaw_Current(tx_message);
-                                Wheels_Address_Setup(tx_message);
-                                Set_Wheels_Current(tx_message); break; //If Motor1 is chosen, Frame ID  is 0x14 under Speed_LOCATION Mode
+        case MOTOR_YAW:         PitchYaw_Address_Setup(); 
+                                motor_yaw_cur = current;
+                                Set_PitchYaw_Current();
+                                CAN_Transmit(CAN2,&tx_pitchyaw_message);
+                                Wheels_Address_Setup();
+                                Set_Wheels_Current();
+                                CAN_Transmit(CAN2,&tx_wheels_message); break; //If Motor1 is chosen, Frame ID  is 0x14 under Speed_LOCATION Mode
         
-        case MOTOR_PITCH:       PitchYaw_Address_Setup(tx_message);
-                                MOTOR_PITCH_CUR = current;
-                                Set_PitchYaw_Current(tx_message);
-                                Wheels_Address_Setup(tx_message);
-                                Set_Wheels_Current(tx_message); break; //If Motor2 is chosen, Frame ID  is 0x24 under Speed_LOCATION Mode
+        case MOTOR_PITCH:       PitchYaw_Address_Setup(); 
+                                motor_pitch_cur = current;
+                                Set_PitchYaw_Current();
+                                CAN_Transmit(CAN2,&tx_pitchyaw_message);
+                                Wheels_Address_Setup();
+                                Set_Wheels_Current();
+                                CAN_Transmit(CAN2,&tx_wheels_message); break; //If Motor2 is chosen, Frame ID  is 0x24 under Speed_LOCATION Mode
         
-        case MOTOR_FRONT_RIGHT: Wheels_Address_Setup(tx_message);
-                                MOTOR_FRONT_RIGHT_CUR = current;
-                                Set_Wheels_Current(tx_message);
-                                PitchYaw_Address_Setup(tx_message);
-                                Set_PitchYaw_Current(tx_message); break; //If Motor3 is chosen, Frame ID  is 0x34 under Speed_LOCATION Mode
+        case MOTOR_FRONT_RIGHT: Wheels_Address_Setup();
+                                motor_front_right_cur = current;
+                                Set_Wheels_Current();
+                                CAN_Transmit(CAN2,&tx_wheels_message);
+                                PitchYaw_Address_Setup();
+                                Set_PitchYaw_Current();
+                                CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor3 is chosen, Frame ID  is 0x34 under Speed_LOCATION Mode
         
-        case MOTOR_FRONT_LEFT:  Wheels_Address_Setup(tx_message);
-                                MOTOR_FRONT_LEFT_CUR = current;
-                                Set_Wheels_Current(tx_message);
-                                PitchYaw_Address_Setup(tx_message);
-                                Set_PitchYaw_Current(tx_message); break; //If Motor4 is chosen, Frame ID  is 0x44 under Speed_LOCATION Mode
+        case MOTOR_FRONT_LEFT:  Wheels_Address_Setup();
+                                motor_front_left_cur = current;
+                                Set_Wheels_Current();
+                                CAN_Transmit(CAN2,&tx_wheels_message);
+                                PitchYaw_Address_Setup();
+                                Set_PitchYaw_Current();
+                                CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor4 is chosen, Frame ID  is 0x44 under Speed_LOCATION Mode
         
-        case MOTOR_BACK_LEFT:   Wheels_Address_Setup(tx_message);
-                                MOTOR_BACK_LEFT_CUR = current;
-                                Set_Wheels_Current(tx_message);
-                                PitchYaw_Address_Setup(tx_message);
-                                Set_PitchYaw_Current(tx_message); break; //If Motor5 is chosen, Frame ID  is 0x54 under Speed_LOCATION Mode
+        case MOTOR_BACK_LEFT:   Wheels_Address_Setup();
+                                motor_back_left_cur = current;
+                                Set_Wheels_Current();
+                                CAN_Transmit(CAN2,&tx_wheels_message);
+                                PitchYaw_Address_Setup();
+                                Set_PitchYaw_Current();
+                                CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor5 is chosen, Frame ID  is 0x54 under Speed_LOCATION Mode
         
-        case MOTOR_BACK_RIGHT:  Wheels_Address_Setup(tx_message);
-                                MOTOR_BACK_RIGHT_CUR = current;
-                                Set_Wheels_Current(tx_message);
-                                PitchYaw_Address_Setup(tx_message);
-                                Set_PitchYaw_Current(tx_message); break; //If Motor6 is chosen, Frame ID  is 0x64 under Speed_LOCATION Mode
+        case MOTOR_BACK_RIGHT:  Wheels_Address_Setup();
+                                motor_back_right_cur = current;
+                                Set_Wheels_Current();
+                                CAN_Transmit(CAN2,&tx_wheels_message);
+                                PitchYaw_Address_Setup();
+                                Set_PitchYaw_Current();
+                                CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor6 is chosen, Frame ID  is 0x64 under Speed_LOCATION Mode
 
     }
+    delay_ms(1);
 
-    // CAN_Transmit(CAN2,&tx_message);
-    // CAN_Transmit(CAN2,&tx_message2);
 
 }
 
@@ -420,6 +426,96 @@ void Motor_Current_Send(int Motor_ID, int current) {
 // tx_message1 for wheels
 // tx_message2 for pitch and yaw
 void Motor_Reset_Can_2(void) {
+
+
+    CanTxMsg tx_message1;
+    CanTxMsg tx_message2;  
+    motor_yaw_cur = 0;                 
+    motor_pitch_cur = 0;          
+    motor_front_right_cur = 0;             
+    motor_front_left_cur = 0;     
+    motor_back_left_cur = 0;      
+    motor_back_right_cur = 0;
+
+
+
+    tx_message1.StdId = 0x200;
+    tx_message1.DLC = 0x08;
+    tx_message1.RTR = CAN_RTR_Data;
+    tx_message1.IDE = CAN_Id_Standard;
+
+    tx_message2.StdId = 0x1FF;
+    tx_message2.DLC = 0x08;
+    tx_message2.RTR = CAN_RTR_Data;
+    tx_message2.IDE = CAN_Id_Standard;
+
+/*****************************
+    tx_message1 Controls wheels
+*******************************/
+
+/*
+    tx_message.StdId = 0x200 for wheels
+    Data 0 and 1 -> Front right wheel
+    Data 2 and 3 -> Front left wheel
+    Data 4 and 5 -> Rear left wheel
+    Data 6 and 7 -> Rear right wheel
+    data is sent in little endian
+    positive values -> counter clockwise rotation
+    negative values -> clockwise rotation
+    I tested:
+    +500 to right front wheel. +500 = 0xF401z in little endian so: 
+    tx_message1.Data[0] = 0xF4;
+    tx_message1.Data[1] = 0x01;
+    -500 to right front wheel. -500 = 0x0CFE in little endian so:: 
+    tx_message1.Data[0] = 0x0C;
+    tx_message1.Data[1] = 0xFE;
+*/  
+    tx_message1.Data[0] = 0x00;
+    tx_message1.Data[1] = 0x00;
+    tx_message1.Data[2] = 0x00;
+    tx_message1.Data[3] = 0x00;
+    tx_message1.Data[4] = 0x00;
+    tx_message1.Data[5] = 0x00;
+    tx_message1.Data[6] = 0x00;
+    tx_message1.Data[7] = 0x00;
+
+
+/*****************************
+    tx_message2 Controls pitch and yaw
+*******************************/
+
+/*
+    
+    tx_message.StdId = 0x1FF for pitch and yaw    
+    Data 0 and 1 -> yaw (side to side)
+    Data 2 and 3 -> pitch (up, down)
+   
+    data is sent in little endian
+    positive values -> yaw right turn        pitch up
+    negative values -> yaw left turn        pitch down
+    +1000 to yaw. +1000 = 0xE803 in little endian so: 
+    tx_message1.Data[0] = 0xE8;
+    tx_message1.Data[1] = 0x03;
+    -1000 to yaw. -1000 = 0x18FC in little endian so:: 
+    tx_message1.Data[0] = 0x18;
+    tx_message1.Data[1] = 0xFC;
+*/
+    tx_message2.Data[0] = 0x00;
+    tx_message2.Data[1] = 0x00;
+    tx_message2.Data[2] = 0x00;
+    tx_message2.Data[3] = 0x00;
+    tx_message2.Data[4] = 0x00;
+    tx_message2.Data[5] = 0x00;
+    tx_message2.Data[6] = 0x00;
+    tx_message2.Data[7] = 0x00;
+
+    CAN_Transmit(CAN2,&tx_message1);
+    CAN_Transmit(CAN2,&tx_message2);
+}
+
+
+// For manually setting currents to motors for testing
+void Motor_ManSet_Can_2(void) {
 
 
     CanTxMsg tx_message1;
@@ -495,91 +591,6 @@ void Motor_Reset_Can_2(void) {
     tx_message2.Data[6] = 0x00;
     tx_message2.Data[7] = 0x00;
 
-    CAN_Transmit(CAN2,&tx_message1);
-    //delay_ms(10);
-    CAN_Transmit(CAN2,&tx_message2);
-}
-
-
-
-void Motor_ManSet_Can_2(void) {
-
-
-    CanTxMsg tx_message1;
-    CanTxMsg tx_message2;  
-
-    tx_message1.StdId = 0x200;
-    tx_message1.DLC = 0x08;
-    tx_message1.RTR = CAN_RTR_Data;
-    tx_message1.IDE = CAN_Id_Standard;
-
-    tx_message2.StdId = 0x1FF;
-    tx_message2.DLC = 0x08;
-    tx_message2.RTR = CAN_RTR_Data;
-    tx_message2.IDE = CAN_Id_Standard;
-
-/*****************************
-    tx_message1 Controls wheels
-*******************************/
-
-/*
-    tx_message.StdId = 0x200 for wheels
-    Data 0 and 1 -> Front right wheel
-    Data 2 and 3 -> Front left wheel
-    Data 4 and 5 -> Rear left wheel
-    Data 6 and 7 -> Rear right wheel
-    data is sent in little endian
-    positive values -> counter clockwise rotation
-    negative values -> clockwise rotation
-    I tested:
-    +500 to right front wheel. +500 = 0xF401z in little endian so: 
-    tx_message1.Data[0] = 0xF4;
-    tx_message1.Data[1] = 0x01;
-    -500 to right front wheel. -500 = 0x0CFE in little endian so:: 
-    tx_message1.Data[0] = 0x0C;
-    tx_message1.Data[1] = 0xFE;
-*/  
-    // tx_message1.Data[0] = 0x18;
-    // tx_message1.Data[1] = 0xFC;
-    // tx_message1.Data[2] = 0x18;
-    // tx_message1.Data[3] = 0xFC;
-    // tx_message1.Data[4] = 0x00;
-    // tx_message1.Data[5] = 0x00;
-    // tx_message1.Data[6] = 0x00;
-    // tx_message1.Data[7] = 0x00;
-
-
-/*****************************
-    tx_message2 Controls pitch and yaw
-*******************************/
-
-/*
-    
-    tx_message.StdId = 0x1FF for pitch and yaw    
-    Data 0 and 1 -> yaw (side to side)
-    Data 2 and 3 -> pitch (up, down)
-   
-    data is sent in little endian
-    positive values -> yaw right turn        pitch up
-    negative values -> yaw left turn        pitch down
-    +1000 to yaw. +1000 = 0xE803 in little endian so: 
-    tx_message1.Data[0] = 0xE8;
-    tx_message1.Data[1] = 0x03;
-    -1000 to yaw. -1000 = 0x18FC in little endian so:: 
-    tx_message1.Data[0] = 0x18;
-    tx_message1.Data[1] = 0xFC;
-*/
-    tx_message2.Data[0] = 0x00;
-    tx_message2.Data[1] = 0x00;
-    tx_message2.Data[2] = 0x18;
-    tx_message2.Data[3] = 0xFC;
-    tx_message2.Data[4] = 0x00;
-    tx_message2.Data[5] = 0x00;
-    tx_message2.Data[6] = 0x00;
-    tx_message2.Data[7] = 0x00;
-
-    // CAN_Transmit(CAN2,&tx_message1);
-    //delay_ms(10);
     CAN_Transmit(CAN2,&tx_message2);
 }
 
