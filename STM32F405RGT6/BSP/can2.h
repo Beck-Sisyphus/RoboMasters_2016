@@ -33,13 +33,14 @@ extern int8_t gyro_ok_flag;
 void CAN2_Configuration(void);
 void GYRO_RST(void);
 void Encoder_sent(float encoder_angle);
+
 void Motor_Reset_Can_2(void);
 void Motor_Current_Send(int, int);
 
-void PitchYaw_Address_Setup(CanTxMsg);
-void Wheels_Address_Setup(CanTxMsg);
-void Set_PitchYaw_Current(CanTxMsg);
-void Set_Wheels_Current(CanTxMsg);
+void PitchYaw_Address_Setup(void);
+void Wheels_Address_Setup(void);
+void Set_PitchYaw_Current(void);
+void Set_Wheels_Current(void);
 
 void Motor_ManSet_Can_2(void);
 

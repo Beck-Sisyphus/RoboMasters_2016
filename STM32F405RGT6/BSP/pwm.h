@@ -3,8 +3,8 @@
 
 void PWM_Configuration(void);
 
-#define PWM1  TIM2->CCR1
-#define PWM2  TIM2->CCR2
+#define PWM1  TIM5->CCR1
+#define PWM2  TIM5->CCR2
 
 #endif
 
