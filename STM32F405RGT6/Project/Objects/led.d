@@ -1,12 +1,11 @@
 .\objects\led.o: ..\BSP\led.c
 .\objects\led.o: ..\BSP\led.h
 .\objects\led.o: ..\Libraries\stm32f4xx.h
-.\objects\led.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h
-.\objects\led.o: E:\MDK-ARM\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\led.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmInstr.h
-.\objects\led.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\cmsis_armcc.h
-.\objects\led.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmFunc.h
-.\objects\led.o: E:\MDK-ARM\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmSimd.h
+.\objects\led.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4.h
+.\objects\led.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\led.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
+.\objects\led.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
+.\objects\led.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4_simd.h
 .\objects\led.o: ..\Libraries\system_stm32f4xx.h
 .\objects\led.o: ..\User\stm32f4xx_conf.h
 .\objects\led.o: ..\Libraries\stm32f4xx_adc.h
