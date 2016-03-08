@@ -85,6 +85,8 @@ int main(void)
         // delay_ms(1000);
         // printf("Yaw current: %i", temp_yaw_current);
         // delay_ms(1000);
-        set_Pitch_Position(4000);
+        #if PID
+            set_Pitch_Position(4000);
+        #endif
     }
 }
