@@ -1,6 +1,9 @@
 #include "main.h"
 #include "mpu6050_driver.h"
 
+///Turns on Beck's trying for PID controller 
+#define PID true
+
 // Improvements direction: Acceleration filter, increasing the proportion of the acceleration correction in quaternion
 // Remote control command smoothing
 
@@ -65,7 +68,7 @@ int main(void)
         CurrentProtect(); // Overcurrent protection for motor controller
 
         // Motor_Current_Send(2, -1000);
-        Motor_ManSet_Can_2(); 
+        // Motor_ManSet_Can_2(); 
         // Motor_Current_Send(2, -1000);
         // LED1_ON();
         // delay_ms(1000);
@@ -73,6 +76,7 @@ int main(void)
         // Motor_Current_Send(4, -1000);
         // delay_ms(1000);
 
+        /* Send to Arduino */ 
         // printf("Pitch angle: %i", temp_pitch_angle);
         // delay_ms(1000);
         // printf("Pitch current: %i", temp_pitch_current);
@@ -81,6 +85,6 @@ int main(void)
         // delay_ms(1000);
         // printf("Yaw current: %i", temp_yaw_current);
         // delay_ms(1000);
-
+        set_Pitch_Position(4000);
     }
 }
