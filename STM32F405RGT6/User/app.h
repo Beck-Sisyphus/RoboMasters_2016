@@ -2,10 +2,11 @@
 #define __APP_H__
 #include <stm32f4xx.h>
 
-#define ESC_MAX 5000.0
+#define ESC_MAX 500.0
 #define GAP 0.0
 #define abs(x) ((x)>0? (x):(-(x)))
 
+void set_Pitch_Position(float target_pitch_angle);
 void Cmd_ESC(int16_t current_201,int16_t current_202,int16_t current_203);
 
 float Velocity_Control_205(float current_velocity_201,float target_velocity_201);

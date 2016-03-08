@@ -18,12 +18,12 @@ extern uint16_t temp_pitch_current;
 /*
     Top level Function to implement PID control on Pitch Servo
 */
-void pitch_Position(float target_pitch_angle)
+void set_Pitch_Position(float target_pitch_angle)
 {
     // PID for position
     float pitch_position_change = Position_Control_205(temp_pitch_angle, target_pitch_angle);
     float pitch_velocity_change = Velocity_Control_205(temp_pitch_current, pitch_position_change);
-    Motor_Current_Send(2, temp_pitch_current + pitch_velocity_change);
+    Motor_Current_Send(2, pitch_velocity_change);
 }
 
 
