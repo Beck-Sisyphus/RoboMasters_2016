@@ -553,4 +553,3 @@ void Motor_ManSet_Can_2(void) {
 
     CAN_Transmit(CAN2,&tx_message2);
 }
-

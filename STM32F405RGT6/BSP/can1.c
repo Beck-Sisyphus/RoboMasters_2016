@@ -526,8 +526,3 @@ void Motor_Speed_Location_Set(int Motor_ID,int Give_Speed,int Give_Speed_Locatio
     while(can_tx_success_flag == 0);   
 }
 
-
-
-
-
-
