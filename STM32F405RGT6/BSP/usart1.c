@@ -75,12 +75,12 @@ void USART1_SendChar(unsigned char b)
     USART_SendData(USART1,b);
 }
 
-int fputc(int ch, FILE *f)
-{
-    while (USART_GetFlagStatus(USART1,USART_FLAG_TC) == RESET);
-    USART_SendData(USART1, (uint8_t)ch);    
-    return ch;
-}
+//int fputc(int ch, FILE *f)
+//{
+//    while (USART_GetFlagStatus(USART1,USART_FLAG_TC) == RESET);
+//    USART_SendData(USART1, (uint8_t)ch);    
+//    return ch;
+//}
 
 
 static u16 RS232_VisualScope_CRC16( u8 *Array, u16 Len )
