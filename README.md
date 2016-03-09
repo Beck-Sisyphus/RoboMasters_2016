@@ -11,7 +11,7 @@ Platform: NVIDIA Jetson TX1 and TK1 board.
 ### Embedded and Control
 Lead: Pico Premvuti @pico737
 
-branch: master
+branch: master, embedded
 
 Platform: the trapezoid board with STM32F405RGT6 core. 
 
