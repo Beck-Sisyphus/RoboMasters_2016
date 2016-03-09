@@ -1,5 +1,5 @@
-# RoboMasters_2016_Open_Source
-The open source code running on the trapezoid board for STM32F405RGT6. Thanks for DJI.
+# Embedded and Control on trapezoid board
+Modified from the open source code running on the turrret board from RM2015. 
 
 ## Hardware Configuration
 	(1) Hold trapezoid board with smaller edge facing right
