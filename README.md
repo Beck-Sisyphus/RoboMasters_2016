@@ -1,2 +1,18 @@
-# RoboMasters_2016_Open_Source
-The open source code running on the trapezoid board for STM32F405RGT6. Thanks for DJI.
+# RoboMasters_2016
+University of Washington team competiting in RoboMasters 2016, the second year of this competition. Thanks DJI for organizing this event. Team division: Embedded and Control, Computer Vision
+
+### Computer Vision
+Lead: Yufang Sun @mandary
+
+branch: compvis
+
+Platform: NVIDIA Jetson TX1 and TK1 board.
+
+### Embedded and Control
+Lead: Pico Premvuti @pico737
+
+branch: master, embedded
+
+Platform: the trapezoid board with STM32F405RGT6 core. 
+
+
