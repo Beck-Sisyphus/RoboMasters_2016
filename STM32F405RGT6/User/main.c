@@ -1,15 +1,13 @@
 #include "main.h"
 #include "mpu6050_driver.h"
 
-///Turns on Beck's trying for PID controller 
-#define PID true
-
 // Improvements direction: Acceleration filter, increasing the proportion of the acceleration correction in quaternion
 // Remote control command smoothing
 
 char id[3];
 unsigned char USART_BUF[24] = {0};
-extern RC_Ctl_t RC_Ctl_usart_3;
+// extern RC_Ctl_t RC_Ctl_usart_3;
+extern RC_Ctl_t RC_Ctl;
 extern arduino_data data_usart_3;
 
 extern uint16_t temp_yaw_angle;
@@ -17,6 +15,33 @@ extern uint16_t temp_pitch_angle;
 
 extern uint16_t temp_yaw_current;
 extern uint16_t temp_pitch_current;
+
+
+// extern int bit0;
+// extern int bit1;
+// extern int bit2;
+// extern int bit3;
+// extern int bit4;
+// extern int bit5;
+// extern int bit6;
+// extern int bit7;
+// extern int bit8;
+// extern int bit9;
+// extern int bit10;
+// extern int bit11;
+// extern int bit12;
+// extern int bit13;
+// extern int bit14;
+// extern int bit15;
+// extern int bit16;
+// extern int bit17;
+// extern int bit18;
+// extern int bit19;
+// extern int bit20;
+// extern int bit21;
+// extern int bit22;
+// extern int bit23;
+// extern int bit24;
 
 char greeting[6] = {'H', 'E', 'L', 'L', 'O', '\0'};
 char ay = 'a';
@@ -60,23 +85,99 @@ int main(void)
     // delay_ms(30);       
     // Motor_Init(MOTOR_NUM1,PWM_MODE);
     // delay_ms(30);    
-    LED1_OFF();
-    LED2_OFF();
+
+    // LED1_OFF();
+    // LED2_OFF();
     Motor_Reset_Can_2();
+    // Motor_ManSet_Can_2();
+
     while(1)
     {
         CurrentProtect(); // Overcurrent protection for motor controller
 
-        // Motor_Current_Send(2, -1000);
-        // Motor_ManSet_Can_2(); 
-        // Motor_Current_Send(2, -1000);
+        /************ For Red C Motor
+        if (RC_Ctl.rc.s2 == RC_SW_MID && RC_Ctl.rc.s1 == RC_SW_MID) {
+            // LED1_OFF();
+            // LED2_OFF();
+            Motor_Reset_Can_2();
+        } else if(RC_Ctl.rc.s2 == RC_SW_UP) {
+            // LED1_ON();
+            // Forward
+            Motor_Current_Send(3, -10);
+            Motor_Current_Send(4, -10);
+            Motor_Current_Send(5, 10);
+            Motor_Current_Send(6, 10);
+        } else if (RC_Ctl.rc.s2 == RC_SW_DOWN) {
+            // LED1_ON();
+            //Backward
+            Motor_Current_Send(3, 10);
+            Motor_Current_Send(4, 10);
+            Motor_Current_Send(5, -10);
+            Motor_Current_Send(6, -10);
+        } else if (RC_Ctl.rc.s1 == RC_SW_UP) {
+            // LED2_ON();
+            //Right
+            Motor_Current_Send(3, -10);
+            Motor_Current_Send(4, -10);
+            Motor_Current_Send(5, -10);
+            Motor_Current_Send(6, -10);
+        } else if (RC_Ctl.rc.s1 == RC_SW_DOWN) {
+            // LED2_ON();
+            //Left
+            Motor_Current_Send(3, 10);
+            Motor_Current_Send(4, 10);
+            Motor_Current_Send(5, 10);
+            Motor_Current_Send(6, 10);
+        }  
+        ************/    
+
+
+#define MOTOR_YAW               1
+#define MOTOR_PITCH             2
+#define MOTOR_FRONT_RIGHT       3
+#define MOTOR_FRONT_LEFT        4
+#define MOTOR_BACK_LEFT         5
+#define MOTOR_BACK_RIGHT        6
+        // For Blue Motor
+        if (RC_Ctl.rc.s2 == RC_SW_MID && RC_Ctl.rc.s1 == RC_SW_MID) {
+            // LED1_OFF();
+            // LED2_OFF();
+            Motor_Reset_Can_2();
+        } else if(RC_Ctl.rc.s2 == RC_SW_UP) {
+            // LED1_ON();
+            // Forward
+            Motor_Current_Send(3, -10);
+            Motor_Current_Send(4, 10);
+            Motor_Current_Send(5, 10);
+            Motor_Current_Send(6, -10);
+        } else if (RC_Ctl.rc.s2 == RC_SW_DOWN) {
+            // LED1_ON();
+            //Backward
+            Motor_Current_Send(3, 10);
+            Motor_Current_Send(4, -10);
+            Motor_Current_Send(5, -10);
+            Motor_Current_Send(6, 10);
+        } else if (RC_Ctl.rc.s1 == RC_SW_UP) {
+            // LED2_ON();
+            //Right
+            Motor_Current_Send(3, -10);
+            Motor_Current_Send(4, -10);
+            Motor_Current_Send(5, -10);
+            Motor_Current_Send(6, -10);
+        } else if (RC_Ctl.rc.s1 == RC_SW_DOWN) {
+            // LED2_ON();
+            //Left
+            Motor_Current_Send(3, 10);
+            Motor_Current_Send(4, 10);
+            Motor_Current_Send(5, 10);
+            Motor_Current_Send(6, 10);
+        }  
+
+
         // LED1_ON();
         // delay_ms(1000);
         // LED1_OFF();
-        // Motor_Current_Send(4, -1000);
         // delay_ms(1000);
-
-        /* Send to Arduino */ 
         // printf("Pitch angle: %i", temp_pitch_angle);
         // delay_ms(1000);
         // printf("Pitch current: %i", temp_pitch_current);
@@ -85,8 +186,6 @@ int main(void)
         // delay_ms(1000);
         // printf("Yaw current: %i", temp_yaw_current);
         // delay_ms(1000);
-        #if PID
-            set_Pitch_Position(4000);
-        #endif
+
     }
 }
