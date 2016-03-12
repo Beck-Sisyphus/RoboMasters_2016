@@ -95,7 +95,7 @@ int main(void)
     {
         CurrentProtect(); // Overcurrent protection for motor controller
 
-        /************ For Red C Motor
+        /************ For Red C Motor Switch
         if (RC_Ctl.rc.s2 == RC_SW_MID && RC_Ctl.rc.s1 == RC_SW_MID) {
             // LED1_OFF();
             // LED2_OFF();
@@ -130,15 +130,50 @@ int main(void)
             Motor_Current_Send(6, 10);
         }  
         ************/    
+    // Read Stick values    
+    // printf("ch0:%i ch1:%i ch2:%i ch3:%i", RC_Ctl.rc.ch0, RC_Ctl.rc.ch1, RC_Ctl.rc.ch2, RC_Ctl.rc.ch3);
+    // delay_ms(1000);
 
+        // For Blue Motor Stick
+        if (RC_Ctl.rc.ch0 == RC_CH_VALUE_OFFSET 
+            && RC_Ctl.rc.ch1 == RC_CH_VALUE_OFFSET
+            && RC_Ctl.rc.ch2 == RC_CH_VALUE_OFFSET
+            && RC_Ctl.rc.ch3 == RC_CH_VALUE_OFFSET) {
+            // LED1_OFF();
+            // LED2_OFF();
+            Motor_Reset_Can_2();
+        } else if(RC_Ctl.rc.ch3 > 1600 || RC_Ctl.rc.ch1 > 1600) {
+            // LED1_ON();
+            // Forward
+            Motor_Current_Send(3, -10);
+            Motor_Current_Send(4, 10);
+            Motor_Current_Send(5, 10);
+            Motor_Current_Send(6, -10);
+        } else if (RC_Ctl.rc.ch3 < 400 || RC_Ctl.rc.ch1 < 400) {
+            // LED1_ON();
+            //Backward
+            Motor_Current_Send(3, 10);
+            Motor_Current_Send(4, -10);
+            Motor_Current_Send(5, -10);
+            Motor_Current_Send(6, 10);
+        } else if (RC_Ctl.rc.ch2 > 1600 || RC_Ctl.rc.ch0 > 1600) {
+            // LED2_ON();
+            //Right
+            Motor_Current_Send(3, -10);
+            Motor_Current_Send(4, -10);
+            Motor_Current_Send(5, -10);
+            Motor_Current_Send(6, -10);
+        } else if (RC_Ctl.rc.ch2 < 400 || RC_Ctl.rc.ch0 < 400) {
+            // LED2_ON();
+            //Left
+            Motor_Current_Send(3, 10);
+            Motor_Current_Send(4, 10);
+            Motor_Current_Send(5, 10);
+            Motor_Current_Send(6, 10);
+        }  
 
-#define MOTOR_YAW               1
-#define MOTOR_PITCH             2
-#define MOTOR_FRONT_RIGHT       3
-#define MOTOR_FRONT_LEFT        4
-#define MOTOR_BACK_LEFT         5
-#define MOTOR_BACK_RIGHT        6
-        // For Blue Motor
+/*
+        // For Blue Motor Switch
         if (RC_Ctl.rc.s2 == RC_SW_MID && RC_Ctl.rc.s1 == RC_SW_MID) {
             // LED1_OFF();
             // LED2_OFF();
@@ -173,7 +208,7 @@ int main(void)
             Motor_Current_Send(6, 10);
         }  
 
-
+*/
         // LED1_ON();
         // delay_ms(1000);
         // LED1_OFF();
