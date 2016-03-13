@@ -1,9 +1,5 @@
 #include "main.h"
 
-///Turns on Beck's trying for PID controller
-#define PID true
-
-
 extern uint16_t measured_yaw_angle;
 extern uint16_t measured_pitch_angle;
 
@@ -71,11 +67,13 @@ void Cmd_ESC(int16_t current_201,int16_t current_202,int16_t current_203)
 *********************************************************************************/
 float Velocity_Control_205(float current_velocity_201,float target_velocity_201)
 {
-    const float v_p = 50.0;
+    const float v_p = 15.0;
+    const float v_i = 0.03;
     const float v_d = 1.0;
 
     static float error_v[2] = {0.0,0.0};
     static float output = 0;
+    static float inte = 0;
 
     if(abs(current_velocity_201) < GAP)
     {
@@ -84,8 +82,10 @@ float Velocity_Control_205(float current_velocity_201,float target_velocity_201)
 
     error_v[0] = error_v[1];
     error_v[1] = target_velocity_201 - current_velocity_201;
+    inte += error_v[1];
 
     output = error_v[1] * v_p
+            + inte * v_i
              + (error_v[1] - error_v[0]) * v_d;
 
     if(output > ESC_MAX)
@@ -98,7 +98,7 @@ float Velocity_Control_205(float current_velocity_201,float target_velocity_201)
         output = -ESC_MAX;
     }
 
-    return -output;//cyq:for 6015 motor, negative feedback
+    return output; // For Blue rover, position reading is in inverse direction
 }
 
 
@@ -110,7 +110,7 @@ float Velocity_Control_205(float current_velocity_201,float target_velocity_201)
 float Position_Control_205(float current_position_201,float target_position_201)
 {
 
-    const float l_p = 20.5;
+    const float l_p = 16;
     const float l_i = 0.0;
     const float l_d = 0.6;
 

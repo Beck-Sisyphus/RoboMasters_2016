@@ -2,7 +2,7 @@
 #define __APP_H__
 #include <stm32f4xx.h>
 
-#define ESC_MAX 500.0
+#define ESC_MAX 50000.0
 #define GAP 0.0
 #define abs(x) ((x)>0? (x):(-(x)))
 
