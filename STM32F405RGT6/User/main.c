@@ -16,6 +16,9 @@ extern uint16_t temp_pitch_angle;
 extern uint16_t temp_yaw_current;
 extern uint16_t temp_pitch_current;
 
+// to prevent whels from turning on start-up if remote is off
+uint8_t Remote_On = 0;
+
 
 // extern int bit0;
 // extern int bit1;
@@ -134,42 +137,52 @@ int main(void)
     // printf("ch0:%i ch1:%i ch2:%i ch3:%i", RC_Ctl.rc.ch0, RC_Ctl.rc.ch1, RC_Ctl.rc.ch2, RC_Ctl.rc.ch3);
     // delay_ms(1000);
 
+
+        // To see if remote is off or not
+        if (RC_Ctl.rc.ch2 < RC_CH_VALUE_MIN 
+            || RC_Ctl.rc.ch3 < RC_CH_VALUE_MIN
+            ) {
+            Remote_On = 0;
+        } else {
+            Remote_On = 1;
+        }
+
+
         // For Blue Motor Stick
-        if (RC_Ctl.rc.ch0 == RC_CH_VALUE_OFFSET 
-            && RC_Ctl.rc.ch1 == RC_CH_VALUE_OFFSET
-            && RC_Ctl.rc.ch2 == RC_CH_VALUE_OFFSET
-            && RC_Ctl.rc.ch3 == RC_CH_VALUE_OFFSET) {
+        if ((RC_Ctl.rc.ch2 == RC_CH_VALUE_OFFSET
+            && RC_Ctl.rc.ch3 == RC_CH_VALUE_OFFSET)
+            || Remote_On == 0) {
             // LED1_OFF();
             // LED2_OFF();
             Motor_Reset_Can_2();
-        } else if(RC_Ctl.rc.ch3 > 1600 || RC_Ctl.rc.ch1 > 1600) {
+        } else if(RC_Ctl.rc.ch3 > RC_CH_VALUE_OFFSET) {
             // LED1_ON();
             // Forward
-            Motor_Current_Send(3, -10);
-            Motor_Current_Send(4, 10);
-            Motor_Current_Send(5, 10);
-            Motor_Current_Send(6, -10);
-        } else if (RC_Ctl.rc.ch3 < 400 || RC_Ctl.rc.ch1 < 400) {
+            Motor_Current_Send(3, -1 * Pos_Curr_Eqn(RC_Ctl.rc.ch3));
+            Motor_Current_Send(4, Pos_Curr_Eqn(RC_Ctl.rc.ch3));
+            Motor_Current_Send(5, Pos_Curr_Eqn(RC_Ctl.rc.ch3));
+            Motor_Current_Send(6, -1 * Pos_Curr_Eqn(RC_Ctl.rc.ch3));
+        } else if (RC_Ctl.rc.ch3 < RC_CH_VALUE_OFFSET) {
             // LED1_ON();
             //Backward
-            Motor_Current_Send(3, 10);
-            Motor_Current_Send(4, -10);
-            Motor_Current_Send(5, -10);
-            Motor_Current_Send(6, 10);
-        } else if (RC_Ctl.rc.ch2 > 1600 || RC_Ctl.rc.ch0 > 1600) {
+            Motor_Current_Send(3, -1 * Neg_Curr_Eqn(RC_Ctl.rc.ch3));
+            Motor_Current_Send(4, Neg_Curr_Eqn(RC_Ctl.rc.ch3));
+            Motor_Current_Send(5, Neg_Curr_Eqn(RC_Ctl.rc.ch3));
+            Motor_Current_Send(6, -1 * Neg_Curr_Eqn(RC_Ctl.rc.ch3));
+        } else if (RC_Ctl.rc.ch2 > RC_CH_VALUE_OFFSET) {
             // LED2_ON();
             //Right
-            Motor_Current_Send(3, -10);
-            Motor_Current_Send(4, -10);
-            Motor_Current_Send(5, -10);
-            Motor_Current_Send(6, -10);
-        } else if (RC_Ctl.rc.ch2 < 400 || RC_Ctl.rc.ch0 < 400) {
+            Motor_Current_Send(3, -1 * Pos_Curr_Eqn(RC_Ctl.rc.ch2));
+            Motor_Current_Send(4, -1 * Pos_Curr_Eqn(RC_Ctl.rc.ch2));
+            Motor_Current_Send(5, -1 * Pos_Curr_Eqn(RC_Ctl.rc.ch2));
+            Motor_Current_Send(6, -1 * Pos_Curr_Eqn(RC_Ctl.rc.ch2));
+        } else if (RC_Ctl.rc.ch2 < RC_CH_VALUE_OFFSET) {
             // LED2_ON();
             //Left
-            Motor_Current_Send(3, 10);
-            Motor_Current_Send(4, 10);
-            Motor_Current_Send(5, 10);
-            Motor_Current_Send(6, 10);
+            Motor_Current_Send(3, -1 * Neg_Curr_Eqn(RC_Ctl.rc.ch2));
+            Motor_Current_Send(4, -1 * Neg_Curr_Eqn(RC_Ctl.rc.ch2));
+            Motor_Current_Send(5, -1 * Neg_Curr_Eqn(RC_Ctl.rc.ch2));
+            Motor_Current_Send(6, -1 * Neg_Curr_Eqn(RC_Ctl.rc.ch2));
         }  
 
 /*

@@ -691,6 +691,6 @@ void Motor_ManSet_Can_2(void) {
     tx_message2.Data[6] = 0x00;
     tx_message2.Data[7] = 0x00;
 
-    CAN_Transmit(CAN2,&tx_message1);
+    // CAN_Transmit(CAN2,&tx_message1);
 }
 
