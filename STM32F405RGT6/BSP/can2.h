@@ -8,6 +8,16 @@
 #define pitch_max 15.0
 #define yaw_max 720.0
 
+/****** For Red motor
+#define MOTOR_YAW 				1
+#define MOTOR_PITCH 			2
+#define MOTOR_FRONT_LEFT 		3
+#define MOTOR_BACK_LEFT 		4
+#define MOTOR_FRONT_RIGHT 		5
+#define MOTOR_BACK_RIGHT 		6
+*******/
+
+// For Blue motor
 #define MOTOR_YAW 				1
 #define MOTOR_PITCH 			2
 #define MOTOR_FRONT_RIGHT 		3
