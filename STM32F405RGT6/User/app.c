@@ -7,22 +7,30 @@
 extern uint16_t measured_yaw_angle;
 extern uint16_t measured_pitch_angle;
 
-extern uint16_t target_yaw_current;
-extern uint16_t target_pitch_current;
+extern int16_t measured_yaw_current;
+extern int16_t measured_pitch_current;
 
-#if PID
-    extern uint16_t measured_yaw_current;
-    extern uint16_t measured_pitch_current;
-#endif
+extern int16_t target_yaw_current;
+extern int16_t target_pitch_current;
+
 
 /*
     Top level Function to implement PID control on Pitch Servo
 */
-void set_Pitch_Position(float target_pitch_angle)
+void set_Pitch_Position(uint16_t target_pitch_angle)
 {
     // PID for position
-    float pitch_position_change = Position_Control_205(measured_pitch_angle, target_pitch_angle);
-    float pitch_velocity_change = Velocity_Control_205(target_pitch_current, pitch_position_change);
+    float pitch_position_change = Position_Control_205((float)measured_pitch_angle, (float)target_pitch_angle);
+    float pitch_velocity_change = Velocity_Control_205((float)target_pitch_current, pitch_position_change);
+    Motor_Current_Send(2, (int16_t)pitch_velocity_change);
+    // Motor_Current_Send(2, 100);
+}
+
+void set_Yaw_Position(uint16_t target_yaw_angle)
+{
+    // PID for position
+    int16_t pitch_position_change = Position_Control_205(measured_yaw_angle, target_yaw_angle);
+    int16_t pitch_velocity_change = Velocity_Control_205(target_yaw_current, pitch_position_change);
     // Motor_Current_Send(2, pitch_velocity_change);
     // Motor_Current_Send(2, 100);
 }
@@ -63,7 +71,7 @@ void Cmd_ESC(int16_t current_201,int16_t current_202,int16_t current_203)
 *********************************************************************************/
 float Velocity_Control_205(float current_velocity_201,float target_velocity_201)
 {
-    const float v_p = 15.0;
+    const float v_p = 50.0;
     const float v_d = 1.0;
 
     static float error_v[2] = {0.0,0.0};
@@ -102,7 +110,7 @@ float Velocity_Control_205(float current_velocity_201,float target_velocity_201)
 float Position_Control_205(float current_position_201,float target_position_201)
 {
 
-    const float l_p = 16.0;
+    const float l_p = 20.5;
     const float l_i = 0.0;
     const float l_d = 0.6;
 

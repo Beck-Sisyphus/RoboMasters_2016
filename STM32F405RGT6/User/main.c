@@ -1,9 +1,8 @@
 #include "main.h"
 #include "mpu6050_driver.h"
 
-<<<<<<< HEAD
 ///Turns on Beck's trying for PID controller
-#define PID false
+#define PID true
 
 // Improvements direction: Acceleration filter, increasing the proportion of the acceleration correction in quaternion
 // Remote control command smoothing
@@ -14,13 +13,13 @@ unsigned char USART_BUF[24] = {0};
 extern RC_Ctl_t RC_Ctl;
 extern arduino_data data_usart_3;
 
-extern uint16_t temp_yaw_angle;
+extern uint16_t measured_yaw_angle;
 extern uint16_t measured_pitch_angle;
 
-extern uint16_t temp_yaw_current;
-extern uint16_t temp_pitch_current;
-
-extern uint16_t measure_pitch_current;
+extern int16_t target_yaw_current;
+extern int16_t target_pitch_current;
+extern int16_t measured_yaw_current;
+extern int16_t measured_pitch_current;
 // to prevent whels from turning on start-up if remote is off
 uint8_t Remote_On = 0;
 
@@ -169,7 +168,7 @@ int main(void)
             Motor_Current_Send(4, -1 * Neg_Curr_Eqn(RC_Ctl.rc.ch2));
             Motor_Current_Send(5, -1 * Neg_Curr_Eqn(RC_Ctl.rc.ch2));
             Motor_Current_Send(6, -1 * Neg_Curr_Eqn(RC_Ctl.rc.ch2));
-        }  
+        }
 
 /*
         // For Blue Motor Switch
@@ -209,26 +208,28 @@ int main(void)
 
 */
 
-        Motor_Current_Send(2, count);
-        printf("%i, %i, %i, %i", count, measured_pitch_angle, measure_pitch_current, temp_pitch_current);
-        count--;
-        delay_ms(1000);
+
+
 
         /* Send to Arduino */
         // printf("Pitch angle: %i", measured_pitch_angle);
 
         // printf("Pitch angle: %i", temp_pitch_angle);
         // delay_ms(1000);
-        // printf("Pitch current: %i", temp_pitch_current);
+        // printf("Pitch current: %i", target_pitch_current);
         // delay_ms(1000);
-        // printf("Yaw angle: %i", temp_yaw_angle);
+        // printf("Yaw angle: %i", measured_yaw_angle);
         // delay_ms(1000);
-        // printf("Yaw current: %i", temp_yaw_current);
+        // printf("Yaw current: %i", target_yaw_current);
         // delay_ms(1000);
         #if PID
             set_Pitch_Position(4000);
-            printf("Pitch current measured?: %i", measure_pitch_current);
-            delay_ms(1000);
+        #else
+            Motor_Current_Send(2, count);
+            count = count + 50;
         #endif
+
+        printf("%i, %i, %hd, %hd", count, measured_pitch_angle, measured_pitch_current, target_pitch_current);
+        delay_ms(1000);
     }
 }

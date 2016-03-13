@@ -149,19 +149,20 @@ float target_yaw_angle;
 
 
 // yaw and pitch angle rx messages from CAN
-uint16_t measured_yaw_angle;
-uint16_t measured_pitch_angle;
+uint16_t measured_yaw_angle;   // range from 0~8191, 0x1FFF
+uint16_t measured_pitch_angle; // range from 0~8191, 0x1FFF
+
+// Beck read from the datasheet, and guess it is the measured current
+// yaw and pitch measured current rx messages from CAN
+int16_t measured_yaw_current;
+int16_t measured_pitch_current;
 
 // yaw and pitch current rx messages from CAN
-uint16_t target_yaw_current;
-uint16_t target_pitch_current;
+int16_t target_yaw_current;
+int16_t target_pitch_current;
 
-// #if PID
-    // Beck read from the datasheet, and guess it is the measured current
-    // yaw and pitch measured current rx messages from CAN
-    uint16_t measured_yaw_current;
-    uint16_t measured_pitch_current;
-// #endif
+
+
 
 /*************************************************************************
                           CAN2_RX0_IRQHandler
