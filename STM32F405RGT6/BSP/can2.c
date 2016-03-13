@@ -149,18 +149,18 @@ float target_yaw_angle;
 
 
 // yaw and pitch angle rx messages from CAN
-uint16_t temp_yaw_angle;
+uint16_t measured_yaw_angle;
 uint16_t measured_pitch_angle;
 
 // yaw and pitch current rx messages from CAN
-uint16_t temp_yaw_current;
-uint16_t temp_pitch_current;
+uint16_t target_yaw_current;
+uint16_t target_pitch_current;
 
 // #if PID
     // Beck read from the datasheet, and guess it is the measured current
     // yaw and pitch measured current rx messages from CAN
-    uint16_t measure_yaw_current;
-    uint16_t measure_pitch_current;
+    uint16_t measured_yaw_current;
+    uint16_t measured_pitch_current;
 // #endif
 
 /*************************************************************************
@@ -197,17 +197,17 @@ void CAN2_RX0_IRQHandler(void)
             uint16_t yaw_data4 = rx_message.Data[4];
             uint16_t yaw_data5 = rx_message.Data[5];
 
-            temp_yaw_angle = (yaw_data0)<<8|(yaw_data1);
-            temp_yaw_current = (yaw_data4)<<8|(yaw_data5);
+            measured_yaw_angle = (yaw_data0)<<8|(yaw_data1);
+            target_yaw_current = (yaw_data4)<<8|(yaw_data5);
 
 
 
 
             // normalize angle range since default angle range is werid
-            if(temp_yaw_angle > 6060 && temp_yaw_angle < 8200) {
-                temp_yaw_angle = temp_yaw_angle - 6060;
+            if(measured_yaw_angle > 6060 && measured_yaw_angle < 8200) {
+                measured_yaw_angle = measured_yaw_angle - 6060;
             } else {
-                temp_yaw_angle = temp_yaw_angle + 2130;
+                measured_yaw_angle = measured_yaw_angle + 2130;
             }
         }
 
@@ -234,19 +234,19 @@ void CAN2_RX0_IRQHandler(void)
 
             uint16_t pitch_data2 = rx_message.Data[2];
             uint16_t pitch_data3 = rx_message.Data[3];
-            measure_pitch_current = (pitch_data2)<<8|(pitch_data3);
+            measured_pitch_current = (pitch_data2)<<8|(pitch_data3);
 
             measured_pitch_angle = (pitch_data0)<<8|(pitch_data1);
 
-            temp_pitch_current = (pitch_data4)<<8|(pitch_data5);
+            target_pitch_current = (pitch_data4)<<8|(pitch_data5);
 
             #if PID
                 uint16_t pitch_data2 = rx_message.Data[2];
                 uint16_t pitch_data3 = rx_message.Data[3];
-                measure_pitch_current = (pitch_data2)<<8|(pitch_data3);
+                measured_pitch_current = (pitch_data2)<<8|(pitch_data3);
                 // printf("Pitch angle: %i", measured_pitch_angle);
-                // printf("Pitch current measured?: %i", measure_pitch_current);
-                // printf("Pitch current: %i", temp_pitch_current);
+                // printf("Pitch current measured?: %i", measured_pitch_current);
+                // printf("Pitch current: %i", target_pitch_current);
             #endif
         }
 
@@ -258,11 +258,11 @@ void CAN2_RX0_IRQHandler(void)
         if(rx_message.StdId == 0x401)
         {
             gyro_ok_flag = 1;
-            temp_yaw_angle = (int32_t)(rx_message.Data[0]<<24)|(int32_t)(rx_message.Data[1]<<16)
+            measured_yaw_angle = (int32_t)(rx_message.Data[0]<<24)|(int32_t)(rx_message.Data[1]<<16)
             | (int32_t)(rx_message.Data[2]<<8) | (int32_t)(rx_message.Data[3]);
 
             last_yaw_angle = this_yaw_angle;
-            this_yaw_angle = -((float)temp_yaw_angle*0.01);
+            this_yaw_angle = -((float)measured_yaw_angle*0.01);
         }
 
         //Remote controller, mouse, and turret channel 遥控器 鼠标  云台通道

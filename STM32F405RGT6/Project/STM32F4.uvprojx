@@ -591,6 +591,16 @@
               <FileType>5</FileType>
               <FilePath>..\BSP\pwm.h</FilePath>
             </File>
+            <File>
+              <FileName>usart3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\usart3.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart3.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\BSP\usart3.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
