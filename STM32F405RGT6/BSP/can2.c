@@ -1,15 +1,18 @@
 #include "can2.h"
 #include "led.h"
-#include "usart3.h"
-
+#include "usart3.h" 
 ///Turns on Beck's trying for PID controller
 #define PID true
+
+extern RC_Ctl_t RC_Ctl;
+uint8_t Remote_On = 0;
 
 /*----CAN2_TX-----PB13----*/
 /*----CAN2_RX-----PB12----*/
 
 void CAN2_Configuration(void)
 {
+
     CAN_InitTypeDef        can;
     CAN_FilterInitTypeDef  can_filter;
     GPIO_InitTypeDef       gpio;
@@ -20,7 +23,7 @@ void CAN2_Configuration(void)
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN2, ENABLE);
 
     GPIO_PinAFConfig(GPIOB, GPIO_PinSource12, GPIO_AF_CAN2);
-    GPIO_PinAFConfig(GPIOB, GPIO_PinSource13, GPIO_AF_CAN2);
+    GPIO_PinAFConfig(GPIOB, GPIO_PinSource13, GPIO_AF_CAN2); 
 
     gpio.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13 ;
     gpio.GPIO_Mode = GPIO_Mode_AF;
@@ -36,18 +39,18 @@ void CAN2_Configuration(void)
     CAN_StructInit(&can);
 
     can.CAN_TTCM = DISABLE;
-    can.CAN_ABOM = DISABLE;
-    can.CAN_AWUM = DISABLE;
-    can.CAN_NART = DISABLE;
-    can.CAN_RFLM = DISABLE;
-    can.CAN_TXFP = ENABLE;
-    can.CAN_Mode = CAN_Mode_Normal;
+    can.CAN_ABOM = DISABLE;    
+    can.CAN_AWUM = DISABLE;    
+    can.CAN_NART = DISABLE;    
+    can.CAN_RFLM = DISABLE;    
+    can.CAN_TXFP = ENABLE;     
+    can.CAN_Mode = CAN_Mode_Normal; 
     can.CAN_SJW  = CAN_SJW_1tq;
     can.CAN_BS1 = CAN_BS1_9tq;
     can.CAN_BS2 = CAN_BS2_4tq;
     can.CAN_Prescaler = 3;   //CAN BaudRate 42/(1+9+4)/3=1Mbps
     CAN_Init(CAN2, &can);
-
+    
     can_filter.CAN_FilterNumber=14;
     can_filter.CAN_FilterMode=CAN_FilterMode_IdMask;
     can_filter.CAN_FilterScale=CAN_FilterScale_32bit;
@@ -58,19 +61,19 @@ void CAN2_Configuration(void)
     can_filter.CAN_FilterFIFOAssignment=0;//the message which pass the filter save in fifo0
     can_filter.CAN_FilterActivation=ENABLE;
     CAN_FilterInit(&can_filter);
-
+    
     CAN_ITConfig(CAN2,CAN_IT_FMP0,ENABLE);
 }
 
 void GYRO_RST(void)
 {
     CanTxMsg tx_message;
-
+    
     tx_message.StdId = 0x404;
     tx_message.IDE = CAN_Id_Standard;
     tx_message.RTR = CAN_RTR_Data;
     tx_message.DLC = 0x08;
-
+    
     tx_message.Data[0] = 0x00;
     tx_message.Data[1] = 0x01;
     tx_message.Data[2] = 0x02;
@@ -79,20 +82,20 @@ void GYRO_RST(void)
     tx_message.Data[5] = 0x05;
     tx_message.Data[6] = 0x06;
     tx_message.Data[7] = 0x07;
-
+    
     CAN_Transmit(CAN2,&tx_message);
 }
 
 void Encoder_sent(float encoder_angle)
 {
     CanTxMsg tx_message;
-
+    
     tx_message.StdId = 0x601;
     tx_message.IDE = CAN_Id_Standard;
     tx_message.RTR = CAN_RTR_Data;
     tx_message.DLC = 0x08;
-
-    encoder_angle = encoder_angle * 100.0;
+    
+    encoder_angle = encoder_angle * 100.0; 
     tx_message.Data[0] = (uint8_t)((int32_t)encoder_angle >>24);
     tx_message.Data[1] = (uint8_t)((int32_t)encoder_angle >>16);
     tx_message.Data[2] = (uint8_t)((int32_t)encoder_angle >>8);
@@ -101,19 +104,19 @@ void Encoder_sent(float encoder_angle)
     tx_message.Data[5] = 0x00;
     tx_message.Data[6] = 0x00;
     tx_message.Data[7] = 0x00;
-
+    
     CAN_Transmit(CAN2,&tx_message);
 }
 
 void Radio_Sent(const uint16_t * radio_channel)
 {
     CanTxMsg tx_message;
-
+    
     tx_message.StdId = 0x402;
     tx_message.DLC = 0x08;
     tx_message.RTR = CAN_RTR_Data;
     tx_message.IDE = CAN_Id_Standard;
-
+    
     tx_message.Data[0] = (uint8_t)(*(radio_channel+2)>>8);
     tx_message.Data[1] = (uint8_t)(*(radio_channel+2));
     tx_message.Data[2] = (uint8_t)(*(radio_channel+6)>>8);
@@ -122,7 +125,7 @@ void Radio_Sent(const uint16_t * radio_channel)
     tx_message.Data[5] = (uint8_t)(*(radio_channel+5));
     tx_message.Data[6] = (uint8_t)(*(radio_channel+7)>>8);
     tx_message.Data[7] = (uint8_t)(*(radio_channel+7));
-
+    
     CAN_Transmit(CAN2,&tx_message);
 }
 
@@ -147,7 +150,6 @@ uint8_t ShootFlag=0;
 float target_pitch_angle;
 float target_yaw_angle;
 
-
 // yaw and pitch angle rx messages from CAN
 uint16_t measured_yaw_angle;   // range from 0~8191, 0x1FFF
 uint16_t measured_pitch_angle; // range from 0~8191, 0x1FFF
@@ -161,9 +163,6 @@ int16_t measured_pitch_current;
 int16_t target_yaw_current;
 int16_t target_pitch_current;
 
-
-
-
 /*************************************************************************
                           CAN2_RX0_IRQHandler
 Description: Interrupt receive for chassis CAN bus data and single axis gyroscope
@@ -172,7 +171,7 @@ Description: Interrupt receive for chassis CAN bus data and single axis gyroscop
 void CAN2_RX0_IRQHandler(void)
 {
     CanRxMsg rx_message;
-    if (CAN_GetITStatus(CAN2,CAN_IT_FMP0)!= RESET)
+    if (CAN_GetITStatus(CAN2,CAN_IT_FMP0)!= RESET) 
     {
        CAN_ClearITPendingBit(CAN2, CAN_IT_FMP0);
        CAN_Receive(CAN2, CAN_FIFO0, &rx_message);
@@ -183,14 +182,14 @@ void CAN2_RX0_IRQHandler(void)
         // around 4770 is left-most yaw position
         // data 0 and 1 measure angle
 
-        // data 4 and 5 measures what current you are tx to motors
+        // data 4 and 5 measures what current you are tx to motors 
         // data 4 and 5 not same as current tx value
         // -1000 current value = 27852 (yaw_data4)<<8|(yaw_data5) value
         // -750 current value = 24305 (yaw_data4)<<8|(yaw_data5) value
         // -500 current value = 16630 (yaw_data4)<<8|(yaw_data5) value
         // pitch has same current to (data4<<8)|(data5) conversion
         if(rx_message.StdId == 0x205)
-        {
+        { 
 
             // construct message from data[0] and data[1]
             uint16_t yaw_data0 = rx_message.Data[0];
@@ -216,17 +215,17 @@ void CAN2_RX0_IRQHandler(void)
         /************ PITCH ************/
         // pitch angle range is [around 3520, around 4500]
         // around 3520 is highest pitch position
-        // around 4500 is lowest pitch position
+        // around 4500 is lowest pitch position  
         // data 0 and 1 measure angle
 
-        // data 4 and 5 measures what current you are tx to motors
+        // data 4 and 5 measures what current you are tx to motors 
         // data 4 and 5 not same as current tx value
         // -1000 current value = 27852 (pitch_data4)<<8|(pitch_data5) value
         // -750 current value = 24305 (pitch_data4)<<8|(pitch_data5) value
         // -500 current value = 16630 (pitch_data4)<<8|(pitch_data5) value
         // yaw has same current to (data4<<8)|(data5) conversion
         if(rx_message.StdId == 0x206)
-        {
+        { 
             // construct message from data[0] and data[1]
             uint16_t pitch_data0 = rx_message.Data[0];
             uint16_t pitch_data1 = rx_message.Data[1];
@@ -249,51 +248,52 @@ void CAN2_RX0_IRQHandler(void)
                 // printf("Pitch current measured?: %i", measured_pitch_current);
                 // printf("Pitch current: %i", target_pitch_current);
             #endif
+
         }
 
 
-
-        // Rest of IRQHandler is provided old code I didn't use
-
+        
+        // Rest of IRQHandler is provided old code I didn't use     
+        
         //Single axis gyroscope data 单轴陀螺仪数据
         if(rx_message.StdId == 0x401)
-        {
+        { 
             gyro_ok_flag = 1;
-            measured_yaw_angle = (int32_t)(rx_message.Data[0]<<24)|(int32_t)(rx_message.Data[1]<<16)
+            measured_yaw_angle = (int32_t)(rx_message.Data[0]<<24)|(int32_t)(rx_message.Data[1]<<16) 
             | (int32_t)(rx_message.Data[2]<<8) | (int32_t)(rx_message.Data[3]);
-
+            
             last_yaw_angle = this_yaw_angle;
-            this_yaw_angle = -((float)measured_yaw_angle*0.01);
+            this_yaw_angle = -((float)measured_yaw_angle*0.01);         
         }
-
+        
         //Remote controller, mouse, and turret channel 遥控器 鼠标  云台通道
         if(rx_message.StdId == 0x402)
-        {
+        { 
             temp_yaw = (uint16_t)(rx_message.Data[0]<<8)|(uint16_t)(rx_message.Data[1]);
             temp_pitch = (uint16_t)(rx_message.Data[2]<<8)|(uint16_t)(rx_message.Data[3]);
-            shooting_flag = (uint8_t)rx_message.Data[4];
+            shooting_flag = (uint8_t)rx_message.Data[4];   
             mode_flag = (uint8_t)rx_message.Data[6];//S2 switch
-
-            //for mouse
+            
+            //for mouse            
             if(shooting_flag == 1)              //cyq: trigger shoot
-            {
+            {   
                 if(ShootFlag == 1)
-                {
-                    Motor_PWM_Set(MOTOR_NUM1,-1000);
+                {                       
+                    Motor_PWM_Set(MOTOR_NUM1,-1000);    
                     ShootFlag=0;
-                }
+                }                  
             }
-            else
-            {
+            else 
+            {         
                 if(ShootFlag == 0)
-                {
+                {   
                     ShootFlag=1;
-                }
+                }                                
             }
             if (mode_flag == 1)
             {
                 target_pitch_angle += (temp_pitch - 1024)/66.0;//remote control
-                target_yaw_angle += (temp_yaw - 1024)/600.0 ;//cyq
+                target_yaw_angle += (temp_yaw - 1024)/600.0 ;//cyq                                
             }
             else
             {
@@ -308,7 +308,7 @@ void CAN2_RX0_IRQHandler(void)
             {
                 target_pitch_angle = -pitch_max;
             }
-        }
+        }  
     }
 }
 
@@ -322,11 +322,11 @@ Description: Motor_Current_Send(int Motor_ID, int current)
 *************************************************************************/
 
 // global variables to store current state in every motor
-uint16_t motor_yaw_cur;
-uint16_t motor_pitch_cur;
-uint16_t motor_front_right_cur;
-uint16_t motor_front_left_cur;
-uint16_t motor_back_left_cur;
+uint16_t motor_yaw_cur;                 
+uint16_t motor_pitch_cur;           
+uint16_t motor_front_right_cur;     
+uint16_t motor_front_left_cur;      
+uint16_t motor_back_left_cur;       
 uint16_t motor_back_right_cur;
 
 // different CAN messages for pitch/yaw and wheel motors
@@ -371,30 +371,116 @@ void Set_PitchYaw_Current() {
 /************ For Red C Motor
 // prepares whole 0x200 wheel CAN message for tx
 void Set_Wheels_Current() {
-    tx_wheels_message.Data[0] = motor_front_left_cur & 0xFF;
-    tx_wheels_message.Data[1] = motor_front_left_cur >> 8;
-    tx_wheels_message.Data[2] = motor_back_left_cur & 0xFF;
-    tx_wheels_message.Data[3] = motor_back_left_cur >> 8;
-    tx_wheels_message.Data[4] = motor_front_right_cur & 0xFF;
-    tx_wheels_message.Data[5] = motor_front_right_cur >> 8;
-    tx_wheels_message.Data[6] = motor_back_right_cur & 0xFF;
-    tx_wheels_message.Data[7] = motor_back_right_cur >> 8;
+    tx_wheels_message.Data[0] = motor_front_left_cur >> 8;
+    tx_wheels_message.Data[1] = motor_front_left_cur & 0xFF;
+    tx_wheels_message.Data[2] = motor_back_left_cur >> 8;
+    tx_wheels_message.Data[3] = motor_back_left_cur & 0xFF;
+    tx_wheels_message.Data[4] = motor_front_right_cur >> 8;
+    tx_wheels_message.Data[5] = motor_front_right_cur & 0xFF;
+    tx_wheels_message.Data[6] = motor_back_right_cur >> 8;
+    tx_wheels_message.Data[7] = motor_back_right_cur & 0xFF;
 }
 */
 
 //*********** For Blue Motor
 // prepares whole 0x200 wheel CAN message for tx
-// Still small-endian
+/*
+Change, same as what Beck observed for pitch/yaw
+*/
 void Set_Wheels_Current() {
-    tx_wheels_message.Data[0] = motor_front_right_cur & 0xFF;
-    tx_wheels_message.Data[1] = motor_front_right_cur >> 8;
-    tx_wheels_message.Data[2] = motor_front_left_cur & 0xFF;
-    tx_wheels_message.Data[3] = motor_front_left_cur >> 8;
-    tx_wheels_message.Data[4] = motor_back_left_cur & 0xFF;
-    tx_wheels_message.Data[5] = motor_back_left_cur >> 8;
-    tx_wheels_message.Data[6] = motor_back_right_cur & 0xFF;
-    tx_wheels_message.Data[7] = motor_back_right_cur >> 8;
+
+    tx_wheels_message.Data[0] = motor_front_right_cur >> 8;
+    tx_wheels_message.Data[1] = motor_front_right_cur & 0xFF;
+    tx_wheels_message.Data[2] = motor_front_left_cur >> 8;
+    tx_wheels_message.Data[3] = motor_front_left_cur & 0xFF;
+    tx_wheels_message.Data[4] = motor_back_left_cur >> 8;
+    tx_wheels_message.Data[5] = motor_back_left_cur & 0xFF;
+    tx_wheels_message.Data[6] = motor_back_right_cur >> 8;
+    tx_wheels_message.Data[7] = motor_back_right_cur & 0xFF;
 }
+
+
+void Remote_Control() {
+            // To see if remote is off or not
+    if (RC_Ctl.rc.ch2 < RC_CH_VALUE_MIN 
+        || RC_Ctl.rc.ch3 < RC_CH_VALUE_MIN
+        ) {
+        Remote_On = 0;
+    } else {
+        Remote_On = 1;
+    }
+
+
+    // // For Blue Motor Stick
+    if ((RC_Ctl.rc.ch2 == RC_CH_VALUE_OFFSET
+        && RC_Ctl.rc.ch3 == RC_CH_VALUE_OFFSET)
+        || Remote_On == 0) {
+        // LED1_OFF();
+        // LED2_OFF();
+        Motor_Reset_Can_2();
+    } else if(RC_Ctl.rc.ch3 > RC_CH_VALUE_OFFSET) {
+        // LED1_ON();
+        // Forward
+        All_Wheel_Current_Send(0, RC_Ctl.rc.ch3);
+    } else if (RC_Ctl.rc.ch3 < RC_CH_VALUE_OFFSET) {
+        // LED1_ON();
+        //Backward
+        All_Wheel_Current_Send(1, RC_Ctl.rc.ch3);
+    } else if (RC_Ctl.rc.ch2 > RC_CH_VALUE_OFFSET) {
+        // LED2_ON();
+        //Right
+        All_Wheel_Current_Send(2, RC_Ctl.rc.ch2);
+    } else if (RC_Ctl.rc.ch2 < RC_CH_VALUE_OFFSET) {
+        // LED2_ON();
+        //Left
+        All_Wheel_Current_Send(3, RC_Ctl.rc.ch2);
+    } 
+}
+
+// uint16_t motor_front_right_cur;     
+// uint16_t motor_front_left_cur;      
+// uint16_t motor_back_left_cur;       
+// uint16_t motor_back_right_cur;
+
+// *********** For Blue Motor *************//
+// takes in an integer from 0 to 3 that specifies the direction
+// 0: forward, 1: backward, 2: right, 3: left
+// and sends current to all motors at the same time
+void All_Wheel_Current_Send(int direction, int current) {
+    if(direction == 0) {
+        //forward
+        motor_front_right_cur = -1 * Pos_Curr_Eqn(current);
+        motor_back_right_cur = -1 * Pos_Curr_Eqn(current);
+        motor_front_left_cur = Pos_Curr_Eqn(current);
+        motor_back_left_cur = Pos_Curr_Eqn(current);
+    } else if(direction == 1) {
+        //backward
+        motor_front_right_cur = Neg_Curr_Eqn(current);
+        motor_back_right_cur = Neg_Curr_Eqn(current);
+        motor_front_left_cur = -1 * Neg_Curr_Eqn(current);
+        motor_back_left_cur = -1 * Neg_Curr_Eqn(current);
+    } else if(direction == 2) {
+        //right
+        motor_front_right_cur = -1 * Pos_Curr_Eqn(current);
+        motor_back_right_cur = -1 * Pos_Curr_Eqn(current);
+        motor_front_left_cur = -1 * Pos_Curr_Eqn(current);
+        motor_back_left_cur = -1 * Pos_Curr_Eqn(current);
+    } else if(direction == 3) {
+        //left
+        motor_front_right_cur = Neg_Curr_Eqn(current);
+        motor_back_right_cur = Neg_Curr_Eqn(current);
+        motor_front_left_cur = Neg_Curr_Eqn(current);
+        motor_back_left_cur = Neg_Curr_Eqn(current);
+
+    }
+    Wheels_Address_Setup();
+    Set_Wheels_Current();
+    CAN_Transmit(CAN2,&tx_wheels_message);
+}
+
+
+
+
 
 // Sends specified current value to motor specified by Motor_ID
 // Motor_ID mapping is in can2.h
@@ -420,22 +506,22 @@ void Motor_Current_Send(int Motor_ID, int current) {
     ************** For Red C Motor **************
         switch (Motor_ID)
     {
-        case MOTOR_YAW:         PitchYaw_Address_Setup();
+        case MOTOR_YAW:         PitchYaw_Address_Setup(); 
                                 motor_yaw_cur = current;
                                 Set_PitchYaw_Current();
                                 CAN_Transmit(CAN2,&tx_pitchyaw_message);
                                 Wheels_Address_Setup();
                                 Set_Wheels_Current();
                                 CAN_Transmit(CAN2,&tx_wheels_message); break; //If Motor1 is chosen, Frame ID  is 0x14 under Speed_LOCATION Mode
-
-        case MOTOR_PITCH:       PitchYaw_Address_Setup();
+        
+        case MOTOR_PITCH:       PitchYaw_Address_Setup(); 
                                 motor_pitch_cur = current;
                                 Set_PitchYaw_Current();
                                 CAN_Transmit(CAN2,&tx_pitchyaw_message);
                                 Wheels_Address_Setup();
                                 Set_Wheels_Current();
                                 CAN_Transmit(CAN2,&tx_wheels_message); break; //If Motor2 is chosen, Frame ID  is 0x24 under Speed_LOCATION Mode
-
+        
         case MOTOR_FRONT_LEFT: Wheels_Address_Setup();
                                 motor_front_left_cur = current;
                                 Set_Wheels_Current();
@@ -443,7 +529,7 @@ void Motor_Current_Send(int Motor_ID, int current) {
                                 PitchYaw_Address_Setup();
                                 Set_PitchYaw_Current();
                                 CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor3 is chosen, Frame ID  is 0x34 under Speed_LOCATION Mode
-
+        
         case MOTOR_BACK_LEFT:  Wheels_Address_Setup();
                                 motor_back_left_cur = current;
                                 Set_Wheels_Current();
@@ -451,7 +537,7 @@ void Motor_Current_Send(int Motor_ID, int current) {
                                 PitchYaw_Address_Setup();
                                 Set_PitchYaw_Current();
                                 CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor4 is chosen, Frame ID  is 0x44 under Speed_LOCATION Mode
-
+        
         case MOTOR_FRONT_RIGHT:   Wheels_Address_Setup();
                                 motor_front_right_cur = current;
                                 Set_Wheels_Current();
@@ -459,7 +545,7 @@ void Motor_Current_Send(int Motor_ID, int current) {
                                 PitchYaw_Address_Setup();
                                 Set_PitchYaw_Current();
                                 CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor5 is chosen, Frame ID  is 0x54 under Speed_LOCATION Mode
-
+        
         case MOTOR_BACK_RIGHT:  Wheels_Address_Setup();
                                 motor_back_right_cur = current;
                                 Set_Wheels_Current();
@@ -475,22 +561,22 @@ void Motor_Current_Send(int Motor_ID, int current) {
     //************** For Blue C Motor **************
         switch (Motor_ID)
     {
-        case MOTOR_YAW:         PitchYaw_Address_Setup();
+        case MOTOR_YAW:         PitchYaw_Address_Setup(); 
                                 motor_yaw_cur = current;
                                 Set_PitchYaw_Current();
                                 CAN_Transmit(CAN2,&tx_pitchyaw_message);
                                 Wheels_Address_Setup();
                                 Set_Wheels_Current();
                                 CAN_Transmit(CAN2,&tx_wheels_message); break; //If Motor1 is chosen, Frame ID  is 0x14 under Speed_LOCATION Mode
-
-        case MOTOR_PITCH:       PitchYaw_Address_Setup();
+        
+        case MOTOR_PITCH:       PitchYaw_Address_Setup(); 
                                 motor_pitch_cur = current;
                                 Set_PitchYaw_Current();
                                 CAN_Transmit(CAN2,&tx_pitchyaw_message);
                                 Wheels_Address_Setup();
                                 Set_Wheels_Current();
                                 CAN_Transmit(CAN2,&tx_wheels_message); break; //If Motor2 is chosen, Frame ID  is 0x24 under Speed_LOCATION Mode
-
+        
         case MOTOR_FRONT_RIGHT: Wheels_Address_Setup();
                                 motor_front_right_cur = current;
                                 Set_Wheels_Current();
@@ -498,7 +584,7 @@ void Motor_Current_Send(int Motor_ID, int current) {
                                 PitchYaw_Address_Setup();
                                 Set_PitchYaw_Current();
                                 CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor3 is chosen, Frame ID  is 0x34 under Speed_LOCATION Mode
-
+        
         case MOTOR_FRONT_LEFT:  Wheels_Address_Setup();
                                 motor_front_left_cur = current;
                                 Set_Wheels_Current();
@@ -506,7 +592,7 @@ void Motor_Current_Send(int Motor_ID, int current) {
                                 PitchYaw_Address_Setup();
                                 Set_PitchYaw_Current();
                                 CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor4 is chosen, Frame ID  is 0x44 under Speed_LOCATION Mode
-
+        
         case MOTOR_BACK_LEFT:   Wheels_Address_Setup();
                                 motor_back_left_cur = current;
                                 Set_Wheels_Current();
@@ -514,7 +600,7 @@ void Motor_Current_Send(int Motor_ID, int current) {
                                 PitchYaw_Address_Setup();
                                 Set_PitchYaw_Current();
                                 CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor5 is chosen, Frame ID  is 0x54 under Speed_LOCATION Mode
-
+        
         case MOTOR_BACK_RIGHT:  Wheels_Address_Setup();
                                 motor_back_right_cur = current;
                                 Set_Wheels_Current();
@@ -540,12 +626,12 @@ void Motor_Reset_Can_2(void) {
 
 
     CanTxMsg tx_message1;
-    CanTxMsg tx_message2;
-    motor_yaw_cur = 0;
-    motor_pitch_cur = 0;
-    motor_front_right_cur = 0;
-    motor_front_left_cur = 0;
-    motor_back_left_cur = 0;
+    CanTxMsg tx_message2;  
+    motor_yaw_cur = 0;                 
+    motor_pitch_cur = 0;          
+    motor_front_right_cur = 0;             
+    motor_front_left_cur = 0;     
+    motor_back_left_cur = 0;      
     motor_back_right_cur = 0;
 
 
@@ -582,13 +668,13 @@ void Motor_Reset_Can_2(void) {
     positive values -> counter clockwise rotation
     negative values -> clockwise rotation
     I tested:
-    +500 to right front wheel. +500 = 0xF401z in little endian so:
+    +500 to right front wheel. +500 = 0xF401z in little endian so: 
     tx_message1.Data[0] = 0xF4;
     tx_message1.Data[1] = 0x01;
-    -500 to right front wheel. -500 = 0x0CFE in little endian so::
+    -500 to right front wheel. -500 = 0x0CFE in little endian so:: 
     tx_message1.Data[0] = 0x0C;
     tx_message1.Data[1] = 0xFE;
-*/
+*/  
     tx_message1.Data[0] = 0x00;
     tx_message1.Data[1] = 0x00;
     tx_message1.Data[2] = 0x00;
@@ -604,18 +690,18 @@ void Motor_Reset_Can_2(void) {
 *******************************/
 
 /*
-
-    tx_message.StdId = 0x1FF for pitch and yaw
+    
+    tx_message.StdId = 0x1FF for pitch and yaw    
     Data 0 and 1 -> yaw (side to side)
     Data 2 and 3 -> pitch (up, down)
-
+   
     data is sent in little endian
     positive values -> yaw right turn        pitch up
     negative values -> yaw left turn        pitch down
-    +1000 to yaw. +1000 = 0xE803 in little endian so:
+    +1000 to yaw. +1000 = 0xE803 in little endian so: 
     tx_message1.Data[0] = 0xE8;
     tx_message1.Data[1] = 0x03;
-    -1000 to yaw. -1000 = 0x18FC in little endian so::
+    -1000 to yaw. -1000 = 0x18FC in little endian so:: 
     tx_message1.Data[0] = 0x18;
     tx_message1.Data[1] = 0xFC;
 */
@@ -638,7 +724,7 @@ void Motor_ManSet_Can_2(void) {
 
 
     CanTxMsg tx_message1;
-    CanTxMsg tx_message2;
+    CanTxMsg tx_message2;  
 
     tx_message1.StdId = 0x200;
     tx_message1.DLC = 0x08;
@@ -656,7 +742,7 @@ void Motor_ManSet_Can_2(void) {
 
 /*
     tx_message.StdId = 0x200 for wheels
-
+    
     ************** For Red C Motor **************
     Data 0 and 1 -> Front left wheel            Motor_ID 3
     Data 2 and 3 -> back left wheel             Motor_ID 4
@@ -673,14 +759,13 @@ void Motor_ManSet_Can_2(void) {
     positive values -> counter clockwise rotation
     negative values -> clockwise rotation
     I tested:
-    +500 to right front wheel. +500 = 0xF401z in little endian so:
+    +500 to right front wheel. +500 = 0xF401z in little endian so: 
     tx_message1.Data[0] = 0xF4;
     tx_message1.Data[1] = 0x01;
-    -500 to right front wheel. -500 = 0x0CFE in little endian so::
+    -500 to right front wheel. -500 = 0x0CFE in little endian so:: 
     tx_message1.Data[0] = 0x0C;
     tx_message1.Data[1] = 0xFE;
-
-*/
+*/  
     tx_message1.Data[0] = 0xF4;
     tx_message1.Data[1] = 0x01;
 
@@ -694,30 +779,29 @@ void Motor_ManSet_Can_2(void) {
     tx_message1.Data[7] = 0xFE;
 
 
-
 /*****************************
     tx_message2 Controls pitch and yaw
 *******************************/
 
 /*
-
-    tx_message.StdId = 0x1FF for pitch and yaw
+    
+    tx_message.StdId = 0x1FF for pitch and yaw    
     Data 0 and 1 -> yaw (side to side)
     Data 2 and 3 -> pitch (up, down)
-
+   
     data is sent in little endian
     positive values -> yaw right turn        pitch up
     negative values -> yaw left turn        pitch down
-    +1000 to yaw. +1000 = 0xE803 in little endian so:
+    +1000 to yaw. +1000 = 0xE803 in little endian so: 
     tx_message1.Data[0] = 0xE8;
     tx_message1.Data[1] = 0x03;
-    -1000 to yaw. -1000 = 0x18FC in little endian so::
+    -1000 to yaw. -1000 = 0x18FC in little endian so:: 
     tx_message1.Data[0] = 0x18;
     tx_message1.Data[1] = 0xFC;
 */
     tx_message2.Data[0] = 0x00;
     tx_message2.Data[1] = 0x00;
-    tx_message2.Data[2] = 0x64;
+    tx_message2.Data[2] = 0x00;
     tx_message2.Data[3] = 0x00;
     tx_message2.Data[4] = 0x00;
     tx_message2.Data[5] = 0x00;
@@ -726,3 +810,4 @@ void Motor_ManSet_Can_2(void) {
 
     // CAN_Transmit(CAN2,&tx_message1);
 }
+
