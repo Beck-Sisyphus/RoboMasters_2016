@@ -5,6 +5,7 @@
 #define PID true
 
 extern RC_Ctl_t RC_Ctl;
+extern arduino_data data_usart_3;
 uint8_t Remote_On = 0;
 
 /*----CAN2_TX-----PB13----*/
@@ -399,7 +400,7 @@ void Set_Wheels_Current() {
     tx_wheels_message.Data[7] = motor_back_right_cur & 0xFF;
 }
 
-
+// Enables cannon to be driven with remote
 void Remote_Control() {
             // To see if remote is off or not
     if (RC_Ctl.rc.ch2 < RC_CH_VALUE_MIN 
@@ -415,20 +416,28 @@ void Remote_Control() {
     if ((RC_Ctl.rc.ch2 == RC_CH_VALUE_OFFSET
         && RC_Ctl.rc.ch3 == RC_CH_VALUE_OFFSET)
         || Remote_On == 0) {
-        // LED1_OFF();
-        // LED2_OFF();
         Motor_Reset_Can_2();
+    }  else if (RC_Ctl.rc.ch3 > RC_CH_VALUE_OFFSET && RC_Ctl.rc.ch2 < RC_CH_VALUE_OFFSET) {
+        //Diagonal up left   
+        All_Wheel_Current_Send(4, RC_Ctl.rc.ch3);         
+    } else if (RC_Ctl.rc.ch3 > RC_CH_VALUE_OFFSET && RC_Ctl.rc.ch2 > RC_CH_VALUE_OFFSET) {
+        //Diagonal up right   
+        All_Wheel_Current_Send(5, RC_Ctl.rc.ch3);        
+    } else if (RC_Ctl.rc.ch3 < RC_CH_VALUE_OFFSET && RC_Ctl.rc.ch2 < RC_CH_VALUE_OFFSET) {
+        //Diagonal down left   
+        All_Wheel_Current_Send(6, RC_Ctl.rc.ch3);         
+    } else if (RC_Ctl.rc.ch3 < RC_CH_VALUE_OFFSET && RC_Ctl.rc.ch2 > RC_CH_VALUE_OFFSET) {
+        //Diagonal down right  
+        All_Wheel_Current_Send(7, RC_Ctl.rc.ch3);          
     } else if(RC_Ctl.rc.ch3 > RC_CH_VALUE_OFFSET) {
-        // LED1_ON();
         // Forward
         All_Wheel_Current_Send(0, RC_Ctl.rc.ch3);
     } else if (RC_Ctl.rc.ch3 < RC_CH_VALUE_OFFSET) {
-        // LED1_ON();
         //Backward
         All_Wheel_Current_Send(1, RC_Ctl.rc.ch3);
     } else if (RC_Ctl.rc.ch2 > RC_CH_VALUE_OFFSET) {
         // LED2_ON();
-        //Right
+        // Right
         All_Wheel_Current_Send(2, RC_Ctl.rc.ch2);
     } else if (RC_Ctl.rc.ch2 < RC_CH_VALUE_OFFSET) {
         // LED2_ON();
@@ -437,14 +446,10 @@ void Remote_Control() {
     } 
 }
 
-// uint16_t motor_front_right_cur;     
-// uint16_t motor_front_left_cur;      
-// uint16_t motor_back_left_cur;       
-// uint16_t motor_back_right_cur;
-
 // *********** For Blue Motor *************//
-// takes in an integer from 0 to 3 that specifies the direction
+// takes in an integer from 0 to 7 that specifies the direction
 // 0: forward, 1: backward, 2: right, 3: left
+// 4: upleft, 5: up right, 6: down left, 7: down right
 // and sends current to all motors at the same time
 void All_Wheel_Current_Send(int direction, int current) {
     if(direction == 0) {
@@ -455,28 +460,82 @@ void All_Wheel_Current_Send(int direction, int current) {
         motor_back_left_cur = Pos_Curr_Eqn(current);
     } else if(direction == 1) {
         //backward
-        motor_front_right_cur = Neg_Curr_Eqn(current);
-        motor_back_right_cur = Neg_Curr_Eqn(current);
-        motor_front_left_cur = -1 * Neg_Curr_Eqn(current);
-        motor_back_left_cur = -1 * Neg_Curr_Eqn(current);
-    } else if(direction == 2) {
-        //right
-        motor_front_right_cur = -1 * Pos_Curr_Eqn(current);
-        motor_back_right_cur = -1 * Pos_Curr_Eqn(current);
-        motor_front_left_cur = -1 * Pos_Curr_Eqn(current);
-        motor_back_left_cur = -1 * Pos_Curr_Eqn(current);
-    } else if(direction == 3) {
-        //left
-        motor_front_right_cur = Neg_Curr_Eqn(current);
-        motor_back_right_cur = Neg_Curr_Eqn(current);
+        motor_front_right_cur = -1 * Neg_Curr_Eqn(current);
+        motor_back_right_cur = -1 * Neg_Curr_Eqn(current);
         motor_front_left_cur = Neg_Curr_Eqn(current);
         motor_back_left_cur = Neg_Curr_Eqn(current);
+    } else if(direction == 2) {
+        //right
+        motor_front_right_cur = -1 * Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
+        motor_back_right_cur =  -1 * Pos_Curr_Eqn(current);
+        motor_front_left_cur = Pos_Curr_Eqn(current);
+        motor_back_left_cur = Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
 
+    } else if(direction == 3) {
+        //left
+        motor_front_right_cur = -1 * Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
+        motor_back_right_cur = -1 * Neg_Curr_Eqn(current);
+        motor_front_left_cur = Neg_Curr_Eqn(current);
+        motor_back_left_cur = Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
+    } else if(direction == 5) {
+        //up right
+        motor_front_right_cur = 0; //
+        motor_back_right_cur =  -1 * Pos_Curr_Eqn(current);
+        motor_front_left_cur = Pos_Curr_Eqn(current);
+        motor_back_left_cur = 0; //
+    } else if(direction == 4) {
+        //up left
+        motor_front_right_cur = Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
+        motor_back_right_cur = 0;
+        motor_front_left_cur = 0;
+        motor_back_left_cur = -1 * Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
+
+    } else if(direction == 7) {
+        //down right
+        motor_front_right_cur = Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
+        motor_back_right_cur =  0;
+        motor_front_left_cur = 0;
+        motor_back_left_cur = -1 * Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
+    } else if(direction == 6) {
+        //down left
+        motor_front_right_cur = 0; //
+        motor_back_right_cur = -1 * Neg_Curr_Eqn(current);
+        motor_front_left_cur = Neg_Curr_Eqn(current);
+        motor_back_left_cur = 0; //
     }
+
     Wheels_Address_Setup();
     Set_Wheels_Current();
     CAN_Transmit(CAN2,&tx_wheels_message);
 }
+
+    // For rotating left and right
+    // if(direction == 0) {
+    //     //forward
+    //     motor_front_right_cur = -1 * Pos_Curr_Eqn(current);
+    //     motor_back_right_cur = -1 * Pos_Curr_Eqn(current);
+    //     motor_front_left_cur = Pos_Curr_Eqn(current);
+    //     motor_back_left_cur = Pos_Curr_Eqn(current);
+    // } else if(direction == 1) {
+    //     //backward
+    //     motor_front_right_cur = Neg_Curr_Eqn(current);
+    //     motor_back_right_cur = Neg_Curr_Eqn(current);
+    //     motor_front_left_cur = -1 * Neg_Curr_Eqn(current);
+    //     motor_back_left_cur = -1 * Neg_Curr_Eqn(current);
+    // } else if(direction == 2) {
+    //     //right
+    //     motor_front_right_cur = -1 * Pos_Curr_Eqn(current);
+    //     motor_back_right_cur = -1 * Pos_Curr_Eqn(current);
+    //     motor_front_left_cur = -1 * Pos_Curr_Eqn(current);
+    //     motor_back_left_cur = -1 * Pos_Curr_Eqn(current);
+    // } else if(direction == 3) {
+    //     //left
+    //     motor_front_right_cur = Neg_Curr_Eqn(current);
+    //     motor_back_right_cur = Neg_Curr_Eqn(current);
+    //     motor_front_left_cur = Neg_Curr_Eqn(current);
+    //     motor_back_left_cur = Neg_Curr_Eqn(current);
+
+    // }
 
 
 
@@ -810,4 +869,5 @@ void Motor_ManSet_Can_2(void) {
 
     // CAN_Transmit(CAN2,&tx_message1);
 }
+
 
