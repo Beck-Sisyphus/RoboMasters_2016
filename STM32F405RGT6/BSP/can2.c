@@ -402,7 +402,7 @@ void Set_Wheels_Current() {
 
 // Enables cannon to be driven with remote
 void Remote_Control() {
-            // To see if remote is off or not
+    // To see if remote is off or not
     if (RC_Ctl.rc.ch2 < RC_CH_VALUE_MIN 
         || RC_Ctl.rc.ch3 < RC_CH_VALUE_MIN
         ) {
@@ -411,10 +411,11 @@ void Remote_Control() {
         Remote_On = 1;
     }
 
-
     // // For Blue Motor Stick
     if ((RC_Ctl.rc.ch2 == RC_CH_VALUE_OFFSET
-        && RC_Ctl.rc.ch3 == RC_CH_VALUE_OFFSET)
+        && RC_Ctl.rc.ch3 == RC_CH_VALUE_OFFSET
+        && RC_Ctl.rc.ch0 == RC_CH_VALUE_OFFSET
+        && RC_Ctl.rc.ch1 == RC_CH_VALUE_OFFSET)
         || Remote_On == 0) {
         Motor_Reset_Can_2();
     }  else if (RC_Ctl.rc.ch3 > RC_CH_VALUE_OFFSET && RC_Ctl.rc.ch2 < RC_CH_VALUE_OFFSET) {
@@ -436,21 +437,33 @@ void Remote_Control() {
         //Backward
         All_Wheel_Current_Send(1, RC_Ctl.rc.ch3);
     } else if (RC_Ctl.rc.ch2 > RC_CH_VALUE_OFFSET) {
-        // LED2_ON();
-        // Right
+        // slide Right
         All_Wheel_Current_Send(2, RC_Ctl.rc.ch2);
     } else if (RC_Ctl.rc.ch2 < RC_CH_VALUE_OFFSET) {
-        // LED2_ON();
-        //Left
+        // slide Left
         All_Wheel_Current_Send(3, RC_Ctl.rc.ch2);
-    } 
+    } else if(RC_Ctl.rc.ch0 < RC_CH_VALUE_OFFSET) {
+        All_Wheel_Current_Send(8, RC_Ctl.rc.ch0);
+    } else if(RC_Ctl.rc.ch0 > RC_CH_VALUE_OFFSET) {
+        All_Wheel_Current_Send(9, RC_Ctl.rc.ch0);
+    }
 }
 
 // *********** For Blue Motor *************//
 // takes in an integer from 0 to 7 that specifies the direction
-// 0: forward, 1: backward, 2: right, 3: left
-// 4: upleft, 5: up right, 6: down left, 7: down right
+// 0: forward
+// 1: backward
+// 2: right
+// 3: left
+// 4: upleft
+// 5: up right
+// 6: down left
+// 7: down right
+// 8: rotate left
+// 9: rotate right
 // and sends current to all motors at the same time
+// left stick for forward, backward; left, right, and diagonal sliding
+// right stick for left and right rotating
 void All_Wheel_Current_Send(int direction, int current) {
     if(direction == 0) {
         //forward
@@ -465,14 +478,14 @@ void All_Wheel_Current_Send(int direction, int current) {
         motor_front_left_cur = Neg_Curr_Eqn(current);
         motor_back_left_cur = Neg_Curr_Eqn(current);
     } else if(direction == 2) {
-        //right
+        //slide right
         motor_front_right_cur = -1 * Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
         motor_back_right_cur =  -1 * Pos_Curr_Eqn(current);
         motor_front_left_cur = Pos_Curr_Eqn(current);
         motor_back_left_cur = Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
 
     } else if(direction == 3) {
-        //left
+        //slide left
         motor_front_right_cur = -1 * Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
         motor_back_right_cur = -1 * Neg_Curr_Eqn(current);
         motor_front_left_cur = Neg_Curr_Eqn(current);
@@ -502,42 +515,24 @@ void All_Wheel_Current_Send(int direction, int current) {
         motor_back_right_cur = -1 * Neg_Curr_Eqn(current);
         motor_front_left_cur = Neg_Curr_Eqn(current);
         motor_back_left_cur = 0; //
+    } else if(direction == 8) {
+        //rotate right
+        motor_front_right_cur = Neg_Curr_Eqn(current);
+        motor_back_right_cur = Neg_Curr_Eqn(current);
+        motor_front_left_cur = Neg_Curr_Eqn(current);
+        motor_back_left_cur = Neg_Curr_Eqn(current);
+    } else if(direction == 9) {
+        //rotate left
+        motor_front_right_cur = Pos_Curr_Eqn(current);
+        motor_back_right_cur = Pos_Curr_Eqn(current);
+        motor_front_left_cur = Pos_Curr_Eqn(current);
+        motor_back_left_cur = Pos_Curr_Eqn(current);
     }
 
     Wheels_Address_Setup();
     Set_Wheels_Current();
     CAN_Transmit(CAN2,&tx_wheels_message);
 }
-
-    // For rotating left and right
-    // if(direction == 0) {
-    //     //forward
-    //     motor_front_right_cur = -1 * Pos_Curr_Eqn(current);
-    //     motor_back_right_cur = -1 * Pos_Curr_Eqn(current);
-    //     motor_front_left_cur = Pos_Curr_Eqn(current);
-    //     motor_back_left_cur = Pos_Curr_Eqn(current);
-    // } else if(direction == 1) {
-    //     //backward
-    //     motor_front_right_cur = Neg_Curr_Eqn(current);
-    //     motor_back_right_cur = Neg_Curr_Eqn(current);
-    //     motor_front_left_cur = -1 * Neg_Curr_Eqn(current);
-    //     motor_back_left_cur = -1 * Neg_Curr_Eqn(current);
-    // } else if(direction == 2) {
-    //     //right
-    //     motor_front_right_cur = -1 * Pos_Curr_Eqn(current);
-    //     motor_back_right_cur = -1 * Pos_Curr_Eqn(current);
-    //     motor_front_left_cur = -1 * Pos_Curr_Eqn(current);
-    //     motor_back_left_cur = -1 * Pos_Curr_Eqn(current);
-    // } else if(direction == 3) {
-    //     //left
-    //     motor_front_right_cur = Neg_Curr_Eqn(current);
-    //     motor_back_right_cur = Neg_Curr_Eqn(current);
-    //     motor_front_left_cur = Neg_Curr_Eqn(current);
-    //     motor_back_left_cur = Neg_Curr_Eqn(current);
-
-    // }
-
-
 
 
 
@@ -623,57 +618,35 @@ void Motor_Current_Send(int Motor_ID, int current) {
         case MOTOR_YAW:         PitchYaw_Address_Setup(); 
                                 motor_yaw_cur = current;
                                 Set_PitchYaw_Current();
-                                CAN_Transmit(CAN2,&tx_pitchyaw_message);
-                                Wheels_Address_Setup();
-                                Set_Wheels_Current();
-                                CAN_Transmit(CAN2,&tx_wheels_message); break; //If Motor1 is chosen, Frame ID  is 0x14 under Speed_LOCATION Mode
+                                CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor1 is chosen, Frame ID  is 0x14 under Speed_LOCATION Mode
         
         case MOTOR_PITCH:       PitchYaw_Address_Setup(); 
                                 motor_pitch_cur = current;
                                 Set_PitchYaw_Current();
-                                CAN_Transmit(CAN2,&tx_pitchyaw_message);
-                                Wheels_Address_Setup();
-                                Set_Wheels_Current();
-                                CAN_Transmit(CAN2,&tx_wheels_message); break; //If Motor2 is chosen, Frame ID  is 0x24 under Speed_LOCATION Mode
+                                CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor2 is chosen, Frame ID  is 0x24 under Speed_LOCATION Mode
         
         case MOTOR_FRONT_RIGHT: Wheels_Address_Setup();
                                 motor_front_right_cur = current;
                                 Set_Wheels_Current();
-                                CAN_Transmit(CAN2,&tx_wheels_message);
-                                PitchYaw_Address_Setup();
-                                Set_PitchYaw_Current();
-                                CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor3 is chosen, Frame ID  is 0x34 under Speed_LOCATION Mode
+                                CAN_Transmit(CAN2,&tx_wheels_message); break; //If Motor3 is chosen, Frame ID  is 0x34 under Speed_LOCATION Mode
         
         case MOTOR_FRONT_LEFT:  Wheels_Address_Setup();
                                 motor_front_left_cur = current;
                                 Set_Wheels_Current();
-                                CAN_Transmit(CAN2,&tx_wheels_message);
-                                PitchYaw_Address_Setup();
-                                Set_PitchYaw_Current();
-                                CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor4 is chosen, Frame ID  is 0x44 under Speed_LOCATION Mode
+                                CAN_Transmit(CAN2,&tx_wheels_message); break; //If Motor4 is chosen, Frame ID  is 0x44 under Speed_LOCATION Mode
         
         case MOTOR_BACK_LEFT:   Wheels_Address_Setup();
                                 motor_back_left_cur = current;
                                 Set_Wheels_Current();
-                                CAN_Transmit(CAN2,&tx_wheels_message);
-                                PitchYaw_Address_Setup();
-                                Set_PitchYaw_Current();
-                                CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor5 is chosen, Frame ID  is 0x54 under Speed_LOCATION Mode
+                                CAN_Transmit(CAN2,&tx_wheels_message); break; //If Motor5 is chosen, Frame ID  is 0x54 under Speed_LOCATION Mode
         
         case MOTOR_BACK_RIGHT:  Wheels_Address_Setup();
                                 motor_back_right_cur = current;
                                 Set_Wheels_Current();
-                                CAN_Transmit(CAN2,&tx_wheels_message);
-                                PitchYaw_Address_Setup();
-                                Set_PitchYaw_Current();
-                                CAN_Transmit(CAN2,&tx_pitchyaw_message); break; //If Motor6 is chosen, Frame ID  is 0x64 under Speed_LOCATION Mode
+                                CAN_Transmit(CAN2,&tx_wheels_message); break; //If Motor6 is chosen, Frame ID  is 0x64 under Speed_LOCATION Mode
 
     }
     delay_ms(1);
-
-    delay_ms(1);
-
-
 }
 
 
