@@ -443,8 +443,10 @@ void Remote_Control() {
         // slide Left
         All_Wheel_Current_Send(3, RC_Ctl.rc.ch2);
     } else if(RC_Ctl.rc.ch0 < RC_CH_VALUE_OFFSET) {
+        // rotate left
         All_Wheel_Current_Send(8, RC_Ctl.rc.ch0);
     } else if(RC_Ctl.rc.ch0 > RC_CH_VALUE_OFFSET) {
+        // rotate right
         All_Wheel_Current_Send(9, RC_Ctl.rc.ch0);
     }
 }
@@ -516,13 +518,13 @@ void All_Wheel_Current_Send(int direction, int current) {
         motor_front_left_cur = Neg_Curr_Eqn(current);
         motor_back_left_cur = 0; //
     } else if(direction == 8) {
-        //rotate right
+        //rotate left
         motor_front_right_cur = Neg_Curr_Eqn(current);
         motor_back_right_cur = Neg_Curr_Eqn(current);
         motor_front_left_cur = Neg_Curr_Eqn(current);
         motor_back_left_cur = Neg_Curr_Eqn(current);
     } else if(direction == 9) {
-        //rotate left
+        //rotate right
         motor_front_right_cur = Pos_Curr_Eqn(current);
         motor_back_right_cur = Pos_Curr_Eqn(current);
         motor_front_left_cur = Pos_Curr_Eqn(current);
