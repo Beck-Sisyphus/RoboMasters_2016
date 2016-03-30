@@ -8,7 +8,7 @@
 #include "usart3.h"
 
 #define pitch_max 15.0
-#define yaw_max 720.0				//cyq:ÔÆÌ¨½Ç¶ÈµÄ·¶Î§
+#define yaw_max 720.0			
 
 /****** For Red motor
 #define MOTOR_YAW 				1
