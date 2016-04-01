@@ -15,42 +15,25 @@ extern uint16_t temp_pitch_angle;
 extern uint16_t temp_yaw_current;
 extern uint16_t temp_pitch_current;
 
-extern uint16_t x1data0;
-extern uint16_t x1data1;
-extern uint16_t x1data2;
-extern uint16_t x1data3;
-extern uint16_t x1data4;
-extern uint16_t x1data5;
-extern uint16_t x1data6;
-extern uint16_t x1data7;
+extern int16_t x101;
+extern int16_t x123;
+extern int16_t x145;
+extern int16_t x167;
 
-extern uint16_t x2data0;
-extern uint16_t x2data1;
-extern uint16_t x2data2;
-extern uint16_t x2data3;
-extern uint16_t x2data4;
-extern uint16_t x2data5;
-extern uint16_t x2data6;
-extern uint16_t x2data7;
+extern int16_t x201;
+extern int16_t x223;
+extern int16_t x245;
+extern int16_t x267;
 
-extern uint16_t x3data0;
-extern uint16_t x3data1;
-extern uint16_t x3data2;
-extern uint16_t x3data3;
-extern uint16_t x3data4;
-extern uint16_t x3data5;
-extern uint16_t x3data6;
-extern uint16_t x3data7;
+extern int16_t x301;
+extern int16_t x323;
+extern int16_t x345;
+extern int16_t x367;
 
-extern uint16_t x4data0;
-extern uint16_t x4data1;
-extern uint16_t x4data2;
-extern uint16_t x4data3;
-extern uint16_t x4data4;
-extern uint16_t x4data5;
-extern uint16_t x4data6;
-extern uint16_t x4data7;
-
+extern int16_t x401;
+extern int16_t x423;
+extern int16_t x445;
+extern int16_t x467;
 
 char greeting[6] = {'H', 'E', 'L', 'L', 'O', '\0'};
 char ay = 'a';
@@ -97,11 +80,50 @@ int main(void)
 
         Remote_Control(); 
 
-        printf("201 %i %i %i %i %i %i %i \n", x1data0, x1data1, x1data2, x1data3, x1data4, x1data5, x1data6, x1data7);
-        printf("202 %i %i %i %i %i %i %i \n", x2data0, x2data1, x2data2, x2data3, x2data4, x2data5, x2data6, x2data7);
-        printf("203 %i %i %i %i %i %i %i \n", x3data0, x3data1, x3data2, x3data3, x3data4, x3data5, x3data6, x3data7);
-        printf("204 %i %i %i %i %i %i %i \n", x4data0, x4data1, x4data2, x4data3, x4data4, x4data5, x4data6, x4data7);
-
+        /////////// For testing
+        printf("201 %i %i %i %i \n", x101, x123, x145, x167);
+        printf("202 %i %i %i %i \n", x201, x223, x245, x267);
+        printf("203 %i %i %i %i \n", x301, x323, x345, x367);
+        printf("204 %i %i %i %i \n", x401, x423, x445, x467);
         delay_ms(1000);
+        ///////////
     }
 }
+
+
+// For testing
+// extern uint16_t x1data0;
+// extern uint16_t x1data1;
+// extern uint16_t x1data2;
+// extern uint16_t x1data3;
+// extern uint16_t x1data4;
+// extern uint16_t x1data5;
+// extern uint16_t x1data6;
+// extern uint16_t x1data7;
+
+// extern uint16_t x2data0;
+// extern uint16_t x2data1;
+// extern uint16_t x2data2;
+// extern uint16_t x2data3;
+// extern uint16_t x2data4;
+// extern uint16_t x2data5;
+// extern uint16_t x2data6;
+// extern uint16_t x2data7;
+
+// extern uint16_t x3data0;
+// extern uint16_t x3data1;
+// extern uint16_t x3data2;
+// extern uint16_t x3data3;
+// extern uint16_t x3data4;
+// extern uint16_t x3data5;
+// extern uint16_t x3data6;
+// extern uint16_t x3data7;
+
+// extern uint16_t x4data0;
+// extern uint16_t x4data1;
+// extern uint16_t x4data2;
+// extern uint16_t x4data3;
+// extern uint16_t x4data4;
+// extern uint16_t x4data5;
+// extern uint16_t x4data6;
+// extern uint16_t x4data7;
