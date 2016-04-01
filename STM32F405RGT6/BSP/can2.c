@@ -164,11 +164,47 @@ int16_t measured_pitch_current;
 int16_t target_yaw_current;
 int16_t target_pitch_current;
 
+int16_t x101;
+int16_t x123;
+int16_t x145;
+int16_t x167;
+
+int16_t x201;
+int16_t x223;
+int16_t x245;
+int16_t x267;
+
+int16_t x301;
+int16_t x323;
+int16_t x345;
+int16_t x367;
+
+int16_t x401;
+int16_t x423;
+int16_t x445;
+int16_t x467;
+
+
 /*************************************************************************
                           CAN2_RX0_IRQHandler
 Description: Interrupt receive for chassis CAN bus data and single axis gyroscope
 描述：单轴陀螺仪、底盘主控CAN数据接收中断
 *************************************************************************/
+
+/*******
+RX addresses
+0x201: Front right wheel
+0x202: Front left wheel
+0x203: Back left wheel
+0x204: Back right wheel
+0x205: Yaw
+0x206: Pitch
+
+All rx messages mapped the same way:
+data 0 and 1 measure angle
+data 4 and 5 relates to what current you are tx to motors 
+data 4 and 5 NOT same as current tx value
+*******/
 void CAN2_RX0_IRQHandler(void)
 {
     CanRxMsg rx_message;
@@ -177,14 +213,102 @@ void CAN2_RX0_IRQHandler(void)
        CAN_ClearITPendingBit(CAN2, CAN_IT_FMP0);
        CAN_Receive(CAN2, CAN_FIFO0, &rx_message);
 
+    /***************
+    Wheel RX Address
+    0x201: Front right wheel
+    0x202: Front left wheel
+    0x203: Back left wheel
+    0x204: Back right wheel
+
+    data 0 and 1 measure position of wheel (0, around 8200)
+    clockwise wheel rotation decreases wheel's position
+    wheel position value repeats (decrease from 0 means go back to 8200 again)
+
+    data 4 and 5 relates to what current you are tx to motors 
+    data 4 and 5 NOT same as current tx value
+
+    data 2, 3, 6, 7 not useful
+    ***************/
+
+       if(rx_message.StdId == 0x201)
+        { 
+            uint16_t x1data0 = rx_message.Data[0];
+            uint16_t x1data1 = rx_message.Data[1];
+            uint16_t x1data2 = rx_message.Data[2];
+            uint16_t x1data3 = rx_message.Data[3];
+            uint16_t x1data4 = rx_message.Data[4];
+            uint16_t x1data5 = rx_message.Data[5];
+            uint16_t x1data6 = rx_message.Data[6];
+            uint16_t x1data7 = rx_message.Data[7];
+
+            x101 = ( x1data0 << 8 ) | x1data1;
+            x123 = ( x1data2 << 8 ) | x1data3;
+            x145 = ( x1data4 << 8 ) | x1data5;
+            x167 = ( x1data6 << 8 ) | x1data7;
+        }
+
+        if(rx_message.StdId == 0x202)
+        { 
+
+            uint16_t x2data0 = rx_message.Data[0];
+            uint16_t x2data1 = rx_message.Data[1];
+            uint16_t x2data2 = rx_message.Data[2];
+            uint16_t x2data3 = rx_message.Data[3];
+            uint16_t x2data4 = rx_message.Data[4];
+            uint16_t x2data5 = rx_message.Data[5];
+            uint16_t x2data6 = rx_message.Data[6];
+            uint16_t x2data7 = rx_message.Data[7];
+            x201 = ( x2data0 << 8 ) | x2data1;
+            x223 = ( x2data2 << 8 ) | x2data3;
+            x245 = ( x2data4 << 8 ) | x2data5;
+            x267 = ( x2data6 << 8 ) | x2data7;
+
+        }
+
+        if(rx_message.StdId == 0x203)
+        { 
+            uint16_t x3data0 = rx_message.Data[0];
+            uint16_t x3data1 = rx_message.Data[1];
+            uint16_t x3data2 = rx_message.Data[2];
+            uint16_t x3data3 = rx_message.Data[3];
+            uint16_t x3data4 = rx_message.Data[4];
+            uint16_t x3data5 = rx_message.Data[5];
+            uint16_t x3data6 = rx_message.Data[6];
+            uint16_t x3data7 = rx_message.Data[7];
+            x301 = ( x3data0 << 8 ) | x3data1;
+            x323 = ( x3data2 << 8 ) | x3data3;
+            x345 = ( x3data4 << 8 ) | x3data5;
+            x367 = ( x3data6 << 8 ) | x3data7;
+        }
+
+        if(rx_message.StdId == 0x204)
+        { 
+
+            uint16_t x4data0 = rx_message.Data[0];;
+            uint16_t x4data1 = rx_message.Data[1];;
+            uint16_t x4data2 = rx_message.Data[2];;
+            uint16_t x4data3 = rx_message.Data[3];;
+            uint16_t x4data4 = rx_message.Data[4];;
+            uint16_t x4data5 = rx_message.Data[5];;
+            uint16_t x4data6 = rx_message.Data[6];;
+            uint16_t x4data7 = rx_message.Data[7];;
+            x401 = ( x4data0 << 8 ) | x4data1;
+            x423 = ( x4data2 << 8 ) | x4data3;
+            x445 = ( x4data4 << 8 ) | x4data5;
+            x467 = ( x4data6 << 8 ) | x4data7;
+        }
+
+/************** End of Wheel Motor RX Code and Address **************/
+
+
         /************ YAW ************/
-        // Yaw angle range is: [0, around 4770]
-        // 0 is right-most yaw position
-        // around 4770 is left-most yaw position
+        // Yaw angle range is: [around 40, around 4800]
+        // 40 is right-most yaw position
+        // around 4800 is left-most yaw position
         // data 0 and 1 measure angle
 
-        // data 4 and 5 measures what current you are tx to motors 
-        // data 4 and 5 not same as current tx value
+        // data 4 and 5 relates to what current you are tx to motors 
+        // data 4 and 5 NOT same as current tx value
         // -1000 current value = 27852 (yaw_data4)<<8|(yaw_data5) value
         // -750 current value = 24305 (yaw_data4)<<8|(yaw_data5) value
         // -500 current value = 16630 (yaw_data4)<<8|(yaw_data5) value
@@ -205,13 +329,12 @@ void CAN2_RX0_IRQHandler(void)
 
 
             // normalize angle range since default angle range is werid
-            if(measured_yaw_angle > 6060 && measured_yaw_angle < 8200) {
-                measured_yaw_angle = measured_yaw_angle - 6060;
+            if(measured_yaw_angle > 6000 && measured_yaw_angle < 8200) {
+                measured_yaw_angle = measured_yaw_angle - 6000;
             } else {
-                measured_yaw_angle = measured_yaw_angle + 2130;
+                measured_yaw_angle = measured_yaw_angle + 2190;
             }
         }
-
 
         /************ PITCH ************/
         // pitch angle range is [around 3520, around 4500]
@@ -219,8 +342,8 @@ void CAN2_RX0_IRQHandler(void)
         // around 4500 is lowest pitch position  
         // data 0 and 1 measure angle
 
-        // data 4 and 5 measures what current you are tx to motors 
-        // data 4 and 5 not same as current tx value
+        // data 4 and 5 relates to what current you are tx to motors 
+        // data 4 and 5 NOT same as current tx value
         // -1000 current value = 27852 (pitch_data4)<<8|(pitch_data5) value
         // -750 current value = 24305 (pitch_data4)<<8|(pitch_data5) value
         // -500 current value = 16630 (pitch_data4)<<8|(pitch_data5) value
@@ -371,17 +494,18 @@ void Set_PitchYaw_Current() {
 
 /************ For Red C Motor
 // prepares whole 0x200 wheel CAN message for tx
-void Set_Wheels_Current() {
-    tx_wheels_message.Data[0] = motor_front_left_cur >> 8;
-    tx_wheels_message.Data[1] = motor_front_left_cur & 0xFF;
-    tx_wheels_message.Data[2] = motor_back_left_cur >> 8;
-    tx_wheels_message.Data[3] = motor_back_left_cur & 0xFF;
-    tx_wheels_message.Data[4] = motor_front_right_cur >> 8;
-    tx_wheels_message.Data[5] = motor_front_right_cur & 0xFF;
-    tx_wheels_message.Data[6] = motor_back_right_cur >> 8;
-    tx_wheels_message.Data[7] = motor_back_right_cur & 0xFF;
-}
-*/
+// */
+// void Set_Wheels_Current() {
+//     tx_wheels_message.Data[0] = motor_front_left_cur >> 8;
+//     tx_wheels_message.Data[1] = motor_front_left_cur & 0xFF;
+//     tx_wheels_message.Data[2] = motor_back_left_cur >> 8;
+//     tx_wheels_message.Data[3] = motor_back_left_cur & 0xFF;
+//     tx_wheels_message.Data[4] = motor_front_right_cur >> 8;
+//     tx_wheels_message.Data[5] = motor_front_right_cur & 0xFF;
+//     tx_wheels_message.Data[6] = motor_back_right_cur >> 8;
+//     tx_wheels_message.Data[7] = motor_back_right_cur & 0xFF;
+// }
+
 
 //*********** For Blue Motor
 // prepares whole 0x200 wheel CAN message for tx
@@ -470,65 +594,65 @@ void All_Wheel_Current_Send(int direction, int current) {
     if(direction == 0) {
         //forward
         motor_front_right_cur = -1 * Pos_Curr_Eqn(current);
-        motor_back_right_cur = -1 * Pos_Curr_Eqn(current);
-        motor_front_left_cur = Pos_Curr_Eqn(current);
-        motor_back_left_cur = Pos_Curr_Eqn(current);
+        //motor_back_right_cur = -1 * Pos_Curr_Eqn(current);
+        //motor_front_left_cur = Pos_Curr_Eqn(current);
+        //motor_back_left_cur = Pos_Curr_Eqn(current);
     } else if(direction == 1) {
         //backward
-        motor_front_right_cur = -1 * Neg_Curr_Eqn(current);
+        // motor_front_right_cur = -1 * Neg_Curr_Eqn(current);
         motor_back_right_cur = -1 * Neg_Curr_Eqn(current);
-        motor_front_left_cur = Neg_Curr_Eqn(current);
-        motor_back_left_cur = Neg_Curr_Eqn(current);
+        //motor_front_left_cur = Neg_Curr_Eqn(current);
+        //motor_back_left_cur = Neg_Curr_Eqn(current);
     } else if(direction == 2) {
         //slide right
-        motor_front_right_cur = -1 * Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
-        motor_back_right_cur =  -1 * Pos_Curr_Eqn(current);
+        // motor_front_right_cur = -1 * Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
+        //motor_back_right_cur =  -1 * Pos_Curr_Eqn(current);
         motor_front_left_cur = Pos_Curr_Eqn(current);
-        motor_back_left_cur = Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
+        //motor_back_left_cur = Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
 
     } else if(direction == 3) {
         //slide left
-        motor_front_right_cur = -1 * Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
-        motor_back_right_cur = -1 * Neg_Curr_Eqn(current);
-        motor_front_left_cur = Neg_Curr_Eqn(current);
+        // motor_front_right_cur = -1 * Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
+        //motor_back_right_cur = -1 * Neg_Curr_Eqn(current);
+        //motor_front_left_cur = Neg_Curr_Eqn(current);
         motor_back_left_cur = Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
     } else if(direction == 5) {
         //up right
-        motor_front_right_cur = 0; //
-        motor_back_right_cur =  -1 * Pos_Curr_Eqn(current);
-        motor_front_left_cur = Pos_Curr_Eqn(current);
-        motor_back_left_cur = 0; //
+        // motor_front_right_cur = 0; //
+        //motor_back_right_cur =  -1 * Pos_Curr_Eqn(current);
+        //motor_front_left_cur = Pos_Curr_Eqn(current);
+        //motor_back_left_cur = 0; //
     } else if(direction == 4) {
         //up left
-        motor_front_right_cur = Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
-        motor_back_right_cur = 0;
-        motor_front_left_cur = 0;
-        motor_back_left_cur = -1 * Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
+        // motor_front_right_cur = Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
+        //motor_back_right_cur = 0;
+        //motor_front_left_cur = 0;
+        //motor_back_left_cur = -1 * Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
 
     } else if(direction == 7) {
         //down right
-        motor_front_right_cur = Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
-        motor_back_right_cur =  0;
-        motor_front_left_cur = 0;
-        motor_back_left_cur = -1 * Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
+        // motor_front_right_cur = Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
+        //motor_back_right_cur =  0;
+        //motor_front_left_cur = 0;
+        //motor_back_left_cur = -1 * Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
     } else if(direction == 6) {
         //down left
-        motor_front_right_cur = 0; //
-        motor_back_right_cur = -1 * Neg_Curr_Eqn(current);
-        motor_front_left_cur = Neg_Curr_Eqn(current);
-        motor_back_left_cur = 0; //
+        // motor_front_right_cur = 0; //
+        //motor_back_right_cur = -1 * Neg_Curr_Eqn(current);
+        //motor_front_left_cur = Neg_Curr_Eqn(current);
+        //motor_back_left_cur = 0; //
     } else if(direction == 8) {
         //rotate left
-        motor_front_right_cur = Neg_Curr_Eqn(current);
-        motor_back_right_cur = Neg_Curr_Eqn(current);
-        motor_front_left_cur = Neg_Curr_Eqn(current);
-        motor_back_left_cur = Neg_Curr_Eqn(current);
+        // motor_front_right_cur = Neg_Curr_Eqn(current);
+        //motor_back_right_cur = Neg_Curr_Eqn(current);
+        //motor_front_left_cur = Neg_Curr_Eqn(current);
+        //motor_back_left_cur = Neg_Curr_Eqn(current);
     } else if(direction == 9) {
         //rotate right
-        motor_front_right_cur = Pos_Curr_Eqn(current);
-        motor_back_right_cur = Pos_Curr_Eqn(current);
-        motor_front_left_cur = Pos_Curr_Eqn(current);
-        motor_back_left_cur = Pos_Curr_Eqn(current);
+        // motor_front_right_cur = Pos_Curr_Eqn(current);
+        // motor_back_right_cur = Pos_Curr_Eqn(current);
+        // motor_front_left_cur = Pos_Curr_Eqn(current);
+        // motor_back_left_cur = Pos_Curr_Eqn(current);
     }
 
     Wheels_Address_Setup();
@@ -846,3 +970,39 @@ void Motor_ManSet_Can_2(void) {
 }
 
 
+// For testing
+// uint16_t x1data0;
+// uint16_t x1data1;
+// uint16_t x1data2;
+// uint16_t x1data3;
+// uint16_t x1data4;
+// uint16_t x1data5;
+// uint16_t x1data6;
+// uint16_t x1data7;
+
+// uint16_t x2data0;
+// uint16_t x2data1;
+// uint16_t x2data2;
+// uint16_t x2data3;
+// uint16_t x2data4;
+// uint16_t x2data5;
+// uint16_t x2data6;
+// uint16_t x2data7;
+
+// uint16_t x3data0;
+// uint16_t x3data1;
+// uint16_t x3data2;
+// uint16_t x3data3;
+// uint16_t x3data4;
+// uint16_t x3data5;
+// uint16_t x3data6;
+// uint16_t x3data7;
+
+// uint16_t x4data0;
+// uint16_t x4data1;
+// uint16_t x4data2;
+// uint16_t x4data3;
+// uint16_t x4data4;
+// uint16_t x4data5;
+// uint16_t x4data6;
+// uint16_t x4data7;
