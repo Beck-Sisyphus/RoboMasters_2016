@@ -205,10 +205,10 @@ void CAN2_RX0_IRQHandler(void)
 
 
             // normalize angle range since default angle range is werid
-            if(measured_yaw_angle > 6060 && measured_yaw_angle < 8200) {
-                measured_yaw_angle = measured_yaw_angle - 6060;
+            if(measured_yaw_angle > 6000 && measured_yaw_angle < 8200) {
+                measured_yaw_angle = measured_yaw_angle - 6000;
             } else {
-                measured_yaw_angle = measured_yaw_angle + 2130;
+                measured_yaw_angle = measured_yaw_angle + 2190;
             }
         }
 
