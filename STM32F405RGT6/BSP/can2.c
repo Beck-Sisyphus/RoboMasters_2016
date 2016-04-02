@@ -535,132 +535,22 @@ void Remote_Control() {
         Remote_On = 1;
     }
 
-    // // For Blue Motor Stick
-    if ((RC_Ctl.rc.ch2 == RC_CH_VALUE_OFFSET
-        && RC_Ctl.rc.ch3 == RC_CH_VALUE_OFFSET
-        && RC_Ctl.rc.ch0 == RC_CH_VALUE_OFFSET
-        && RC_Ctl.rc.ch1 == RC_CH_VALUE_OFFSET)
-        || Remote_On == 0) {
-        Motor_Reset_Can_2();
-    }  else if (RC_Ctl.rc.ch3 > RC_CH_VALUE_OFFSET && RC_Ctl.rc.ch2 < RC_CH_VALUE_OFFSET) {
-        //Diagonal up left   
-        All_Wheel_Current_Send(4, RC_Ctl.rc.ch3);         
-    } else if (RC_Ctl.rc.ch3 > RC_CH_VALUE_OFFSET && RC_Ctl.rc.ch2 > RC_CH_VALUE_OFFSET) {
-        //Diagonal up right   
-        All_Wheel_Current_Send(5, RC_Ctl.rc.ch3);        
-    } else if (RC_Ctl.rc.ch3 < RC_CH_VALUE_OFFSET && RC_Ctl.rc.ch2 < RC_CH_VALUE_OFFSET) {
-        //Diagonal down left   
-        All_Wheel_Current_Send(6, RC_Ctl.rc.ch3);         
-    } else if (RC_Ctl.rc.ch3 < RC_CH_VALUE_OFFSET && RC_Ctl.rc.ch2 > RC_CH_VALUE_OFFSET) {
-        //Diagonal down right  
-        All_Wheel_Current_Send(7, RC_Ctl.rc.ch3);          
-    } else if(RC_Ctl.rc.ch3 > RC_CH_VALUE_OFFSET) {
-        // Forward
-        All_Wheel_Current_Send(0, RC_Ctl.rc.ch3);
-    } else if (RC_Ctl.rc.ch3 < RC_CH_VALUE_OFFSET) {
-        //Backward
-        All_Wheel_Current_Send(1, RC_Ctl.rc.ch3);
-    } else if (RC_Ctl.rc.ch2 > RC_CH_VALUE_OFFSET) {
-        // slide Right
-        All_Wheel_Current_Send(2, RC_Ctl.rc.ch2);
-    } else if (RC_Ctl.rc.ch2 < RC_CH_VALUE_OFFSET) {
-        // slide Left
-        All_Wheel_Current_Send(3, RC_Ctl.rc.ch2);
-    } else if(RC_Ctl.rc.ch0 < RC_CH_VALUE_OFFSET) {
-        // rotate left
-        All_Wheel_Current_Send(8, RC_Ctl.rc.ch0);
-    } else if(RC_Ctl.rc.ch0 > RC_CH_VALUE_OFFSET) {
-        // rotate right
-        All_Wheel_Current_Send(9, RC_Ctl.rc.ch0);
-    }
-}
 
-// *********** For Blue Motor *************//
-// takes in an integer from 0 to 7 that specifies the direction
-// 0: forward
-// 1: backward
-// 2: right
-// 3: left
-// 4: upleft
-// 5: up right
-// 6: down left
-// 7: down right
-// 8: rotate left
-// 9: rotate right
-// and sends current to all motors at the same time
-// left stick for forward, backward; left, right, and diagonal sliding
-// right stick for left and right rotating
-void All_Wheel_Current_Send(int direction, int current) {
-    if(direction == 0) {
-        //forward
-        motor_front_right_cur = -1 * Pos_Curr_Eqn(current);
-        //motor_back_right_cur = -1 * Pos_Curr_Eqn(current);
-        //motor_front_left_cur = Pos_Curr_Eqn(current);
-        //motor_back_left_cur = Pos_Curr_Eqn(current);
-    } else if(direction == 1) {
-        //backward
-        // motor_front_right_cur = -1 * Neg_Curr_Eqn(current);
-        motor_back_right_cur = -1 * Neg_Curr_Eqn(current);
-        //motor_front_left_cur = Neg_Curr_Eqn(current);
-        //motor_back_left_cur = Neg_Curr_Eqn(current);
-    } else if(direction == 2) {
-        //slide right
-        // motor_front_right_cur = -1 * Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
-        //motor_back_right_cur =  -1 * Pos_Curr_Eqn(current);
-        motor_front_left_cur = Pos_Curr_Eqn(current);
-        //motor_back_left_cur = Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
+    uint16_t drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
+    uint16_t strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
+    uint16_t rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
 
-    } else if(direction == 3) {
-        //slide left
-        // motor_front_right_cur = -1 * Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
-        //motor_back_right_cur = -1 * Neg_Curr_Eqn(current);
-        //motor_front_left_cur = Neg_Curr_Eqn(current);
-        motor_back_left_cur = Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
-    } else if(direction == 5) {
-        //up right
-        // motor_front_right_cur = 0; //
-        //motor_back_right_cur =  -1 * Pos_Curr_Eqn(current);
-        //motor_front_left_cur = Pos_Curr_Eqn(current);
-        //motor_back_left_cur = 0; //
-    } else if(direction == 4) {
-        //up left
-        // motor_front_right_cur = Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
-        //motor_back_right_cur = 0;
-        //motor_front_left_cur = 0;
-        //motor_back_left_cur = -1 * Pos_Curr_Eqn(RC_CH_VALUE_OFFSET + (RC_CH_VALUE_OFFSET - current)); //
-
-    } else if(direction == 7) {
-        //down right
-        // motor_front_right_cur = Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
-        //motor_back_right_cur =  0;
-        //motor_front_left_cur = 0;
-        //motor_back_left_cur = -1 * Neg_Curr_Eqn(RC_CH_VALUE_OFFSET - (current - RC_CH_VALUE_OFFSET)); //
-    } else if(direction == 6) {
-        //down left
-        // motor_front_right_cur = 0; //
-        //motor_back_right_cur = -1 * Neg_Curr_Eqn(current);
-        //motor_front_left_cur = Neg_Curr_Eqn(current);
-        //motor_back_left_cur = 0; //
-    } else if(direction == 8) {
-        //rotate left
-        // motor_front_right_cur = Neg_Curr_Eqn(current);
-        //motor_back_right_cur = Neg_Curr_Eqn(current);
-        //motor_front_left_cur = Neg_Curr_Eqn(current);
-        //motor_back_left_cur = Neg_Curr_Eqn(current);
-    } else if(direction == 9) {
-        //rotate right
-        // motor_front_right_cur = Pos_Curr_Eqn(current);
-        // motor_back_right_cur = Pos_Curr_Eqn(current);
-        // motor_front_left_cur = Pos_Curr_Eqn(current);
-        // motor_back_left_cur = Pos_Curr_Eqn(current);
-    }
-
+    if(Remote_On == 1) {
+        motor_front_right_cur = 11*(-1*drive + strafe - rotate);
+        motor_back_right_cur = 11*(-1*drive - strafe - rotate);
+        motor_front_left_cur = 11*(drive + strafe - rotate);      
+        motor_back_left_cur = 11*(drive - strafe - rotate);   
+    }    
+    
     Wheels_Address_Setup();
     Set_Wheels_Current();
     CAN_Transmit(CAN2,&tx_wheels_message);
 }
-
-
 
 // Sends specified current value to motor specified by Motor_ID
 // Motor_ID mapping is in can2.h

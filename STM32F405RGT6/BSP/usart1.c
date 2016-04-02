@@ -152,34 +152,3 @@ void DMA2_Stream2_IRQHandler(void)
     }
 }
 
-// Takes in reading of a stick
-// Returns current between [0:10]
-// For forward and right motor stick control
-int Pos_Curr_Eqn(int curr) {
-    if(curr == RC_CH_VALUE_MAX) {
-        return 7500;
-    } 
-    // else if(curr < RC_CH_VALUE_OFFSET + 66) {
-    //     return 0;
-    // }
-    else {
-        return (((curr - RC_CH_VALUE_OFFSET) / 66) + 1) * 650 + 350; 
-    }
-}
-
-// Takes in reading of a stick
-// Returns current between [-10:0]
-// For backward and left motor stick control
-int Neg_Curr_Eqn(int curr) {
-    if(curr == RC_CH_VALUE_MIN) {
-        return -7500;
-    } 
-    // else if(curr > RC_CH_VALUE_OFFSET - 66) {
-    //     return 0;
-    // }
-    else {
-        return (((curr - RC_CH_VALUE_OFFSET) / 66) - 1) * 650 - 350; 
-    }
-}
-
-

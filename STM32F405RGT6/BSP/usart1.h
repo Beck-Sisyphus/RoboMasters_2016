@@ -52,9 +52,4 @@ void USART1_SendChar(unsigned char b);
 void RS232_Print( USART_TypeDef*, u8* );
 void RS232_VisualScope( USART_TypeDef*, u8*, u16 );
 
-// For forward and right remote stick control
-int Pos_Curr_Eqn(int);
-// For backward and left remote stick control
-int Neg_Curr_Eqn(int);
-
 #endif

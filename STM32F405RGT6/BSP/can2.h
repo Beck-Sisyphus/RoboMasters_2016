@@ -47,11 +47,10 @@ void CAN2_Configuration(void);
 void GYRO_RST(void);
 void Encoder_sent(float encoder_angle);
 
+void Remote_Control(void);
+
 void Motor_Reset_Can_2(void);
 void Motor_Current_Send(int, int);
-
-void Remote_Control(void);
-void All_Wheel_Current_Send(int, int);
 
 void PitchYaw_Address_Setup(void);
 void Wheels_Address_Setup(void);
