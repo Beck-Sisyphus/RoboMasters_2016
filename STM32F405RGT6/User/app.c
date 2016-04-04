@@ -9,24 +9,32 @@ extern int16_t measured_pitch_current;
 extern int16_t target_yaw_current;
 extern int16_t target_pitch_current;
 
+extern MPU6050_REAL_DATA MPU6050_Real_Data;
+
 
 /*
     Top level Function to implement PID control on Pitch Servo
 */
+// Pitch reading on blue robot is normalized to 4789 ~ 3544, lowest to highest
+// Current range from 1500 - 2300 will make it rise
 void set_Pitch_Position(uint16_t target_pitch_angle)
 {
     // PID for position
     float pitch_position_change = Position_Control_205((float)measured_pitch_angle, (float)target_pitch_angle);
-    // float pitch_velocity_change = Velocity_Control_205((float)target_pitch_current, pitch_position_change);
+    float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_X, pitch_position_change);
     Motor_Current_Send(2, (int16_t)pitch_position_change);
+    // Motor_Current_Send(2, (int16_t)pitch_velocity_change);
 }
 
+// Yaw reading on blue robot is normalized to 4803 ~ 37, left - right
+// current range from -500 ~ 500 will good for tuning
 void set_Yaw_Position(uint16_t target_yaw_angle)
 {
     // PID for position
-    float pitch_position_change = Position_Control_206((float)measured_yaw_angle, (float)target_yaw_angle);
-    // float pitch_velocity_change = Velocity_Control_206((float)target_yaw_current, (float)pitch_position_change);
-    Motor_Current_Send(1, pitch_position_change);
+    float yaw_position_change = Position_Control_206((float)measured_yaw_angle, (float)target_yaw_angle);
+    float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Y, yaw_position_change);
+    Motor_Current_Send(1, yaw_position_change);
+    // Motor_Current_Send(1, (int16_t)yaw_velocity_change);
 }
 
 
@@ -65,12 +73,14 @@ void Cmd_ESC(int16_t current_201,int16_t current_202,int16_t current_203)
 *********************************************************************************/
 float Velocity_Control_205(float current_velocity_205,float target_velocity_205)
 {
+    // Constants from Xian jiangtong University
     // const float v_p = 15.0;
     // const float v_i = 0.03;
     // const float v_d = 1.0;
-    const float v_p = 1.0;
+    // Constants from Northeast Forestry University
+    const float v_p = 25.0;
     const float v_i = 0.0;
-    const float v_d = 0.0;
+    const float v_d = 12.0;
     static float error_v[2] = {0.0,0.0};
     static float output = 0;
     static float inte = 0;
@@ -109,13 +119,14 @@ float Velocity_Control_205(float current_velocity_205,float target_velocity_205)
 *********************************************************************************/
 float Position_Control_205(float current_position_205,float target_position_205)
 {
-
-    // const float l_p = 16;
-    // const float l_i = 0.0;
-    // const float l_d = 0.6;
-    const float l_p = 1.0;
+    // Constants from Xian jiangtong University
+    const float l_p = 16;
     const float l_i = 0.0;
-    const float l_d = 0.0;
+    const float l_d = 0.6;
+    // Constants from Northeast Forestry University
+    // const float l_p = 30;
+    // const float l_i = 0.01;
+    //const float l_d = 30.0;
 
     static float error_l[2] = {0.0,0.0};
     static float output = 0;
@@ -175,7 +186,7 @@ float Velocity_Control_206(float current_velocity_206,float target_velocity_206)
         output = -ESC_MAX;
     }
 
-    return -output;//cyq:for6015 ����
+    return -output;
 }
 
 /********************************************************************************
@@ -185,9 +196,9 @@ float Velocity_Control_206(float current_velocity_206,float target_velocity_206)
 *********************************************************************************/
 float Position_Control_206(float current_position_206,float target_position_206)
 {
-    const float l_p = 1.0;//30.010;//3#5#:0.760
-    const float l_i = 0.0;//0.000035;
-    const float l_d = 0.0;//0.5;//3.5;
+    const float l_p = 30.0;//3#5#:0.760
+    const float l_i = 0.001;
+    const float l_d = 0.5;//3.5;
 
     static float error_l[3] = {0.0,0.0,0.0};
     static float output = 0;
@@ -210,5 +221,5 @@ float Position_Control_206(float current_position_206,float target_position_206)
         output = -ESC_MAX;
     }
 
-    return -output;
+    return output;
 }
