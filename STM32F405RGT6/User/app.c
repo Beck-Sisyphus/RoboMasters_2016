@@ -159,10 +159,12 @@ float Position_Control_205(float current_position_205,float target_position_205)
 float Velocity_Control_206(float current_velocity_206,float target_velocity_206)
 {
     const float v_p = 50.0;
+    const float v_i = 0.0;
     const float v_d = 0.0;
 
     static float error_v[2] = {0.0,0.0};
     static float output = 0;
+    static float inte = 0;
 
     if(abs(current_velocity_206) < GAP)
     {
@@ -171,8 +173,10 @@ float Velocity_Control_206(float current_velocity_206,float target_velocity_206)
 
     error_v[0] = error_v[1];
     error_v[1] = target_velocity_206 - current_velocity_206;
+    inte += error_l[1];
 
     output = error_v[1] * v_p
+             + inte * v_i
              + (error_v[1] - error_v[0]) * v_d;
 
     if(output > ESC_MAX)
@@ -197,16 +201,18 @@ float Position_Control_206(float current_position_206,float target_position_206)
 {
     const float l_p = 30.0;//3#5#:0.760
     const float l_i = 0.0;
-    const float l_d = 3.5;//3.5;
+    const float l_d = 0.0;//3.5;
 
     static float error_l[2] = {0.0,0.0};
     static float output = 0;
+    static float inte = 0;
 
     error_l[0] = error_l[1];
     error_l[1] = target_position_206 - current_position_206;
+    inte += error_l[1];
 
     output = error_l[1] * l_p
-							+ error_l[1] * l_i
+							+ inte * l_i
 							+ (error_l[1] - error_l[0]) * l_d;
 
     if(output > ESC_MAX)
