@@ -11,7 +11,8 @@
 #include "pwm.h"
 #include "laser.h"
 #include "usart3.h"
+#include "tim2.h"
 
 void BSP_Init(void);
 
-#endif 
+#endif
