@@ -8,8 +8,8 @@
 #define abs(x) ((x)>0? (x):(-(x)))
 
 // Measured reading
-#define REAL_PITCH_LOW 56
-#define REAL_PITCH_HIGH 114
+#define REAL_PITCH_LOW 56  // real lowest angle value that the cannon can reach, measured by protractor
+#define REAL_PITCH_HIGH 114 // real lowest angle value that the cannon can reach, measured by protractor
 #define REAL_YAW_LOW -103
 #define REAL_YAW_HIGH 103
 // Encoder reading
