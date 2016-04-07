@@ -17,8 +17,8 @@ void set_Pitch_Position(uint16_t real_angle_pitch)
     float target_pitch_angle = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, BLUE_PITCH_LOW, BLUE_PITCH_HIGH);
     float pitch_position_change = Position_Control_205((float)measured_pitch_angle, (float)target_pitch_angle);
     float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_X, pitch_position_change);
-    Motor_Current_Send(2, (int16_t)pitch_position_change);
-    // Motor_Current_Send(2, (int16_t)pitch_velocity_change);
+    // Motor_Current_Send(2, (int16_t)pitch_position_change);
+    Motor_Current_Send(2, (int16_t)pitch_velocity_change);
 }
 
 /*
@@ -173,7 +173,7 @@ float Velocity_Control_206(float current_velocity_206,float target_velocity_206)
 
     error_v[0] = error_v[1];
     error_v[1] = target_velocity_206 - current_velocity_206;
-    inte += error_l[1];
+    inte += error_v[1];
 
     output = error_v[1] * v_p
              + inte * v_i

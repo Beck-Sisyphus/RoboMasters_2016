@@ -644,7 +644,7 @@ void Motor_Current_Send(int Motor_ID, int current) {
         //                         CAN_Transmit(CAN2,&tx_wheels_message); break; //If Motor6 is chosen, Frame ID  is 0x64 under Speed_LOCATION Mode
 
     }
-    delay_ms(1);
+    // delay_ms(1);
 }
 
 

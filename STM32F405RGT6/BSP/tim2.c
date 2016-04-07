@@ -19,7 +19,7 @@ void TIM2_Configuration(void)
     tim.TIM_Prescaler = 42-1;//cyq:APB1=42MHz,APB2=84MHz
     tim.TIM_CounterMode = TIM_CounterMode_Up;
     tim.TIM_ClockDivision = TIM_CKD_DIV1;
-    tim.TIM_Period = 1000;//cyq:1Khz
+    tim.TIM_Period = 1000;// 1 MHz down to 1 KHz (1 ms)
     TIM_TimeBaseInit(TIM2,&tim);
     /* TIM IT enable */
     TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
