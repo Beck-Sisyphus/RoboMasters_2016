@@ -1,5 +1,8 @@
 #include "main.h"
 
+extern int pitch_Position;
+extern int yaw_Position;
+
 void TIM2_Configuration(void)
 {
     TIM_TimeBaseInitTypeDef  tim;
@@ -30,6 +33,7 @@ void TIM2_IRQHandler(void)
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     {
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-        LED1_TOGGLE();
+        set_Pitch_Position(pitch_Position);
+        set_Yaw_Position(yaw_Position);
     }
 }

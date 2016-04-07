@@ -13,14 +13,6 @@ unsigned char USART_BUF[24] = {0};
 extern RC_Ctl_t RC_Ctl;
 extern arduino_data data_usart_3;
 
-extern uint16_t measured_yaw_angle;
-extern uint16_t measured_pitch_angle;
-
-extern int16_t target_yaw_current;
-extern int16_t target_pitch_current;
-extern int16_t measured_yaw_current;
-extern int16_t measured_pitch_current;
-
 extern MPU6050_RAW_DATA MPU6050_Raw_Data;
 extern MPU6050_REAL_DATA MPU6050_Real_Data;
 
@@ -28,7 +20,8 @@ char greeting[6] = {'H', 'E', 'L', 'L', 'O', '\0'};
 char ay = 'a';
 
 int count = 0;
-
+int pitch_Position;
+int yaw_Position;
 
 int main(void)
 {
@@ -72,8 +65,8 @@ int main(void)
         MPU6050_ReadData();
         /* Send to Arduino */
        #if PID
-           set_Pitch_Position(90);
-           set_Yaw_Position(0);
+           pitch_Position = 90;
+           yaw_Position = 0;
        #else
            Motor_Current_Send(1, count);
 					 Motor_Current_Send(2, -count);
