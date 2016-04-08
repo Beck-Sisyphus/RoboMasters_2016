@@ -72,7 +72,6 @@ int main(void)
     {
         // CurrentProtect();
 			  Remote_Control();
-        MPU6050_ReadData();
         /* Send to Arduino */
        #if PID
             pitch_Position = 90;
