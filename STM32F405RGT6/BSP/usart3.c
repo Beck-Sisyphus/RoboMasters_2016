@@ -2,11 +2,14 @@
 #include "laser.h"
 //#include "main.h"
 #include "usart1.h" // ONLY for the RC_Ctl_t, remove this when we use diff. type
+#include "led.h"
 
-volatile unsigned char arduino_rx_buffer_usart_3[18]; 
+
+volatile unsigned char arduino_rx_buffer_usart_3[16]; 
 DMA_InitTypeDef dma_usart_3; 
 // RC_Ctl_t RC_Ctl_usart_3;
 arduino_data data_usart_3;
+int16_t testData; 
 
 /*-----USART3_TX-----PB10---*/
 /*-----USART3_RX-----PB11---*/
@@ -57,7 +60,7 @@ void USART3_Configuration(void)
     dma_usart_3.DMA_PeripheralBaseAddr = (uint32_t)&(USART3->DR);
     dma_usart_3.DMA_Memory0BaseAddr = (uint32_t)arduino_rx_buffer_usart_3; 
     dma_usart_3.DMA_DIR = DMA_DIR_PeripheralToMemory; 
-    dma_usart_3.DMA_BufferSize = 18; 
+    dma_usart_3.DMA_BufferSize = 16; 
     dma_usart_3.DMA_PeripheralInc = DMA_PeripheralInc_Disable; 
     dma_usart_3.DMA_MemoryInc = DMA_MemoryInc_Enable; 
     dma_usart_3.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte; 
@@ -141,8 +144,20 @@ void DMA1_Stream1_IRQHandler(void)
         DMA_ClearFlag(DMA1_Stream1, DMA_FLAG_TCIF1); 
         DMA_ClearITPendingBit(DMA1_Stream1, DMA_IT_TCIF1); 
 
-        // data_usart_3.packet.p1 = arduino_rx_buffer_usart_3[0];
-        data_usart_3.packet.p1 = arduino_rx_buffer_usart_3[17];
+        data_usart_3.packet.p1 = arduino_rx_buffer_usart_3[4];
+        data_usart_3.packet.p2 = arduino_rx_buffer_usart_3[5];
+
+        // for testing sending and receiving data packets to Arduino
+        testData = (((int16_t) data_usart_3.packet.p1 << 8)) | ((uint8_t) data_usart_3.packet.p2);
+
+        if(testData == -314) {
+            LED1_ON();
+            LED2_OFF();
+        } else if (testData / 100 == 123) {
+            LED1_OFF();
+            LED2_ON();
+        }
+        
     }
 }
 

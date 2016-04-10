@@ -48,8 +48,8 @@
 
 typedef struct {
     struct { 
-        uint8_t p1;
-        uint8_t p2;
+        int8_t p1;
+        int8_t p2;
         // uint16_t p3;
     } packet;
 } arduino_data;
