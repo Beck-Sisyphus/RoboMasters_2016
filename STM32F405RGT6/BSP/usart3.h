@@ -48,9 +48,11 @@
 
 typedef struct {
     struct { 
-        int8_t p1;
-        int8_t p2;
-        // uint16_t p3;
+        int16_t header;
+        int16_t kalAngleX;
+        int16_t targetPitch;
+        int16_t targetYaw;
+        int16_t PWM;
     } packet;
 } arduino_data;
 

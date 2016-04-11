@@ -144,19 +144,22 @@ void DMA1_Stream1_IRQHandler(void)
         DMA_ClearFlag(DMA1_Stream1, DMA_FLAG_TCIF1); 
         DMA_ClearITPendingBit(DMA1_Stream1, DMA_IT_TCIF1); 
 
-        data_usart_3.packet.p1 = arduino_rx_buffer_usart_3[4];
-        data_usart_3.packet.p2 = arduino_rx_buffer_usart_3[5];
+        data_usart_3.packet.header = (((int16_t) arduino_rx_buffer_usart_3[0] << 8)) | (arduino_rx_buffer_usart_3[1] & 255);
+        data_usart_3.packet.kalAngleX = (((int16_t) arduino_rx_buffer_usart_3[2] << 8)) | (arduino_rx_buffer_usart_3[3] & 255);
+        data_usart_3.packet.targetPitch = (((int16_t) arduino_rx_buffer_usart_3[4] << 8)) | (arduino_rx_buffer_usart_3[5] & 255);
+        data_usart_3.packet.targetYaw = (((int16_t) arduino_rx_buffer_usart_3[6] << 8)) | (arduino_rx_buffer_usart_3[7] & 255);
+        data_usart_3.packet.PWM = (((int16_t) arduino_rx_buffer_usart_3[8] << 8)) | (arduino_rx_buffer_usart_3[9] & 255);
 
         // for testing sending and receiving data packets to Arduino
-        testData = (((int16_t) data_usart_3.packet.p1 << 8)) | ((uint8_t) data_usart_3.packet.p2);
-
-        if(testData == -314) {
-            LED1_ON();
-            LED2_OFF();
-        } else if (testData / 100 == 123) {
-            LED1_OFF();
-            LED2_ON();
-        }
+        // testData = (((int16_t) arduino_rx_buffer_usart_3[4] << 8)) | (arduino_rx_buffer_usart_3[5] & 255);
+        // printf("%i, %i", ((int16_t) arduino_rx_buffer_usart_3[4] << 8), (arduino_rx_buffer_usart_3[5]) & 255);
+        // if(testData == -314) {
+        //     LED1_ON();
+        //     LED2_OFF();
+        // } else if (testData / 100 == 123) {
+        //     LED1_OFF();
+        //     LED2_ON();
+        // }
         
     }
 }

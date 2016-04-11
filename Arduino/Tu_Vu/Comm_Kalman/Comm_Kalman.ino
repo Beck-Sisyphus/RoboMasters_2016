@@ -80,7 +80,10 @@ void setup() {
   // tx to TX1
   // header, kalAngleX, kalAngleY, kalAngleZ
   Serial3.begin(115200);
-  if(Serial1.available() > 0) {
+
+  // runs everytime TX1 sends information to Arduino
+  if(Serial1.available() > 16) {
+    
     Serial1.readBytes(rxTX1, 16);
     for(int i = 0; i < 16; i++) {
       rxTX1[i] = (rxTX1[i] & 255);
@@ -89,33 +92,33 @@ void setup() {
     // receive info from rx buffer
     load = rxTX1[2];
     trigger = rxTX1[3];
-    targetPitch = (uint16_t) rxTX1[4] << 8 | rxTX1[5];
-    targetYaw = (uint16_t) rxTX1[6] << 8 | rxTX1[7];
-    PWM = (uint16_t) rxTX1[8] << 8 | rxTX1[9];
+    targetPitch = ((int16_t) rxTX1[4] << 8) | (rxTX1[5] & 255);
+    targetYaw = ((int16_t) rxTX1[6] << 8) | (rxTX1[7] & 255);
+    PWM = ((int16_t) rxTX1[8] << 8) | (rxTX1[9]  & 255);
 
     // change multiplied number later
     kalIntX = kalAngleX * 100;
     kalIntY = kalAngleY * 100;
-    kalIntZ =kalAngle Z * 100;
+    kalIntZ = kalAngleZ * 100;
     
     // tx to TX1
-    txTX1[2] = kalIntX >> 8;
+    txTX1[2] = (kalIntX >> 8) & 255;
     txTX1[3] = kalIntX & 255;
-    txTX1[4] = kalIntY >> 8;
+    txTX1[4] = (kalIntY >> 8) & 255;
     txTX1[5] = kalIntY & 255;
-    txTX1[6] = kalIntZ >> 8;
+    txTX1[6] = (kalIntZ >> 8) & 255;
     txTX1[7] = kalIntZ & 255;
 
     
 
     // tx to trapezoid board
-    txTrap[2] = kalIntX >> 8;
+    txTrap[2] = (kalIntX >> 8) & 255;
     txTrap[3] = kalIntX & 255;
-    txTrap[4] = targetPitch >> 8;
+    txTrap[4] = (targetPitch >> 8) & 255;
     txTrap[5] = targetPitch & 255;
-    txTrap[6] = targetYaw >> 8;
+    txTrap[6] = (targetYaw >> 8) & 255;
     txTrap[7] = targetYaw & 255;
-    txTrap[8] = PWM >> 8;
+    txTrap[8] = (PWM >> 8) & 255;
     txTrap[9] = PWM & 255;
   }
 
