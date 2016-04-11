@@ -32,8 +32,8 @@ void set_Yaw_Position(uint16_t real_angle_yaw)
     float target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, BLUE_YAW_LOW, BLUE_YAW_HIGH);
     float yaw_position_change = Position_Control_206((float)measured_yaw_angle, (float)target_yaw_angle);
     float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change);
-    // Motor_Current_Send(1, (int16_t) yaw_position_change);
-    Motor_Current_Send(1, (int16_t)yaw_velocity_change);
+    Motor_Current_Send(1, (int16_t) yaw_position_change);
+    // Motor_Current_Send(1, (int16_t)yaw_velocity_change);
 }
 
 
@@ -199,7 +199,7 @@ float Velocity_Control_206(float current_velocity_206,float target_velocity_206)
 *********************************************************************************/
 float Position_Control_206(float current_position_206,float target_position_206)
 {
-    const float l_p = 30.0;//3#5#:0.760
+    const float l_p = 29.0;//3#5#:0.760
     const float l_i = 0.0;
     const float l_d = 0.0;//3.5;
 

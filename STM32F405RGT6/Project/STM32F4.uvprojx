@@ -451,6 +451,16 @@
               <FileType>5</FileType>
               <FilePath>..\User\main.h</FilePath>
             </File>
+            <File>
+              <FileName>map.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\map.c</FilePath>
+            </File>
+            <File>
+              <FileName>map.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\map.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -600,6 +610,16 @@
               <FileName>usart3.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\BSP\usart3.h</FilePath>
+            </File>
+            <File>
+              <FileName>tim2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\tim2.c</FilePath>
+            </File>
+            <File>
+              <FileName>tim2.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\BSP\tim2.h</FilePath>
             </File>
           </Files>
         </Group>

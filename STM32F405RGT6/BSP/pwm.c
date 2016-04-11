@@ -7,6 +7,7 @@ TIM_OCInitTypeDef         oc;
 void PWM_Configuration(void)
 {
     GPIO_InitTypeDef          gpio;
+	 
     TIM_TimeBaseInitTypeDef   tim;
     TIM_OCInitTypeDef         oc;
     

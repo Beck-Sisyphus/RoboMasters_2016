@@ -18,13 +18,13 @@ void MPU6050_Interrupt_Configuration(void)
 
     SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA,GPIO_PinSource4);
 
-    exti.EXTI_Line = EXTI_Line5;
+    exti.EXTI_Line = EXTI_Line4;
     exti.EXTI_Mode = EXTI_Mode_Interrupt;
     exti.EXTI_Trigger = EXTI_Trigger_Falling;
     exti.EXTI_LineCmd = ENABLE;
     EXTI_Init(&exti);
 
-    nvic.NVIC_IRQChannel = EXTI9_5_IRQn;
+    nvic.NVIC_IRQChannel = EXTI4_IRQn;
     nvic.NVIC_IRQChannelPreemptionPriority = 0x0F; // Lowest prioity
     nvic.NVIC_IRQChannelSubPriority = 0x0F;
     nvic.NVIC_IRQChannelCmd = ENABLE;
@@ -32,11 +32,10 @@ void MPU6050_Interrupt_Configuration(void)
 }
 
 //MPU6050 external interrupt handler
-void EXTI9_5_IRQHandler(void)
+void EXTI4_IRQHandler(void)
 {
     if(EXTI_GetITStatus(EXTI_Line5) == SET)
     {
-
         // Read MPU6050 data out to control the gimbal smoother
         // USe MPU6050 gyro output as the close-loop feedback for speed
         // If only use the mechanical angle from motor controller for feedback

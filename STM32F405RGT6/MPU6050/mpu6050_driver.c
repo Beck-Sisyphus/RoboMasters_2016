@@ -51,6 +51,14 @@ float gyro_angle_x = 0;
 float gyro_angle_y = 0;
 float gyro_angle_z = 0;
 
+float mpu6050_angle_x = 0;
+float mpu6050_angle_y = 0;
+float mpu6050_angle_z = 0;
+
+float angle_x_filtered = 0;
+float angle_y_filtered = 0;
+float angle_z_filtered = 0;
+
 float gyro_rate_x = 0;
 //MPU6050 Initialzaiton, return 0 if success, otherwise return 0xff
 int MPU6050_Initialization(void)
@@ -148,13 +156,13 @@ int MPU6050_ReadData(void)
         MPU6050_Real_Data.Gyro_Y = -(float)(MPU6050_Raw_Data.Gyro_Y - gyroADC_Y_offset)/65.5;     // read datasheet 32 of 47
         MPU6050_Real_Data.Gyro_Z = (float)(MPU6050_Raw_Data.Gyro_Z - gyroADC_Z_offset)/65.5;      // read datasheet 32 of 47
 				
-				float mpu6050_angle_x = RADIAN_TO_ANGLE*atan(MPU6050_Real_Data.Accel_X/sqrt(MPU6050_Real_Data.Accel_Y*MPU6050_Real_Data.Accel_Y+MPU6050_Real_Data.Accel_Z*MPU6050_Real_Data.Accel_Z));
-				float mpu6050_angle_y = RADIAN_TO_ANGLE*atan(MPU6050_Real_Data.Accel_Y/sqrt(MPU6050_Real_Data.Accel_X*MPU6050_Real_Data.Accel_X+MPU6050_Real_Data.Accel_Z*MPU6050_Real_Data.Accel_Z));
-				float mpu6050_angle_z = RADIAN_TO_ANGLE*atan(sqrt(MPU6050_Real_Data.Accel_X*MPU6050_Real_Data.Accel_X+MPU6050_Real_Data.Accel_Y*MPU6050_Real_Data.Accel_Y)/MPU6050_Real_Data.Accel_Z);
-				// Complementary Filter 
-				float angle_x_filtered = Alpha*(mpu6050_angle_x + MPU6050_Real_Data.Gyro_X * TimeSlice) + (1-Alpha)*MPU6050_Real_Data.Accel_X;
-				float angle_y_filtered = Alpha*(mpu6050_angle_y + MPU6050_Real_Data.Gyro_Y * TimeSlice) + (1-Alpha)*MPU6050_Real_Data.Accel_Y;
-				float angle_z_filtered = Alpha*(mpu6050_angle_z + MPU6050_Real_Data.Gyro_Z * TimeSlice) + (1-Alpha)*MPU6050_Real_Data.Accel_Z;
+		mpu6050_angle_x = RADIAN_TO_ANGLE*atan(MPU6050_Real_Data.Accel_X/sqrt(MPU6050_Real_Data.Accel_Y*MPU6050_Real_Data.Accel_Y+MPU6050_Real_Data.Accel_Z*MPU6050_Real_Data.Accel_Z));
+		mpu6050_angle_y = RADIAN_TO_ANGLE*atan(MPU6050_Real_Data.Accel_Y/sqrt(MPU6050_Real_Data.Accel_X*MPU6050_Real_Data.Accel_X+MPU6050_Real_Data.Accel_Z*MPU6050_Real_Data.Accel_Z));
+		mpu6050_angle_z = RADIAN_TO_ANGLE*atan(sqrt(MPU6050_Real_Data.Accel_X*MPU6050_Real_Data.Accel_X+MPU6050_Real_Data.Accel_Y*MPU6050_Real_Data.Accel_Y)/MPU6050_Real_Data.Accel_Z);
+		// Complementary Filter 
+		angle_x_filtered = Alpha*(mpu6050_angle_x + MPU6050_Real_Data.Gyro_X * TimeSlice) + (1-Alpha)*MPU6050_Real_Data.Accel_X;
+		angle_y_filtered = Alpha*(mpu6050_angle_y + MPU6050_Real_Data.Gyro_Y * TimeSlice) + (1-Alpha)*MPU6050_Real_Data.Accel_Y;
+		angle_z_filtered = Alpha*(mpu6050_angle_z + MPU6050_Real_Data.Gyro_Z * TimeSlice) + (1-Alpha)*MPU6050_Real_Data.Accel_Z;
 		} 
     
     return 0;
@@ -175,9 +183,9 @@ void MPU6050_Gyro_calibration(void)
 		z_temp=z_temp+MPU6050_Raw_Data.Gyro_Z;
 	}			
 	
-	x_temp=x_temp/1000.00;
-	y_temp=y_temp/1000.00;	
-	z_temp=z_temp/1000.00;
+	x_temp=x_temp/1000;
+	y_temp=y_temp/1000;	
+	z_temp=z_temp/1000;
 
 	gyroADC_X_offset=(int)x_temp;
 	gyroADC_Y_offset=(int)y_temp;
