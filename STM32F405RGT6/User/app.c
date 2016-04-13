@@ -18,8 +18,8 @@ void set_Pitch_Position(uint16_t real_angle_pitch)
     float target_pitch_angle = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, BLUE_PITCH_LOW, BLUE_PITCH_HIGH);
     float pitch_position_change = Position_Control_205((float)measured_pitch_angle, (float)target_pitch_angle);
     float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_position_change);
-    //Motor_Current_Send(2, (int16_t)pitch_position_change);
-    Motor_Current_Send(2, (int16_t)pitch_velocity_change);
+    Motor_Current_Send(2, (int16_t)pitch_position_change);
+    //Motor_Current_Send(2, (int16_t)pitch_velocity_change);
 }
 
 /*
@@ -120,7 +120,7 @@ float Velocity_Control_205(float current_velocity_205,float target_velocity_205)
 float Position_Control_205(float current_position_205,float target_position_205)
 {
     // Constants from Xian jiangtong University
-    const float l_p = 15.0;
+    const float l_p = 8;
     const float l_i = 0;
     const float l_d = 0;
     // Constants from Northeast Forestry University

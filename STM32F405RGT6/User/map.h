@@ -2,6 +2,6 @@
 #define __APP_H__
 #include <stm32f4xx.h>
 
-uint16_t map(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, uint16_t out_max);
+long map(long x, long in_min, long in_max, long out_min, long out_max);
 
 #endif

@@ -95,7 +95,7 @@ void Encoder_sent(float encoder_angle)
     tx_message.RTR = CAN_RTR_Data;
     tx_message.DLC = 0x08;
 
-    encoder_angle = encoder_angle * 100.0;
+    encoder_angle = encoder_angle * 100.0f;
     tx_message.Data[0] = (uint8_t)((int32_t)encoder_angle >>24);
     tx_message.Data[1] = (uint8_t)((int32_t)encoder_angle >>16);
     tx_message.Data[2] = (uint8_t)((int32_t)encoder_angle >>8);

@@ -40,8 +40,8 @@
 #define MPU6050_DEVICE_ADDRESS  0xD0
 #define MPU6050_DATA_START      ACCEL_XOUT_H   // Since all data addresses are continuous, read them all 
 #define M_PI 3.14159265358979323846 
-#define Alpha	0.98
-#define TimeSlice	0.01
+#define Alpha	0.98f
+#define TimeSlice	0.01f
 MPU6050_RAW_DATA    MPU6050_Raw_Data; 
 MPU6050_REAL_DATA   MPU6050_Real_Data;
 const float RADIAN_TO_ANGLE = 180/M_PI;
@@ -148,13 +148,13 @@ int MPU6050_ReadData(void)
 				
        
         // Convert origianl data to actual acceleration and gyro data, calculation formula related to the register settings
-        MPU6050_Real_Data.Accel_X = -(float)(MPU6050_Raw_Data.Accel_X)/8192.0; // read datasheet 30 of 47
-        MPU6050_Real_Data.Accel_Y = -(float)(MPU6050_Raw_Data.Accel_Y)/8192.0; // read datasheet 30 of 47
-        MPU6050_Real_Data.Accel_Z = (float)(MPU6050_Raw_Data.Accel_Z)/8192.0;  // read datasheet 30 of 47
-        MPU6050_Real_Data.Temp =   (float)(MPU6050_Raw_Data.Temp)/340.0+36.53; // read datasheet 31 of 47
-        MPU6050_Real_Data.Gyro_X = -(float)(MPU6050_Raw_Data.Gyro_X - gyroADC_X_offset)/65.5;     // read datasheet 32 of 47
-        MPU6050_Real_Data.Gyro_Y = -(float)(MPU6050_Raw_Data.Gyro_Y - gyroADC_Y_offset)/65.5;     // read datasheet 32 of 47
-        MPU6050_Real_Data.Gyro_Z = (float)(MPU6050_Raw_Data.Gyro_Z - gyroADC_Z_offset)/65.5;      // read datasheet 32 of 47
+        MPU6050_Real_Data.Accel_X = -(float)(MPU6050_Raw_Data.Accel_X)/8192.0f; // read datasheet 30 of 47
+        MPU6050_Real_Data.Accel_Y = -(float)(MPU6050_Raw_Data.Accel_Y)/8192.0f; // read datasheet 30 of 47
+        MPU6050_Real_Data.Accel_Z = (float)(MPU6050_Raw_Data.Accel_Z)/8192.0f;  // read datasheet 30 of 47
+        MPU6050_Real_Data.Temp =   (float)(MPU6050_Raw_Data.Temp)/340.0f+36.53f; // read datasheet 31 of 47
+        MPU6050_Real_Data.Gyro_X = -(float)(MPU6050_Raw_Data.Gyro_X - gyroADC_X_offset)/65.5f;     // read datasheet 32 of 47
+        MPU6050_Real_Data.Gyro_Y = -(float)(MPU6050_Raw_Data.Gyro_Y - gyroADC_Y_offset)/65.5f;     // read datasheet 32 of 47
+        MPU6050_Real_Data.Gyro_Z = (float)(MPU6050_Raw_Data.Gyro_Z - gyroADC_Z_offset)/65.5f;      // read datasheet 32 of 47
 				
 		mpu6050_angle_x = RADIAN_TO_ANGLE*atan(MPU6050_Real_Data.Accel_X/sqrt(MPU6050_Real_Data.Accel_Y*MPU6050_Real_Data.Accel_Y+MPU6050_Real_Data.Accel_Z*MPU6050_Real_Data.Accel_Z));
 		mpu6050_angle_y = RADIAN_TO_ANGLE*atan(MPU6050_Real_Data.Accel_Y/sqrt(MPU6050_Real_Data.Accel_X*MPU6050_Real_Data.Accel_X+MPU6050_Real_Data.Accel_Z*MPU6050_Real_Data.Accel_Z));
