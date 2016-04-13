@@ -1,7 +1,7 @@
 #include "main.h"
 
-extern int pitch_Position;
-extern int yaw_Position;
+int pitch_Position;
+int yaw_Position;
 
 void TIM2_Configuration(void)
 {
@@ -33,6 +33,7 @@ void TIM2_IRQHandler(void)
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     {
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+			  // MPU6050_ReadData();
         set_Pitch_Position(pitch_Position);
         // set_Yaw_Position(yaw_Position);
     }

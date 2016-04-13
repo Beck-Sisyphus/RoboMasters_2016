@@ -1,5 +1,4 @@
 #include "main.h"
-#include "mpu6050_driver.h"
 
 ///Turns on Beck's trying for PID controller
 #define PID true
@@ -32,8 +31,8 @@ extern int16_t x423;
 extern MPU6050_RAW_DATA MPU6050_Raw_Data;
 extern MPU6050_REAL_DATA MPU6050_Real_Data;
 
-int pitch_Position;
-int yaw_Position;
+extern int pitch_Position;
+extern int yaw_Position;
 
 char greeting[6] = {'H', 'E', 'L', 'L', 'O', '\0'};
 char ay = 'a';
@@ -87,12 +86,12 @@ int main(void)
             Motor_Current_Send(1, -1000);
 					//  Motor_Current_Send(2, -count);
            // count = count + 20;
-           printf("%i, %i, %hd, %hd, %i, %hd, %hd", count, measured_yaw_angle, measured_yaw_current, target_yaw_current, measured_pitch_angle, measured_pitch_current, target_pitch_current);
+           // printf("%i, %i, %hd, %hd, %i, %hd, %hd", count, measured_yaw_angle, measured_yaw_current, target_yaw_current, measured_pitch_angle, measured_pitch_current, target_pitch_current);
            // printf("%i, %i, %i, %i", x123, x223, x323, x423);
 
-          //  printf("%i, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f", count, MPU6050_Real_Data.Gyro_X,
-          //  MPU6050_Real_Data.Gyro_Y, MPU6050_Real_Data.Gyro_Z,
-          //  MPU6050_Real_Data.Accel_X, MPU6050_Real_Data.Accel_Y, MPU6050_Real_Data.Accel_Z);
+           printf("%i, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f", count, MPU6050_Real_Data.Gyro_X,
+           MPU6050_Real_Data.Gyro_Y, MPU6050_Real_Data.Gyro_Z,
+           MPU6050_Real_Data.Accel_X, MPU6050_Real_Data.Accel_Y, MPU6050_Real_Data.Accel_Z);
            delay_ms(1000);
        #endif
     }
