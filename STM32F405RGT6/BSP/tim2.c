@@ -33,7 +33,7 @@ void TIM2_IRQHandler(void)
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     {
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-        // set_Pitch_Position(pitch_Position);
-        set_Yaw_Position(yaw_Position);
+        set_Pitch_Position(pitch_Position);
+        // set_Yaw_Position(yaw_Position);
     }
 }

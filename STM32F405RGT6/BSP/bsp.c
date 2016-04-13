@@ -13,5 +13,5 @@ void BSP_Init(void){
     CAN2_Configuration();
     USART1_Configuration();
     USART3_Configuration();
-    // TIM2_Configuration();
+    TIM2_Configuration();
 }

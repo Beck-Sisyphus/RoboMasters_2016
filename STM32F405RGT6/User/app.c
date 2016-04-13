@@ -16,9 +16,9 @@ void set_Pitch_Position(uint16_t real_angle_pitch)
     // PID for position
     float target_pitch_angle = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, BLUE_PITCH_LOW, BLUE_PITCH_HIGH);
     float pitch_position_change = Position_Control_205((float)measured_pitch_angle, (float)target_pitch_angle);
-    float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_X, pitch_position_change);
-    Motor_Current_Send(2, (int16_t)pitch_position_change);
-    //Motor_Current_Send(2, (int16_t)pitch_velocity_change);
+    float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_position_change);
+    //Motor_Current_Send(2, (int16_t)pitch_position_change);
+    Motor_Current_Send(2, (int16_t)pitch_velocity_change);
 }
 
 /*
@@ -29,11 +29,11 @@ void set_Pitch_Position(uint16_t real_angle_pitch)
 void set_Yaw_Position(uint16_t real_angle_yaw)
 {
     // PID for position
-    float target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, BLUE_YAW_LOW, BLUE_YAW_HIGH);
+    float target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, BLUE_YAW_RIGHT, BLUE_YAW_LEFT);
     float yaw_position_change = Position_Control_206((float)measured_yaw_angle, (float)target_yaw_angle);
     float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change);
-    Motor_Current_Send(1, (int16_t) yaw_position_change);
-    //Motor_Current_Send(1, (int16_t)yaw_velocity_change);
+    // Motor_Current_Send(1, (int16_t) yaw_position_change);
+    Motor_Current_Send(1, (int16_t)yaw_velocity_change);
 }
 
 
@@ -73,7 +73,7 @@ void Cmd_ESC(int16_t current_201,int16_t current_202,int16_t current_203)
 float Velocity_Control_205(float current_velocity_205,float target_velocity_205)
 {
     // Constants from Xian jiangtong University
-    const float v_p = 3;
+    const float v_p = 15.0;
     const float v_i = 0;
     const float v_d = 0;
     // Constants from Northeast Forestry University
@@ -119,9 +119,9 @@ float Velocity_Control_205(float current_velocity_205,float target_velocity_205)
 float Position_Control_205(float current_position_205,float target_position_205)
 {
     // Constants from Xian jiangtong University
-    const float l_p = 8;
+    const float l_p = 15.0;
     const float l_i = 0;
-    const float l_d = 400;
+    const float l_d = 0;
     // Constants from Northeast Forestry University
     // const float l_p = 30;
     // const float l_i = 0.01;
@@ -149,7 +149,7 @@ float Position_Control_205(float current_position_205,float target_position_205)
         output = -ESC_MAX;
     }
 
-    return output;
+    return -output;
 }
 /********************************************************************************
 @@ Description: Close loop control for the yaw axis speed on motor controller
