@@ -54,6 +54,7 @@ double magGain[3];
 char txTrap[16];
 char txTX1[16];
 char rxTX1[16];
+int16_t header
 int8_t load;
 int8_t trigger;
 int16_t targetPitch;
@@ -211,7 +212,7 @@ void loop() {
   /******************************************************/
   /*  For Communication between TX1, Arduino, Trapezoid */
   // runs everytime TX1 sends information to Arduino
-  if(Serial.available() > 16) {
+  if(Serial.available() > 0) {
     
     Serial.readBytes(rxTX1, 16);
     for(int i = 0; i < 16; i++) {
@@ -219,6 +220,7 @@ void loop() {
     }
 
     // receive info from rx buffer
+    header = ((int16_t) rxTX1[0] << 8) | (rxTX1[1] & 255);
     load = rxTX1[2];
     trigger = rxTX1[3];
     targetPitch = ((int16_t) rxTX1[4] << 8) | (rxTX1[5] & 255);
@@ -231,6 +233,8 @@ void loop() {
     kalIntZ = kalAngleZ * kalConstZ;
     
     // tx to TX1
+    txTX1[0] = (header >> 8) & 255;
+    txTX1[1] = header & 255;
     txTX1[2] = (kalIntX >> 8) & 255;
     txTX1[3] = kalIntX & 255;
     txTX1[4] = (kalIntY >> 8) & 255;
@@ -241,6 +245,8 @@ void loop() {
     
 
     // tx to trapezoid board
+    txTrap[0] = (header >> 8) & 255;
+    txTrap[1] = header & 255;
     txTrap[2] = (kalIntX >> 8) & 255;
     txTrap[3] = kalIntX & 255;
     txTrap[4] = (targetPitch >> 8) & 255;

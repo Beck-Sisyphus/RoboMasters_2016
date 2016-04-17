@@ -53,11 +53,13 @@ def arduinoTX():
 def arduinoRX():
     myData = arduinoData.read(16)
 
+    # change string representation or rx data to int
     for j in range(len(myData)):
         rx[j] = ord(myData[j])
         
     packet = (( (rx[4] << 8)) | (rx[5] & 255))
 
+    # to get correct negative representation of data in Python
     packet = twosComp(16, packet)
     
     if packet == -314:
@@ -69,6 +71,7 @@ def arduinoRX():
         print "CCCCC"
     else:
         print "Problem"
+
 
 # Change negative numbers to
 # correct readable representation in Python
