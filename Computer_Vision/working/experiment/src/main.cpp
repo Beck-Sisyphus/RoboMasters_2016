@@ -44,16 +44,31 @@ cv::namedWindow("Depth", cv::WINDOW_AUTOSIZE);
 namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
 
 //Blue
-int iLowH = 89;
-int iHighH = 125;
+//int iLowH = 89;
+//int iHighH = 125;
 
-int iLowS = 64;
+//int iLowS = 64;
+//int iHighS = 255;
+
+//int iLowV = 128;
+//int iHighV = 255;
+
+int iLowH = 165;
+int iHighH = 179;
+
+int iLowS = 100;
 int iHighS = 255;
 
-int iLowV = 128;
+int iLowV = 75;
 int iHighV = 255;
 
+int iLowR = 0;
+int iHighR = 5;
+
 ////Create trackbars in "Control" window
+///
+cvCreateTrackbar("LowR", "Control", &iLowR, 179); //Hue (0 - 179)
+cvCreateTrackbar("HighR", "Control", &iHighR, 179);
 cvCreateTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
 cvCreateTrackbar("HighH", "Control", &iHighH, 179);
 
@@ -92,6 +107,7 @@ cvtColor(image, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to
 Mat imgThresholded;
 
 inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
+inRange(imgHSV, Scalar(iLowR, iLowS, iLowV), Scalar(iHighR, iHighS, iHighV), imgThresholded); //Threshold the image
 
 //morphological opening (remove small objects from the foreground)
 erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
