@@ -218,7 +218,7 @@ void CAN2_RX0_IRQHandler(void)
         data 0 and 1 measure position of wheel, from 0 to 8191
         clockwise wheel rotation decreases wheel's position
         wheel position value repeats (decrease from 0 means go back to 8200 again)
-    
+
         data 4 and 5 relates to what current you are tx to motors
         data 4 and 5 NOT same as current tx value
 
@@ -285,14 +285,14 @@ void CAN2_RX0_IRQHandler(void)
         if(rx_message.StdId == 0x204)
         {
 
-            int16_t x4data0 = rx_message.Data[0];;
-            int16_t x4data1 = rx_message.Data[1];;
-            int16_t x4data2 = rx_message.Data[2];;
-            int16_t x4data3 = rx_message.Data[3];;
-            int16_t x4data4 = rx_message.Data[4];;
-            int16_t x4data5 = rx_message.Data[5];;
-            int16_t x4data6 = rx_message.Data[6];;
-            int16_t x4data7 = rx_message.Data[7];;
+            int16_t x4data0 = rx_message.Data[0];
+            int16_t x4data1 = rx_message.Data[1];
+            int16_t x4data2 = rx_message.Data[2];
+            int16_t x4data3 = rx_message.Data[3];
+            int16_t x4data4 = rx_message.Data[4];
+            int16_t x4data5 = rx_message.Data[5];
+            int16_t x4data6 = rx_message.Data[6];
+            int16_t x4data7 = rx_message.Data[7];
             measured_204_angle = ( x4data0 << 8 ) | x4data1;
             measured_204_speed = ( x4data2 << 8 ) | x4data3;
             x445 = ( x4data4 << 8 ) | x4data5;
@@ -519,7 +519,13 @@ void Set_Wheels_Current() {
               Code to Enable cannon to be driven with remote
 *************************************************************************/
 void Remote_Control() {
-    // To see if remote is off or not
+    int16_t drive;
+    int16_t strafe;
+    int16_t rotate;
+    int16_t pitch;
+    int16_t yaw;
+	
+	  // To see if remote is off or not
     if (RC_Ctl.rc.ch2 < RC_CH_VALUE_MIN
         || RC_Ctl.rc.ch3 < RC_CH_VALUE_MIN
         ) {
@@ -527,13 +533,6 @@ void Remote_Control() {
     } else {
         Remote_On = 1;
     }
-
-    int16_t drive;
-    int16_t strafe;
-    int16_t rotate;
-    int16_t pitch;
-    int16_t yaw;
-
 
     drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
     strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
