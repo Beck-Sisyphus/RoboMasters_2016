@@ -158,23 +158,23 @@ int16_t measured_pitch_current;
 int16_t target_yaw_current;
 int16_t target_pitch_current;
 
-int16_t x101;
-int16_t x123;
+int16_t measured_201_angle;
+int16_t measured_201_speed;
 int16_t x145;
 int16_t x167;
 
-int16_t x201;
-int16_t x223;
+int16_t measured_202_angle;
+int16_t measured_202_speed;
 int16_t x245;
 int16_t x267;
 
-int16_t x301;
-int16_t x323;
+int16_t measured_203_angle;
+int16_t measured_203_speed;
 int16_t x345;
 int16_t x367;
 
-int16_t x401;
-int16_t x423;
+int16_t measured_204_angle;
+int16_t measured_204_speed;
 int16_t x445;
 int16_t x467;
 
@@ -187,7 +187,7 @@ Description: Interrupt receive for chassis CAN bus data and single axis gyroscop
 
 /*******
 RX addresses
-0x201: Front right wheel
+0measured_202_angle: Front right wheel
 0x202: Front left wheel
 0x203: Back left wheel
 0x204: Back right wheel
@@ -214,14 +214,21 @@ void CAN2_RX0_IRQHandler(void)
     0x203: Back left wheel
     0x204: Back right wheel
 
-    data 0 and 1 measure position of wheel (0, around 8200)
-    clockwise wheel rotation decreases wheel's position
-    wheel position value repeats (decrease from 0 means go back to 8200 again)
+    For sample robot 2015, with EC60 motor drives:
+        data 0 and 1 measure position of wheel, from 0 to 8191
+        clockwise wheel rotation decreases wheel's position
+        wheel position value repeats (decrease from 0 means go back to 8200 again)
+    
+        data 4 and 5 relates to what current you are tx to motors
+        data 4 and 5 NOT same as current tx value
 
-    data 4 and 5 relates to what current you are tx to motors
-    data 4 and 5 NOT same as current tx value
+        data 2, 3, 6, 7 not useful
 
-    data 2, 3, 6, 7 not useful
+    For robot we build in 2016, with 820R motor drives:
+        You calibrate the CAN address in the first time
+        data 0 and 1 measure position of wheel, from 0 to 8191
+        data 2 and 3 measure rotational speed, in unit of RPM
+        data 4,5, 6, and 7 are null.
     ***************/
 
        if(rx_message.StdId == 0x201)
@@ -235,8 +242,8 @@ void CAN2_RX0_IRQHandler(void)
             int16_t x1data6 = rx_message.Data[6];
             int16_t x1data7 = rx_message.Data[7];
 
-            x101 = ( x1data0 << 8 ) | x1data1;
-            x123 = ( x1data2 << 8 ) | x1data3;
+            measured_201_angle = ( x1data0 << 8 ) | x1data1;
+            measured_201_speed = ( x1data2 << 8 ) | x1data3;
             x145 = ( x1data4 << 8 ) | x1data5;
             x167 = ( x1data6 << 8 ) | x1data7;
         }
@@ -252,8 +259,8 @@ void CAN2_RX0_IRQHandler(void)
             int16_t x2data5 = rx_message.Data[5];
             int16_t x2data6 = rx_message.Data[6];
             int16_t x2data7 = rx_message.Data[7];
-            x201 = ( x2data0 << 8 ) | x2data1;
-            x223 = ( x2data2 << 8 ) | x2data3;
+            measured_202_angle = ( x2data0 << 8 ) | x2data1;
+            measured_202_speed = ( x2data2 << 8 ) | x2data3;
             x245 = ( x2data4 << 8 ) | x2data5;
             x267 = ( x2data6 << 8 ) | x2data7;
 
@@ -269,8 +276,8 @@ void CAN2_RX0_IRQHandler(void)
             int16_t x3data5 = rx_message.Data[5];
             int16_t x3data6 = rx_message.Data[6];
             int16_t x3data7 = rx_message.Data[7];
-            x301 = ( x3data0 << 8 ) | x3data1;
-            x323 = ( x3data2 << 8 ) | x3data3;
+            measured_203_angle = ( x3data0 << 8 ) | x3data1;
+            measured_203_speed = ( x3data2 << 8 ) | x3data3;
             x345 = ( x3data4 << 8 ) | x3data5;
             x367 = ( x3data6 << 8 ) | x3data7;
         }
@@ -286,8 +293,8 @@ void CAN2_RX0_IRQHandler(void)
             int16_t x4data5 = rx_message.Data[5];;
             int16_t x4data6 = rx_message.Data[6];;
             int16_t x4data7 = rx_message.Data[7];;
-            x401 = ( x4data0 << 8 ) | x4data1;
-            x423 = ( x4data2 << 8 ) | x4data3;
+            measured_204_angle = ( x4data0 << 8 ) | x4data1;
+            measured_204_speed = ( x4data2 << 8 ) | x4data3;
             x445 = ( x4data4 << 8 ) | x4data5;
             x467 = ( x4data6 << 8 ) | x4data7;
         }
@@ -362,7 +369,7 @@ void CAN2_RX0_IRQHandler(void)
         // Rest of IRQHandler is provided old code I didn't use
         /*
         //Single axis gyroscope data 单轴陀螺仪数据
-        if(rx_message.StdId == 0x401)
+        if(rx_message.StdId == 0measured_204_angle)
         {
             gyro_ok_flag = 1;
             measured_yaw_angle = (int32_t)(rx_message.Data[0]<<24)|(int32_t)(rx_message.Data[1]<<16)
