@@ -35,6 +35,6 @@ void TIM2_IRQHandler(void)
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 			  // MPU6050_ReadData();
         set_Pitch_Position(pitch_Position);
-        set_Yaw_Position(yaw_Position);
+        // set_Yaw_Position(yaw_Position);
     }
 }

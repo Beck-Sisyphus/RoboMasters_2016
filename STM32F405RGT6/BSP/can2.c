@@ -130,7 +130,7 @@ void Radio_Sent(const uint16_t * radio_channel)
 }
 
 
-int8_t gyro_ok_flag = 0;
+// int8_t gyro_ok_flag = 0;
 
 int32_t turn_cnt = 0;
 float dipan_gyro_angle = 0.0;
@@ -369,7 +369,7 @@ void CAN2_RX0_IRQHandler(void)
         // Rest of IRQHandler is provided old code I didn't use
         /*
         //Single axis gyroscope data 单轴陀螺仪数据
-        if(rx_message.StdId == 0measured_204_angle)
+        if(rx_message.StdId == 0x401)
         {
             gyro_ok_flag = 1;
             measured_yaw_angle = (int32_t)(rx_message.Data[0]<<24)|(int32_t)(rx_message.Data[1]<<16)
@@ -524,7 +524,7 @@ void Remote_Control() {
     int16_t rotate;
     int16_t pitch;
     int16_t yaw;
-	
+
 	  // To see if remote is off or not
     if (RC_Ctl.rc.ch2 < RC_CH_VALUE_MIN
         || RC_Ctl.rc.ch3 < RC_CH_VALUE_MIN
