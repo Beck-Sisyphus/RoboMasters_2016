@@ -62,7 +62,7 @@ def arduinoTX():
     tx[7] = yaw7
     tx[8] = PWM8
     tx[9] = PWM9
-    arduinoData.write(tx)
+    arduinoData.write(bytearray(tx))
     
 
 # receive information from arduino

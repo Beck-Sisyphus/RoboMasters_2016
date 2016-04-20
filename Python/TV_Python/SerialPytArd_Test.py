@@ -11,6 +11,7 @@ i = 0
 a = -3.14159
 b = 123.456
 c = 3.14159
+bDivide = 100.0
 
 a = a * 100
 b = b * 100
@@ -38,16 +39,16 @@ def arduinoTX():
     if i % 3 == 0:
         tx[4] = a1
         tx[5] = a2
-        arduinoData.write(tx)
+        arduinoData.write(bytearray(tx))
     elif i % 3 == 1:
         tx[4] = b1
         tx[5] = b2
-        arduinoData.write(tx)
+        arduinoData.write(bytearray(tx))
 
     else:
         tx[4] = c1
         tx[5] = c2
-        arduinoData.write(tx)
+        arduinoData.write(bytearray(tx))
 
 # receive information from arduino
 def arduinoRX():
@@ -64,14 +65,13 @@ def arduinoRX():
     
     if packet == -314:
         print "AAAAA"
-    elif packet == 12345:
+    elif (packet/bDivide) == 123.45:
         print "BBBBB"
 
     elif packet == 314:
         print "CCCCC"
     else:
         print "Problem"
-
 
 # Change negative numbers to
 # correct readable representation in Python
