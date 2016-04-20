@@ -3,9 +3,35 @@
 
 extern uint16_t measured_yaw_angle;
 extern uint16_t measured_pitch_angle;
-
 extern MPU6050_REAL_DATA MPU6050_Real_Data;
 
+/* Pitch Constants  */
+// from Xian jiangtong University
+const float v_p_205 = 15.0;
+const float v_i_205 = 0;
+const float v_d_205 = 0;
+// Constants from Northeast Forestry University
+// const float v_p_205 = 25.0;
+// const float v_i_205 = 0.0;
+// const float v_d_205 = 12.0;
+
+// Constants from Xian jiangtong University
+const float l_p_205 = 8;
+const float l_i_205 = 0;
+const float l_d_205 = 0;
+// Constants from Northeast Forestry University
+// const float l_p_205 = 30;
+// const float l_i_205 = 0.01;
+//const float l_d_205 = 30.0;
+
+/* Yaw Constants*/
+const float v_p_206 = 50.0;
+const float v_i_206 = 0.0;
+const float v_d_206 = 0.0;
+
+const float l_p_206 = 29.0;//3#5#:0.760
+const float l_i_206 = 0.0;
+const float l_d_206 = 0.0;//3.5;
 
 /*
 @@ Description: Top level Function to implement PID control on Pitch Servo
@@ -73,14 +99,6 @@ void Cmd_ESC(int16_t current_201,int16_t current_202,int16_t current_203)
 *********************************************************************************/
 float Velocity_Control_205(float current_velocity_205,float target_velocity_205)
 {
-    // Constants from Xian jiangtong University
-    const float v_p = 15.0;
-    const float v_i = 0;
-    const float v_d = 0;
-    // Constants from Northeast Forestry University
-    // const float v_p = 25.0;
-    // const float v_i = 0.0;
-    // const float v_d = 12.0;
     static float error_v[2] = {0.0,0.0};
     static float output = 0;
     static float inte = 0;
@@ -94,9 +112,9 @@ float Velocity_Control_205(float current_velocity_205,float target_velocity_205)
     error_v[1] = target_velocity_205 - current_velocity_205;
     inte += error_v[1];
 
-    output = error_v[1] * v_p
-            + inte * v_i
-             + (error_v[1] - error_v[0]) * v_d;
+    output = error_v[1] * v_p_205
+            + inte * v_i_205
+             + (error_v[1] - error_v[0]) * v_d_205;
 
     if(output > ESC_MAX)
     {
@@ -111,7 +129,6 @@ float Velocity_Control_205(float current_velocity_205,float target_velocity_205)
     return output; // For Blue rover, position reading is in inverse direction
 }
 
-
 /********************************************************************************
 @@ Description: Close loop control for the pitch axis position on motor controller
  @ Input      : Current position from pitch axis
@@ -119,15 +136,6 @@ float Velocity_Control_205(float current_velocity_205,float target_velocity_205)
 *********************************************************************************/
 float Position_Control_205(float current_position_205,float target_position_205)
 {
-    // Constants from Xian jiangtong University
-    const float l_p = 8;
-    const float l_i = 0;
-    const float l_d = 0;
-    // Constants from Northeast Forestry University
-    // const float l_p = 30;
-    // const float l_i = 0.01;
-    //const float l_d = 30.0;
-
     static float error_l[2] = {0.0,0.0};
     static float output = 0;
     static float inte = 0;
@@ -136,9 +144,9 @@ float Position_Control_205(float current_position_205,float target_position_205)
     error_l[1] = target_position_205 - current_position_205;
     inte += error_l[1];
 
-    output = error_l[1] * l_p
-            + inte * l_i
-            + (error_l[1] - error_l[0]) * l_d;
+    output = error_l[1] * l_p_205
+            + inte * l_i_205
+            + (error_l[1] - error_l[0]) * l_d_205;
 
     if(output > ESC_MAX)
     {
@@ -159,10 +167,6 @@ float Position_Control_205(float current_position_205,float target_position_205)
 *********************************************************************************/
 float Velocity_Control_206(float current_velocity_206,float target_velocity_206)
 {
-    const float v_p = 50.0;
-    const float v_i = 0.0;
-    const float v_d = 0.0;
-
     static float error_v[2] = {0.0,0.0};
     static float output = 0;
     static float inte = 0;
@@ -176,9 +180,9 @@ float Velocity_Control_206(float current_velocity_206,float target_velocity_206)
     error_v[1] = target_velocity_206 - current_velocity_206;
     inte += error_v[1];
 
-    output = error_v[1] * v_p
-             + inte * v_i
-             + (error_v[1] - error_v[0]) * v_d;
+    output = error_v[1] * v_p_206
+             + inte * v_i_206
+             + (error_v[1] - error_v[0]) * v_d_206;
 
     if(output > ESC_MAX)
     {
@@ -200,10 +204,6 @@ float Velocity_Control_206(float current_velocity_206,float target_velocity_206)
 *********************************************************************************/
 float Position_Control_206(float current_position_206,float target_position_206)
 {
-    const float l_p = 29.0;//3#5#:0.760
-    const float l_i = 0.0;
-    const float l_d = 0.0;//3.5;
-
     static float error_l[2] = {0.0,0.0};
     static float output = 0;
     static float inte = 0;
@@ -212,9 +212,9 @@ float Position_Control_206(float current_position_206,float target_position_206)
     error_l[1] = target_position_206 - current_position_206;
     inte += error_l[1];
 
-    output = error_l[1] * l_p
-							+ inte * l_i
-							+ (error_l[1] - error_l[0]) * l_d;
+    output = error_l[1] * l_p_206
+							+ inte * l_i_206
+							+ (error_l[1] - error_l[0]) * l_d_206;
 
     if(output > ESC_MAX)
     {
