@@ -1,0 +1,4 @@
+int32 pwm_speed
+int32 duration
+---
+bool result
