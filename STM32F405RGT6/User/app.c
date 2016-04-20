@@ -7,7 +7,7 @@ extern MPU6050_REAL_DATA MPU6050_Real_Data;
 
 /* Pitch Constants  */
 // from Xian jiangtong University
-const float v_p_205 = 15.0;
+const float v_p_205 = 7.0;
 const float v_i_205 = 0;
 const float v_d_205 = 0;
 // Constants from Northeast Forestry University
@@ -16,22 +16,22 @@ const float v_d_205 = 0;
 // const float v_d_205 = 12.0;
 
 // Constants from Xian jiangtong University
-const float l_p_205 = 8;
-const float l_i_205 = 0;
-const float l_d_205 = 0;
+const float l_p_205 = 100;
+const float l_i_205 = 0.1;
+const float l_d_205 = 10;
 // Constants from Northeast Forestry University
 // const float l_p_205 = 30;
 // const float l_i_205 = 0.01;
 //const float l_d_205 = 30.0;
 
 /* Yaw Constants*/
-const float v_p_206 = 50.0;
-const float v_i_206 = 0.0;
+const float v_p_206 = 100.0;
+const float v_i_206 = 0.0001;
 const float v_d_206 = 0.0;
 
-const float l_p_206 = 29.0;//3#5#:0.760
-const float l_i_206 = 0.0;
-const float l_d_206 = 0.0;//3.5;
+const float l_p_206 = 10.0;//3#5#:0.760
+const float l_i_206 = 1.0;
+const float l_d_206 = 1.0;//3.5;
 
 /*
 @@ Description: Top level Function to implement PID control on Pitch Servo

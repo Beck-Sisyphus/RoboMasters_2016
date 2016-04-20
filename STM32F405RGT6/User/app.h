@@ -16,6 +16,11 @@
 #define BLUE_PITCH_HIGH 3544
 #define BLUE_YAW_RIGHT 100
 #define BLUE_YAW_LEFT 4871
+// Encoder reading
+#define RED_PITCH_LOW 3092
+#define RED_PITCH_HIGH 2584
+#define RED_YAW_RIGHT 2284
+#define RED_YAW_LEFT 6888
 
 void set_Pitch_Position(uint16_t target_pitch_angle);
 void set_Yaw_Position(uint16_t target_yaw_angle);

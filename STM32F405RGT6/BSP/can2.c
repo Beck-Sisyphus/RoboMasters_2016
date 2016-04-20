@@ -35,6 +35,12 @@ void CAN2_Configuration(void)
     nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);
 
+    nvic.NVIC_IRQChannel = CAN2_TX_IRQn;
+    nvic.NVIC_IRQChannelPreemptionPriority = 1;
+    nvic.NVIC_IRQChannelSubPriority = 0;
+    nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
+
     CAN_DeInit(CAN2);
     CAN_StructInit(&can);
 
@@ -368,16 +374,6 @@ void CAN2_RX0_IRQHandler(void)
 
         // Rest of IRQHandler is provided old code I didn't use
         /*
-        //Single axis gyroscope data 单轴陀螺仪数据
-        if(rx_message.StdId == 0x401)
-        {
-            gyro_ok_flag = 1;
-            measured_yaw_angle = (int32_t)(rx_message.Data[0]<<24)|(int32_t)(rx_message.Data[1]<<16)
-            | (int32_t)(rx_message.Data[2]<<8) | (int32_t)(rx_message.Data[3]);
-
-            last_yaw_angle = this_yaw_angle;
-            this_yaw_angle = -((float)measured_yaw_angle*0.01);
-        }
 
         //Remote controller, mouse, and turret channel 遥控器 鼠标  云台通道
         if(rx_message.StdId == 0x402)
