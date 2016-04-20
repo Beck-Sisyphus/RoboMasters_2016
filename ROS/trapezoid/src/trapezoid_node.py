@@ -1,10 +1,22 @@
+#!/usr/bin/env python
+# trapezoid_node: ROS node to interface with trapezoid board.
+
+
 # To be run in conjunction with Comm_Kalman.ino
 # Arduino file
-
 
 import serial
 import time
 
+# ros imports
+import rospy
+from geometry_msgs.msg import PoseStamped
+from trapezoid.srv import *
+
+# Check in Arduino environment what com port is used
+# it is com7 on TV's computer. If on linux, ls /dev
+ARDUINO_SERIAL_PORT = 'com7'
+ARDUINO_BAUDRATE = 115200
 
 # tx and rx to/from Arduino
 tx = [0] * 16
@@ -23,35 +35,57 @@ kalAngleX
 kalAngleY
 kalAngleZ
 
-
 # Constant to get more decimal places of float data from Arduino
 # Set equal to floats
 kalConstX = 100.0
 kalConstY = 100.0
 kalConstZ = 100.0
 
+# Continuously writes to Arduino
+# and read back from it
+def main():
+	# subscribers
+	rospy.Subscriber('/trapezoid/turret_pose', PoseStamped, handle_turret_pose)
 
-# Split data into different packets
-header0 = (header >> 8) & 255
-header1 = header & 255
+	# publishers
+	pub_pose = rospy.Publisher('/trapezoid/pose', PoseStamped, queue_size=10)
 
-pitch4 = (pitch >> 8) & 255
-pitch5 = pitch & 255
+	# services
+	rospy.Service('/trapezoid/shoot', Shoot, handle_shoot)
 
-yaw6 = (yaw >> 8) & 255
-yaw7 = yaw & 255
-
-PWM8 = (PWM >> 8) & 255
-PWM9 = PWM & 255
+	#init the node
+	rospy.init_node('trapezoid', anonymous=True)
 
 
-# For tx and rx.
-# Check in Arduino environment what com port is used
-# it is com7 on TV's computer
-arduinoData = serial.Serial('com7', 115200)
+	arduinoData = serial.Serial(ARDUINO_SERIAL_PORT, ARDUINO_BAUDRATE)
+	while (1 == 1):
+	    #To Do:
+	    #write to arduino data
+	    #when get aiming information
+	    arduinoTX()
+	    
+	    #receive arduino data
+	    if(arduinoData.inWaiting() > 0):
+	        arduinoRX()
+	        #todo: publish the pose
+
 
 # Send information to arduino
 def arduinoTX():
+	# Split data into different packets
+	header0 = (header >> 8) & 255
+	header1 = header & 255
+
+	pitch4 = (pitch >> 8) & 255
+	pitch5 = pitch & 255
+
+	yaw6 = (yaw >> 8) & 255
+	yaw7 = yaw & 255
+
+	PWM8 = (PWM >> 8) & 255
+	PWM9 = PWM & 255
+
+	# send the data
     tx[0] = header0
     tx[1] = header1
     tx[2] = load
@@ -86,6 +120,14 @@ def arduinoRX():
     kalAngleY = kalAngleY / kalConstY
     kalAngleZ = kalAngleZ / kalConstZ
 
+# -------- subscriber handlers --------
+def handle_turret_pose(data):
+	print data
+
+# -------- service handlers --------
+def handle_shoot(req):
+	print req
+	return req
 
 
 # Change negative numbers to
@@ -99,16 +141,8 @@ def twosComp(bits, value):
         return value
 
 
-# Continuously writes to Arduino
-# and read back from it
-while (1 == 1):
-
-    #To Do:
-    #write to arduino data
-    #when get aiming information
-    arduinoTX()
-    
-    #receive arduino data
-    if(arduinoData.inWaiting() > 0):
-        arduinoRX()
-        
+if __name__ == '__main__':
+	try:
+		main()
+	except rospy.ROSInterruptException:
+		pass
