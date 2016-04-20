@@ -1,11 +1,5 @@
 #include "can2.h"
 #include "led.h"
-#include "usart3.h"
-
-
-extern RC_Ctl_t RC_Ctl;
-extern arduino_data data_usart_3;
-uint8_t Remote_On = 0;
 
 /*----CAN2_TX-----PB13----*/
 /*----CAN2_RX-----PB12----*/
@@ -134,9 +128,6 @@ void Radio_Sent(const uint16_t * radio_channel)
 
     CAN_Transmit(CAN2,&tx_message);
 }
-
-
-// int8_t gyro_ok_flag = 0;
 
 int32_t turn_cnt = 0;
 float dipan_gyro_angle = 0.0;
@@ -511,68 +502,6 @@ void Set_Wheels_Current() {
 }
 
 
-/*************************************************************************
-              Code to Enable cannon to be driven with remote
-*************************************************************************/
-void Remote_Control() {
-    int16_t drive;
-    int16_t strafe;
-    int16_t rotate;
-    int16_t pitch;
-    int16_t yaw;
-
-	  // To see if remote is off or not
-    if (RC_Ctl.rc.ch2 < RC_CH_VALUE_MIN
-        || RC_Ctl.rc.ch3 < RC_CH_VALUE_MIN
-        ) {
-        Remote_On = 0;
-    } else {
-        Remote_On = 1;
-    }
-
-    drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
-    strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
-    rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
-
-    if(RC_Ctl.rc.s1 == RC_SW_UP && RC_Ctl.rc.s2 == RC_SW_UP) {
-        drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
-        strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
-        rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
-
-    } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-        if(RC_Ctl.rc.ch3 > RC_CH_VALUE_OFFSET) {
-            pitch = -10 * (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET);
-        } else if(RC_Ctl.rc.ch3 < RC_CH_VALUE_OFFSET) {
-            pitch = 10 * (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET);
-        }
-
-        yaw = -2 * (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET);
-    }
-
-    if(Remote_On == 1) {
-
-        if(RC_Ctl.rc.s1 == RC_SW_UP && RC_Ctl.rc.s2 == RC_SW_UP) {
-            motor_front_right_cur = 11*(-1*drive + strafe + rotate);
-            motor_back_right_cur = 11*(-1*drive - strafe + rotate);
-            motor_front_left_cur = 11*(drive + strafe + rotate);
-            motor_back_left_cur = 11*(drive - strafe + rotate);
-            Wheels_Address_Setup();
-            Set_Wheels_Current();
-            CAN_Transmit(CAN2, &tx_wheels_message);
-        } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-            motor_yaw_cur = yaw;
-            motor_pitch_cur = pitch;
-            PitchYaw_Address_Setup();
-            Set_PitchYaw_Current();
-            CAN_Transmit(CAN2, &tx_pitchyaw_message);
-        } else {
-            Motor_Reset_Can_2();
-        }
-    }
-
-
-
-}
 
 // Sends specified current value to motor specified by Motor_ID
 // Motor_ID mapping is in can2.h
@@ -857,4 +786,15 @@ void Motor_ManSet_Can_2(void) {
     tx_message2.Data[7] = 0x00;
 
     // CAN_Transmit(CAN2,&tx_message1);
+}
+
+void wheel_control(int16_t drive, int16_t strafe, int16_t rotate)
+{
+    motor_front_right_cur = 11*(-1*drive + strafe + rotate);
+    motor_back_right_cur = 11*(-1*drive - strafe + rotate);
+    motor_front_left_cur = 11*(drive + strafe + rotate);
+    motor_back_left_cur = 11*(drive - strafe + rotate);
+    Wheels_Address_Setup();
+    Set_Wheels_Current();
+    CAN_Transmit(CAN2, &tx_wheels_message);
 }

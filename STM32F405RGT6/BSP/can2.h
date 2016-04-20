@@ -8,7 +8,7 @@
 #include "usart3.h"
 
 #define pitch_max 15.0
-#define yaw_max 720.0			
+#define yaw_max 720.0
 
 // For Red motor
 // #define MOTOR_YAW 				1
@@ -47,8 +47,6 @@ void CAN2_Configuration(void);
 void GYRO_RST(void);
 void Encoder_sent(float encoder_angle);
 
-void Remote_Control(void);
-
 void Motor_Reset_Can_2(void);
 void Motor_Current_Send(int, int);
 
@@ -58,5 +56,6 @@ void Set_PitchYaw_Current(void);
 void Set_Wheels_Current(void);
 
 void Motor_ManSet_Can_2(void);
+void wheel_control(int16_t, int16_t, int16_t);
 
-#endif 
+#endif

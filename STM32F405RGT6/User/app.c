@@ -1,5 +1,4 @@
 #include "main.h"
-#include "map.h"
 
 extern uint16_t measured_yaw_angle;
 extern uint16_t measured_pitch_angle;
