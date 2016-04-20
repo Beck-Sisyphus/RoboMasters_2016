@@ -48,7 +48,6 @@ void GYRO_RST(void);
 void Encoder_sent(float encoder_angle);
 
 void Motor_Reset_Can_2(void);
-void Motor_Current_Send(int, int);
 
 void PitchYaw_Address_Setup(void);
 void Wheels_Address_Setup(void);
@@ -56,6 +55,8 @@ void Set_PitchYaw_Current(void);
 void Set_Wheels_Current(void);
 
 void Motor_ManSet_Can_2(void);
+
+void pitchyaw_control(int16_t, int16_t);
 void wheel_control(int16_t, int16_t, int16_t);
 
 #endif

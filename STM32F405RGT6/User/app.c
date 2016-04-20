@@ -43,7 +43,11 @@ void set_Pitch_Position(uint16_t real_angle_pitch)
     float target_pitch_angle = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, BLUE_PITCH_LOW, BLUE_PITCH_HIGH);
     float pitch_position_change = Position_Control_205((float)measured_pitch_angle, (float)target_pitch_angle);
     float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_position_change);
-    Motor_Current_Send(2, (int16_t)pitch_position_change);
+
+    pitchyaw_control(0, (int16_t) pitch_position_change);
+    // pitchyaw_control(0, (int16_t)pitch_velocity_change);
+
+    // Motor_Current_Send(2, (int16_t)pitch_position_change);
     //Motor_Current_Send(2, (int16_t)pitch_velocity_change);
 }
 
@@ -58,8 +62,12 @@ void set_Yaw_Position(uint16_t real_angle_yaw)
     float target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, BLUE_YAW_RIGHT, BLUE_YAW_LEFT);
     float yaw_position_change = Position_Control_206((float)measured_yaw_angle, (float)target_yaw_angle);
     float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change);
+
+    pitchyaw_control((int16_t) yaw_position_change, 0);
+    //pitchyaw_control((int16_t) yaw_velocity_change, 0);
+
     // Motor_Current_Send(1, (int16_t) yaw_position_change);
-    Motor_Current_Send(1, (int16_t)yaw_velocity_change);
+    // Motor_Current_Send(1, (int16_t)yaw_velocity_change);
 }
 
 

@@ -40,13 +40,12 @@ void Remote_Control() {
         yaw = -2 * (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET);
     }
 
-    if(Remote_On == 1) {
 
+    if(Remote_On == 1) {
         if(RC_Ctl.rc.s1 == RC_SW_UP && RC_Ctl.rc.s2 == RC_SW_UP) {
             wheel_control(drive, strafe, rotate);
         } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-            Motor_Current_Send(1, yaw);
-            Motor_Current_Send(2, pitch);
+            pitchyaw_control(yaw, pitch);
         } else {
             Motor_Reset_Can_2();
         }
