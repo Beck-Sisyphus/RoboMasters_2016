@@ -228,3 +228,8 @@ float Position_Control_206(float current_position_206,float target_position_206)
 
     return output;
 }
+
+long map(long x, long in_min, long in_max, long out_min, long out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}

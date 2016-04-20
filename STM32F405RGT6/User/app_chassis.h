@@ -10,5 +10,6 @@ float Velocity_Control_201(float target_velocity_201);
 float Velocity_Control_202(float target_velocity_202);
 float Velocity_Control_203(float target_velocity_203);
 float Velocity_Control_204(float target_velocity_204);
+float PID_Control(float measured,float target, const float p, const float i, const float d);
 
 #endif

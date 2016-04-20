@@ -1,13 +1,14 @@
 #include "main.h"
 
-extern int16_t measured_201_angle;
 extern int16_t measured_201_speed;
-extern int16_t measured_202_angle;
 extern int16_t measured_202_speed;
-extern int16_t measured_203_angle;
 extern int16_t measured_203_speed;
-extern int16_t measured_204_angle;
 extern int16_t measured_204_speed;
+
+extern int16_t measured_201_angle;
+extern int16_t measured_202_angle;
+extern int16_t measured_203_angle;
+extern int16_t measured_204_angle;
 
 const float v_p_201 = 1.0;
 const float v_i_201 = 0;

@@ -32,4 +32,6 @@ float Position_Control_205(float current_position_201,float target_position_201)
 float Velocity_Control_206(float current_velocity_203,float target_velocity_203);
 float Position_Control_206(float current_position_203,float target_position_203);
 
+long map(long x, long in_min, long in_max, long out_min, long out_max);
+
 #endif

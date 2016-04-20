@@ -193,7 +193,7 @@ Description: Interrupt receive for chassis CAN bus data and single axis gyroscop
 
 /*******
 RX addresses
-0measured_202_angle: Front right wheel
+0x201: Front right wheel
 0x202: Front left wheel
 0x203: Back left wheel
 0x204: Back right wheel

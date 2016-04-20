@@ -109,7 +109,7 @@ void CAN1_RX0_IRQHandler(void)
           | (int32_t)(rx_message.Data[2]<<8) | (int32_t)(rx_message.Data[3]);
 
           last_yaw_angle = this_yaw_angle;
-          this_yaw_angle = -((float)measured_yaw_angle_401*0.01);
+          this_yaw_angle = -((float)measured_yaw_angle_401*0.01f);
         }
     }
 }
