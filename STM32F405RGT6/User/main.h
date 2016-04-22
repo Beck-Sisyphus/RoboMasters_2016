@@ -13,11 +13,9 @@
 #include "module_rs232.h"
 #include "HAL_HMC5883L.h"
 #include "HMC5883L.h"
-
-//#include "Kalman.h"
+#include "remote_control.h"
 
 #include <stdio.h>
-//#include <stdbool.h>
 #include <string.h>
 #include <math.h>
 

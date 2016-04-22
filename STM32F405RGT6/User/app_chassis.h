@@ -6,10 +6,10 @@
 #define GAP 0.0f
 #define ESC_MAX 50000.0f
 
-float Velocity_Control_201(float target_velocity_201);
-float Velocity_Control_202(float target_velocity_202);
-float Velocity_Control_203(float target_velocity_203);
-float Velocity_Control_204(float target_velocity_204);
-float PID_Control(float measured,float target, const float p, const float i, const float d);
+void Velocity_Control_201(float target_velocity_201);
+void Velocity_Control_202(float target_velocity_202);
+void Velocity_Control_203(float target_velocity_203);
+void Velocity_Control_204(float target_velocity_204);
+int16_t PID_Control(float measured,float target, const float p, const float i, const float d);
 
 #endif

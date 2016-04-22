@@ -1,5 +1,5 @@
 #include "can2.h"
-#include "led.h"
+#include "app_chassis.h"
 
 /*----CAN2_TX-----PB13----*/
 /*----CAN2_RX-----PB12----*/
@@ -516,10 +516,20 @@ void pitchyaw_control(int16_t yaw_current, int16_t pitch_current) {
 // controls wheels using kinematic equations
 void wheel_control(int16_t drive, int16_t strafe, int16_t rotate)
 {
-    motor_front_right_cur = 11*(-1*drive + strafe + rotate);
-    motor_back_right_cur = 11*(-1*drive - strafe + rotate);
-    motor_front_left_cur = 11*(drive + strafe + rotate);
-    motor_back_left_cur = 11*(drive - strafe + rotate);
+    int16_t motor_201_pos = (-1*drive + strafe + rotate);
+    int16_t motor_204_pos = (-1*drive - strafe + rotate);
+    int16_t motor_202_pos = (drive + strafe + rotate);
+    int16_t motor_203_pos = (drive - strafe + rotate);
+
+    // motor_front_right_cur = 11 * motor_201_pos;
+    // motor_front_left_cur  = 11 * motor_202_pos;
+    // motor_back_left_cur   = 11 * motor_203_pos;
+    // motor_back_right_cur  = 11 * motor_204_pos;
+    Velocity_Control_201(motor_201_pos);
+    Velocity_Control_204(motor_204_pos);
+    Velocity_Control_202(motor_202_pos);
+    Velocity_Control_203(motor_203_pos);
+
     Wheels_Address_Setup();
     Set_Wheels_Current();
     CAN_Transmit(CAN2, &tx_wheels_message);
