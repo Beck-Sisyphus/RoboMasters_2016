@@ -12,8 +12,8 @@
 #define REAL_YAW_LOW -103
 #define REAL_YAW_HIGH 103
 // Encoder reading
-#define BLUE_PITCH_LOW 4789
-#define BLUE_PITCH_HIGH 3544
+#define BLUE_PITCH_LOW 7742 // 4789
+#define BLUE_PITCH_HIGH 6453 // 3544
 #define BLUE_YAW_RIGHT 100
 #define BLUE_YAW_LEFT 4871
 // Encoder reading
