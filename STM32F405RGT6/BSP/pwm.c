@@ -1,7 +1,7 @@
 #include "main.h"
 
-/*-LEFT---(PB3---TIM5_CH2)--*/
-/*-RIGHT--(PA15--TIM5_CH1)--*/
+/*-LEFT---(PA1---TIM5_CH2)--*/
+/*-RIGHT--(PA0--TIM5_CH1)--*/
 TIM_OCInitTypeDef         oc;
 
 void PWM_Configuration(void)
@@ -14,14 +14,13 @@ void PWM_Configuration(void)
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA ,ENABLE);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
 
-    gpio.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_0|GPIO_Pin_2;
+    gpio.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_0;
     gpio.GPIO_Mode = GPIO_Mode_AF;
     gpio.GPIO_Speed = GPIO_Speed_100MHz;
     GPIO_Init(GPIOA,&gpio);
 
     GPIO_PinAFConfig(GPIOA,GPIO_PinSource1, GPIO_AF_TIM5);
-    GPIO_PinAFConfig(GPIOA,GPIO_PinSource0,GPIO_AF_TIM5);    
-		GPIO_PinAFConfig(GPIOA,GPIO_PinSource2,GPIO_AF_TIM5);    
+    GPIO_PinAFConfig(GPIOA,GPIO_PinSource0,GPIO_AF_TIM5);       
 
     tim.TIM_Prescaler = 84-1;
     tim.TIM_CounterMode = TIM_CounterMode_Up;
@@ -37,11 +36,13 @@ void PWM_Configuration(void)
     oc.TIM_OCNPolarity = TIM_OCPolarity_Low;
     oc.TIM_OCIdleState = TIM_OCIdleState_Reset;
     oc.TIM_OCNIdleState = TIM_OCIdleState_Set;
+
+    // TIM5 channel 1, 2 intialize
     TIM_OC1Init(TIM5,&oc);
     TIM_OC2Init(TIM5,&oc);
-    
+
     TIM_OC1PreloadConfig(TIM5,TIM_OCPreload_Enable);
-    TIM_OC2PreloadConfig(TIM5,TIM_OCPreload_Enable);
+    TIM_OC2PreloadConfig(TIM5,TIM_OCPreload_Enable);  
            
     TIM_ARRPreloadConfig(TIM5,ENABLE);
 
@@ -52,6 +53,15 @@ void PWM_Configuration(void)
 void set(int pulse){
     oc.TIM_Pulse = pulse;
 }
+
+// DIfferent GPIO modes
+// typedef enum
+// { 
+//   GPIO_Mode_IN   = 0x00, /*!< GPIO Input Mode */
+//   GPIO_Mode_OUT  = 0x01, /*!< GPIO Output Mode */
+//   GPIO_Mode_AF   = 0x02, /*!< GPIO Alternate function Mode */
+//   GPIO_Mode_AN   = 0x03  /*!< GPIO Analog Mode */
+// }GPIOMode_TypeDef;
 
 
 
