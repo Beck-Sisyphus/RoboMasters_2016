@@ -25,13 +25,13 @@ void CAN2_Configuration(void)
 
     nvic.NVIC_IRQChannel = CAN2_RX0_IRQn;
     nvic.NVIC_IRQChannelPreemptionPriority = 1;
-    nvic.NVIC_IRQChannelSubPriority = 0;
+    nvic.NVIC_IRQChannelSubPriority = 2;
     nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);
 
     nvic.NVIC_IRQChannel = CAN2_TX_IRQn;
     nvic.NVIC_IRQChannelPreemptionPriority = 1;
-    nvic.NVIC_IRQChannelSubPriority = 0;
+    nvic.NVIC_IRQChannelSubPriority = 2;
     nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);
 

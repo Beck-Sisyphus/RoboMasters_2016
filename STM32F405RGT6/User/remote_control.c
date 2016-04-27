@@ -2,6 +2,11 @@
 extern RC_Ctl_t RC_Ctl;
 uint8_t Remote_On = 0;
 
+extern int16_t pitch_Position;
+extern int16_t yaw_Position;
+extern int16_t pitch_Velocity;
+extern int16_t yaw_Velocity;
+
 /*************************************************************************
               Code to Enable cannon to be driven with remote
 *************************************************************************/
@@ -31,13 +36,15 @@ void Remote_Control() {
         rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
 
     } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-        if(RC_Ctl.rc.ch3 > RC_CH_VALUE_OFFSET) {
-            pitch = -10 * (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET);
-        } else if(RC_Ctl.rc.ch3 < RC_CH_VALUE_OFFSET) {
-            pitch = 10 * (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET);
-        }
+        pitch = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
+        yaw = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
+        // if(RC_Ctl.rc.ch3 > RC_CH_VALUE_OFFSET) {
+        //     pitch = -10 * (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET);
+        // } else if(RC_Ctl.rc.ch3 < RC_CH_VALUE_OFFSET) {
+        //     pitch = 10 * (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET);
+        // }
 
-        yaw = -2 * (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET);
+        // yaw = -2 * (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET);
     }
 
 
@@ -45,7 +52,12 @@ void Remote_Control() {
         if(RC_Ctl.rc.s1 == RC_SW_UP && RC_Ctl.rc.s2 == RC_SW_UP) {
             wheel_control(drive, strafe, rotate);
         } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-            pitchyaw_control(yaw, pitch);
+            // float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, 0);
+            // pitchyaw_control((int16_t) yaw_velocity_change, 0);
+            // pitch_Velocity = pitch;
+            // yaw_Velocity   = yaw;
+            // pitch_Position = pitch;
+            // yaw_Position = yaw;
         } else {
             Motor_Reset_Can_2();
         }

@@ -1,7 +1,10 @@
 #include "main.h"
 
-int pitch_Position;
-int yaw_Position;
+int16_t pitch_Position;
+int16_t yaw_Position;
+int16_t pitch_Velocity;
+int16_t yaw_Velocity;
+
 
 void TIM2_Configuration(void)
 {
@@ -34,8 +37,11 @@ void TIM2_IRQHandler(void)
     {
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 			  // MPU6050_ReadData();
-        //set_Pitch_Position(pitch_Position);
-        //set_Yaw_Position(yaw_Position);
-        pitchyaw_control(yaw_Position, pitch_Position);
+        // set_Pitch_Position(pitch_Position);
+        // set_Yaw_Position(yaw_Position);
+        set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
+        // float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_Velocity);
+        // float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_Velocity);
+        // pitchyaw_control((int16_t) yaw_velocity_change, (int16_t)pitch_velocity_change);
     }
 }

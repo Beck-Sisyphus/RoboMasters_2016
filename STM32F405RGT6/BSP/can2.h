@@ -18,30 +18,13 @@
 // #define MOTOR_FRONT_RIGHT 		5
 // #define MOTOR_BACK_RIGHT 		6
 
-// For Blue motor
+// For Blue motor and all 2016 soldier robots
 #define MOTOR_YAW 				1
 #define MOTOR_PITCH 			2
 #define MOTOR_FRONT_RIGHT 		3
 #define MOTOR_FRONT_LEFT 		4
 #define MOTOR_BACK_LEFT 		5
 #define MOTOR_BACK_RIGHT 		6
-
-/* May not need
-extern float YAW_Angle;
-extern float PITCH_Angle;
-
-// yaw and pitch angle rx messages from CAN
-extern uint16_t temp_yaw_angle;
-extern uint16_t temp_pitch_angle;
-
-extern uint16_t temp_yaw_current;
-extern uint16_t temp_pitch_current;
-
-
-extern float dipan_gyro_angle;
-extern uint8_t shooting_flag;
-extern int8_t gyro_ok_flag;
-*/
 
 void CAN2_Configuration(void);
 void GYRO_RST(void);

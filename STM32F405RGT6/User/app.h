@@ -3,7 +3,7 @@
 #include <stm32f4xx.h>
 
 #define ESC_MAX 50000.0f
-#define GAP 0.0f
+#define GAP 1.0f
 #define abs(x) ((x)>0? (x):(-(x)))
 
 // Measured reading
@@ -12,26 +12,26 @@
 #define REAL_YAW_LOW -103
 #define REAL_YAW_HIGH 103
 // Encoder reading
-#define BLUE_PITCH_LOW 7742 // 4789
-#define BLUE_PITCH_HIGH 6453 // 3544
-#define BLUE_YAW_RIGHT 100
-#define BLUE_YAW_LEFT 4871
+#define BLUE_PITCH_LOW 7530 // 4789
+#define BLUE_PITCH_HIGH 6244 // 3544
+#define BLUE_YAW_RIGHT 100  // 507740
+#define BLUE_YAW_LEFT 4871  //
 // Encoder reading
 #define RED_PITCH_LOW 3092
 #define RED_PITCH_HIGH 2584
 #define RED_YAW_RIGHT 2284
 #define RED_YAW_LEFT 6888
 
-void set_Pitch_Position(uint16_t target_pitch_angle);
-void set_Yaw_Position(uint16_t target_yaw_angle);
-void Cmd_ESC(int16_t current_201,int16_t current_202,int16_t current_203);
+void set_Pitch_Position(uint16_t);
+void set_Yaw_Position(uint16_t);
+void set_Pitch_Yaw_Position(uint16_t, uint16_t);
 
-float Velocity_Control_205(float current_velocity_201,float target_velocity_201);
-float Position_Control_205(float current_position_201,float target_position_201);
+float Velocity_Control_205(float, float);
+float Position_Control_205(float, float);
 
-float Velocity_Control_206(float current_velocity_203,float target_velocity_203);
-float Position_Control_206(float current_position_203,float target_position_203);
+float Velocity_Control_206(float, float);
+float Position_Control_206(float, float);
 
-long map(long x, long in_min, long in_max, long out_min, long out_max);
+static long map(long x, long in_min, long in_max, long out_min, long out_max);
 
 #endif
