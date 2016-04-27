@@ -49,10 +49,12 @@
 typedef struct {
     struct { 
         int16_t header;
-        int16_t kalAngleX;
-        int16_t targetPitch;
-        int16_t targetYaw;
-        int16_t PWM;
+        int8_t feeder_motor_state;
+        int8_t friction_motor_state;
+        int16_t pitch_req;
+        int16_t yaw_req;
+        int16_t feeder_motor_pwm;
+        int16_t friction_motor_pwm;
     } packet;
 } arduino_data;
 
