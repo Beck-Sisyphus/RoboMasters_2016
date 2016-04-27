@@ -13,5 +13,6 @@ void BSP_Init(void){
     CAN2_Configuration();
     USART1_Configuration();
     USART3_Configuration();
+    PWM_Configuration();
     TIM2_Configuration();
 }
