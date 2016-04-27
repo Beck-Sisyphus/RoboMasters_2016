@@ -11,12 +11,12 @@ tx = [0] * 16
 rx = [0] * 16
 
 # Data to be tx to Arduino
-header
-load
-trigger
-pitch
-yaw
-PWM
+feeder_motor_state
+friction_motor_state
+pitch_req
+yaw_req
+feeder_motor_pwm
+friction_motor_pwm
 
 # Data to be rx from Arduino
 kalAngleX
@@ -31,20 +31,6 @@ kalConstY = 100.0
 kalConstZ = 100.0
 
 
-# Split data into different packets
-header0 = (header >> 8) & 255
-header1 = header & 255
-
-pitch4 = (pitch >> 8) & 255
-pitch5 = pitch & 255
-
-yaw6 = (yaw >> 8) & 255
-yaw7 = yaw & 255
-
-PWM8 = (PWM >> 8) & 255
-PWM9 = PWM & 255
-
-
 # For tx and rx.
 # Check in Arduino environment what com port is used
 # it is com7 on TV's computer
@@ -52,16 +38,18 @@ arduinoData = serial.Serial('com7', 115200)
 
 # Send information to arduino
 def arduinoTX():
-    tx[0] = header0
-    tx[1] = header1
-    tx[2] = load
-    tx[3] = trigger
-    tx[4] = pitch4
-    tx[5] = pitch5
-    tx[6] = yaw6
-    tx[7] = yaw7
-    tx[8] = PWM8
-    tx[9] = PWM9
+    tx[0] = (header >> 8) & 255
+    tx[1] = header & 255
+    tx[2] = feeder_motor_state
+    tx[3] = friction_motor_state
+    tx[4] = (pitch_req >> 8) & 255
+    tx[5] = pitch_req & 255
+    tx[6] = (yaw_req >> 8) & 255
+    tx[7] = yaw_req & 255
+    tx[8] = (feeder_motor_pwm >> 8) & 255
+    tx[9] = feeder_motor_pwm & 255
+    tx[10] = (friction_motor_pwm >> 8) & 255
+    tx[11] = friction_motor_pwm & 255
     arduinoData.write(bytearray(tx))
     
 

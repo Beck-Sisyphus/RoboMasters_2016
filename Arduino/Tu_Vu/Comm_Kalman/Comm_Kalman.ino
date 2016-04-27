@@ -54,12 +54,13 @@ double magGain[3];
 char txTrap[16];
 char txTX1[16];
 char rxTX1[16];
-int16_t header
-int8_t load;
-int8_t trigger;
-int16_t targetPitch;
-int16_t targetYaw;
-int16_t PWM;
+int16_t header;
+int8_t feeder_motor_state;
+int8_t friction_motor_state;
+int16_t pitch_req;
+int16_t yaw_req;
+int16_t feeder_motor_pwm;
+int16_t friction_motor_pwm;
 
 // estimate of kalAngles at int to tx
 int16_t kalIntX;
@@ -221,11 +222,12 @@ void loop() {
 
     // receive info from rx buffer
     header = ((int16_t) rxTX1[0] << 8) | (rxTX1[1] & 255);
-    load = rxTX1[2];
-    trigger = rxTX1[3];
-    targetPitch = ((int16_t) rxTX1[4] << 8) | (rxTX1[5] & 255);
-    targetYaw = ((int16_t) rxTX1[6] << 8) | (rxTX1[7] & 255);
-    PWM = ((int16_t) rxTX1[8] << 8) | (rxTX1[9]  & 255);
+    feeder_motor_state = rxTX1[2];
+    friction_motor_state = rxTX1[3];
+    pitch_req = ((int16_t) rxTX1[4] << 8) | (rxTX1[5] & 255);
+    yaw_req = ((int16_t) rxTX1[6] << 8) | (rxTX1[7] & 255);
+    feeder_motor_pwm = ((int16_t) rxTX1[8] << 8) | (rxTX1[9]  & 255);
+    friction_motor_pwm = ((int16_t) rxTX1[10] << 8) | (rxTX1[11]  & 255);
 
     // change multiplied number later
     kalIntX = kalAngleX * kalConstX;
@@ -247,14 +249,16 @@ void loop() {
     // tx to trapezoid board
     txTrap[0] = (header >> 8) & 255;
     txTrap[1] = header & 255;
-    txTrap[2] = (kalIntX >> 8) & 255;
-    txTrap[3] = kalIntX & 255;
-    txTrap[4] = (targetPitch >> 8) & 255;
-    txTrap[5] = targetPitch & 255;
-    txTrap[6] = (targetYaw >> 8) & 255;
-    txTrap[7] = targetYaw & 255;
-    txTrap[8] = (PWM >> 8) & 255;
-    txTrap[9] = PWM & 255;
+    txTrap[2] = feeder_motor_state;
+    txTrap[3] = friction_motor_state;
+    txTrap[4] = (pitch_req >> 8) & 255;
+    txTrap[5] = pitch_req & 255;
+    txTrap[6] = (yaw_req >> 8) & 255;
+    txTrap[7] = yaw_req & 255;
+    txTrap[8] = (feeder_motor_pwm >> 8) & 255;
+    txTrap[9] = feeder_motor_pwm & 255;
+    txTrap[10] = (friction_motor_pwm >> 8) & 255;
+    txTrap[11] = friction_motor_pwm & 255;
     Serial3.write(txTrap, 16);
   }
   
