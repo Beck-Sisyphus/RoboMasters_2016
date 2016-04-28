@@ -55,6 +55,13 @@ void PWM_Configuration(void)
     TIM_ARRPreloadConfig(TIM5,ENABLE);
     TIM_Cmd(TIM5,ENABLE);
 
+    // Friction motor speed
+    PWM1 = 0;
+    PWM2 = 0;
+
+    // Feeder motor speed
+    PWM3 = 0;
+
     // TIM_ARRPreloadConfig(TIM9,ENABLE);
     // TIM_Cmd(TIM9,ENABLE);
 
