@@ -17,6 +17,7 @@ void Remote_Control() {
     int16_t pitch;
     int16_t yaw;
 
+
 	  // To see if remote is off or not
     if (RC_Ctl.rc.ch2 < RC_CH_VALUE_MIN
         || RC_Ctl.rc.ch3 < RC_CH_VALUE_MIN
@@ -26,18 +27,15 @@ void Remote_Control() {
         Remote_On = 1;
     }
 
-    drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
-    strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
-    rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
-
     if(RC_Ctl.rc.s1 == RC_SW_UP && RC_Ctl.rc.s2 == RC_SW_UP) {
         drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
         strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
         rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
 
     } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-        pitch = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
-        yaw = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
+        pitch = 45 + floor((RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET) / 14.6);
+        // yaw = round_div((RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET), 6.4);
+        yaw = -floor((RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET) / 6.4);
         // if(RC_Ctl.rc.ch3 > RC_CH_VALUE_OFFSET) {
         //     pitch = -10 * (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET);
         // } else if(RC_Ctl.rc.ch3 < RC_CH_VALUE_OFFSET) {
@@ -54,7 +52,8 @@ void Remote_Control() {
         } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
             // float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, 0);
             // pitchyaw_control((int16_t) yaw_velocity_change, 0);
-            // pitch_Velocity = pitch;
+            pitch_Position = pitch;
+            yaw_Position = yaw;
             // yaw_Velocity   = yaw;
             // pitch_Position = pitch;
             // yaw_Position = yaw;
@@ -62,4 +61,11 @@ void Remote_Control() {
             Motor_Reset_Can_2();
         }
     }
+}
+
+// division rounding
+// for smoothening remote control of pitch and yaw
+int round_div(int dividend, float divisor)
+{
+    return (int) ((dividend + (divisor / 2)) / divisor);
 }

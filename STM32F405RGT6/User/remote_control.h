@@ -3,4 +3,5 @@
 #include <stm32f4xx.h>
 
 void Remote_Control(void);
+int round_div(int, float);
 #endif
