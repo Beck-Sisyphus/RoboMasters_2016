@@ -33,9 +33,21 @@ void Remote_Control() {
         rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
 
     } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-        pitch = 79 + floor((RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET) / 18.6);
-        // yaw = round_div((RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET), 6.4);
-        yaw = floor((RC_CH_VALUE_OFFSET - RC_Ctl.rc.ch2) / 6.4);
+        // pitch = 79 + floor((RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET) / 18.6);
+        // yaw = floor((RC_CH_VALUE_OFFSET - RC_Ctl.rc.ch2) / 6.4);
+
+        if(pitch >= 78) {
+            pitch = min(pitch + RC_Ctl.rc.ch3 -  RC_CH_VALUE_OFFSET , 114);    
+        } else if(pitch < 78) {
+            pitch = max(pitch + RC_Ctl.rc.ch3 -  RC_CH_VALUE_OFFSET , 43);
+        }     
+
+        if(yaw >= 0) {
+            yaw = min(yaw + RC_Ctl.rc.ch2 -  RC_CH_VALUE_OFFSET , 103);    
+        } else if(yaw < 0) {
+            yaw = max(yaw + RC_Ctl.rc.ch2 -  RC_CH_VALUE_OFFSET , -103);
+        } 
+
         // if(RC_Ctl.rc.ch3 > RC_CH_VALUE_OFFSET) {
         //     pitch = -10 * (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET);
         // } else if(RC_Ctl.rc.ch3 < RC_CH_VALUE_OFFSET) {
@@ -62,6 +74,24 @@ void Remote_Control() {
         }
     }
 }
+
+int min(int a, int b) {
+    if(a<b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+int max(int a, int b) {
+    if(a>b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+
 
 // division rounding
 // for smoothening remote control of pitch and yaw

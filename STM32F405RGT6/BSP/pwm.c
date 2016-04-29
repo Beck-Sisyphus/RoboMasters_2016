@@ -1,6 +1,7 @@
 #include "main.h"
 
 extern RC_Ctl_t RC_Ctl;
+extern arduino_data data_usart_3;
 
 /*-LEFT---(PA1---TIM5_CH2)--*/
 /*-RIGHT--(PA0--TIM5_CH1)--*/
@@ -55,28 +56,54 @@ void PWM_Configuration(void)
     TIM_ARRPreloadConfig(TIM5,ENABLE);
     TIM_Cmd(TIM5,ENABLE);
 
-    // Friction motor speed
-    PWM1 = 0;
-    PWM2 = 0;
-
-    // Feeder motor speed
+    // initialize friction motors
+    PWM1 = 1000;
+    PWM2 = 1000;
+    // initialize feeder motor no spin
     PWM3 = 0;
 
-    // TIM_ARRPreloadConfig(TIM9,ENABLE);
-    // TIM_Cmd(TIM9,ENABLE);
-
-    // TIM_ARRPreloadConfig(TIM5,DISABLE);
-    // TIM_Cmd(TIM5,DISABLE);
-
-    // TIM_ARRPreloadConfig(TIM9,DISABLE);
-    // TIM_Cmd(TIM9,DISABLE);
-          
-    
-
 }
+
+
+void feeder_motor_on(void) {
+    PWM3 = data_usart_3.packet.feeder_motor_pwm;
+}
+
+void feeder_motor_off(void) {
+    PWM3 = 0;
+}
+
+void friction_motor_on(void) {
+    PWM1 = data_usart_3.packet.friction_motor_pwm;
+    PWM2 = data_usart_3.packet.friction_motor_pwm;
+}
+
+void friction_motor_off(void) {
+    PWM1 = 0;
+    PWM2 = 0;
+}
+
+void usart3_receive(void) {
+    if (data_usart_3.packet.feeder_motor_state == 1) {
+        feeder_motor_on();
+    } else if (data_usart_3.packet.feeder_motor_state == 0) {
+        feeder_motor_off();
+    }
+
+    if (data_usart_3.packet.friction_motor_state == 1) {
+        friction_motor_on();
+    } else if (data_usart_3.packet.friction_motor_state == 0) {
+        friction_motor_off();
+    }
+}
+
 void set(int pulse){
     oc.TIM_Pulse = pulse;
 }
+
+
+
+
 
 // DIfferent GPIO modes
 // typedef enum
