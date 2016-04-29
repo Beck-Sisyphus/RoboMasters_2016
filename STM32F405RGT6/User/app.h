@@ -11,7 +11,7 @@
     x-axis forward, y-axis right, z-axis down
 */
 // Measured reading in radian unit, * 1000 for communication with ROS
-#define REAL_PITCH_LOW 977   // 56 degree, real lowest angle value that the cannon can reach
+#define REAL_PITCH_LOW 750   // 43 degree, real lowest angle value that the cannon can reach
 #define REAL_PITCH_HIGH 1990 // 114 degree, real lowest angle value that the cannon can reach
 #define REAL_YAW_LOW -1798   // -103 degree
 #define REAL_YAW_HIGH 1798   // 103 degree
