@@ -6,6 +6,10 @@
 #define GAP 1.0f
 #define abs(x) ((x)>0? (x):(-(x)))
 
+/*  System Coordinate defination
+    Roll-Pitch-Yaw Angles
+    x-axis forward, y-axis right, z-axis down
+*/
 // Measured reading in radian unit, * 1000 for communication with ROS
 #define REAL_PITCH_LOW 977   // 56 degree, real lowest angle value that the cannon can reach
 #define REAL_PITCH_HIGH 1990 // 114 degree, real lowest angle value that the cannon can reach
