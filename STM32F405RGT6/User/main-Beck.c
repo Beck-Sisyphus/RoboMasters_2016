@@ -31,7 +31,7 @@ int count = 0;
 int main(void)
 {
     int i = 0;
-    pitch_Position = 90;
+    pitch_Position = 1571; // 90 degree in radian
     yaw_Position = 0;
     BSP_Init();
     //delay 500ms, wait MPU6050 for stable signal

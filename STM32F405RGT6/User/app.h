@@ -6,11 +6,11 @@
 #define GAP 1.0f
 #define abs(x) ((x)>0? (x):(-(x)))
 
-// Measured reading
-#define REAL_PITCH_LOW 56  // real lowest angle value that the cannon can reach, measured by protractor
-#define REAL_PITCH_HIGH 114 // real lowest angle value that the cannon can reach, measured by protractor
-#define REAL_YAW_LOW -103
-#define REAL_YAW_HIGH 103
+// Measured reading in radian unit, * 1000 for communication with ROS
+#define REAL_PITCH_LOW 977   // 56 degree, real lowest angle value that the cannon can reach
+#define REAL_PITCH_HIGH 1990 // 114 degree, real lowest angle value that the cannon can reach
+#define REAL_YAW_LOW -1798   // -103 degree
+#define REAL_YAW_HIGH 1798   // 103 degree
 // Encoder reading
 #define BLUE_PITCH_LOW 7530 // 4789
 #define BLUE_PITCH_HIGH 6244 // 3544
