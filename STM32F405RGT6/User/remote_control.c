@@ -74,8 +74,8 @@ void Remote_Control() {
         } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
             // float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, 0);
             // pitchyaw_control((int16_t) yaw_velocity_change, 0);
-            pitch_Position = remote_pitch_change;
-            yaw_Position = remote_yaw_change;
+            remote_pitch_change = pitch;
+            remote_yaw_change = yaw;
             // yaw_Velocity   = yaw;
             // pitch_Position = pitch;
             // yaw_Position = yaw;
