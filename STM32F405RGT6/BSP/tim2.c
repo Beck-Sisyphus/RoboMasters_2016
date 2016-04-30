@@ -5,6 +5,10 @@ extern int16_t yaw_Position;
 extern int16_t pitch_Velocity;
 extern int16_t yaw_Velocity;
 
+// for velocity controlling pitch and yaw with remote
+extern int16_t remote_pitch_change;
+extern int16_t remote_yaw_change;
+
 
 void TIM2_Configuration(void)
 {
@@ -12,6 +16,10 @@ void TIM2_Configuration(void)
     NVIC_InitTypeDef         nvic;
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE);
+
+    // initialize starting position
+    // pitch_Position = 78;
+    // yaw_Position = 0;
 
     nvic.NVIC_IRQChannel = TIM2_IRQn;
     nvic.NVIC_IRQChannelPreemptionPriority = 2;
@@ -36,6 +44,12 @@ void TIM2_IRQHandler(void)
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     {
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-        set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
+			  // MPU6050_ReadData();
+        // set_Pitch_Position(pitch_Position);
+        // set_Yaw_Position(yaw_Position);
+        set_Pitch_Yaw_Position(remote_pitch_change, remote_yaw_change);
+        // float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_Velocity);
+        // float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_Velocity);
+        // pitchyaw_control((int16_t) yaw_velocity_change, (int16_t)pitch_velocity_change);
     }
 }

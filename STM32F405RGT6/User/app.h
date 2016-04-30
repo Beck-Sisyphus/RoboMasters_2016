@@ -6,15 +6,16 @@
 #define GAP 1.0f
 #define abs(x) ((x)>0? (x):(-(x)))
 
-/*  System Coordinate defination
-    Roll-Pitch-Yaw Angles
-    x-axis forward, y-axis right, z-axis down
-*/
-// Measured reading in radian unit, * 1000 for communication with ROS
-#define REAL_PITCH_LOW 750   // 43 degree, real lowest angle value that the cannon can reach
-#define REAL_PITCH_HIGH 1990 // 114 degree, real lowest angle value that the cannon can reach
-#define REAL_YAW_LOW -1798   // -103 degree
-#define REAL_YAW_HIGH 1798   // 103 degree
+// Measured reading
+// #define REAL_PITCH_LOW 43  // real lowest angle value that the cannon can reach, measured by protractor
+// #define REAL_PITCH_HIGH 114 // real lowest angle value that the cannon can reach, measured by protractor
+// #define REAL_YAW_LOW -103
+// #define REAL_YAW_HIGH 103
+
+#define REAL_PITCH_LOW 750  // real lowest angle value that the cannon can reach, measured by protractor
+#define REAL_PITCH_HIGH 1990 // real lowest angle value that the cannon can reach, measured by protractor
+#define REAL_YAW_LOW -1798
+#define REAL_YAW_HIGH 1798
 // Encoder reading
 #define BLUE_PITCH_LOW 7530 // 4789
 #define BLUE_PITCH_HIGH 6244 // 3544
@@ -26,9 +27,9 @@
 #define RED_YAW_RIGHT 2284
 #define RED_YAW_LEFT 6888
 
-void set_Pitch_Position(uint16_t);
-void set_Yaw_Position(uint16_t);
-void set_Pitch_Yaw_Position(uint16_t, uint16_t);
+void set_Pitch_Position(int16_t);
+void set_Yaw_Position(int16_t);
+void set_Pitch_Yaw_Position(int16_t, int16_t);
 
 float Velocity_Control_205(float, float);
 float Position_Control_205(float, float);
