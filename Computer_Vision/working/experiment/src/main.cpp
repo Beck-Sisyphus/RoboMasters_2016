@@ -119,13 +119,15 @@ erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(
 
 imshow("Thresholded Image", imgThresholded); //show the thresholded image
 //imshow("Original", image); //show the original image
+
+uint8_t* pixelPtr = (uint8_t*)imgThresholded.data;
 int x_min = INFINITY;
 int x_max = -INFINITY;
 int y_min = INFINITY;
 int y_max = -INFINITY;
 for(int x = 0; x < width; x++){
 	for(int y = 0; y < height; y++){
-		if(imgThresholded.data[x][y][0] == 255){
+		if(pixelPtr[x * width + y * height] == 255 && pixelPtr[x * width + y * height + 1] == 255){
 			if(x < x_min){
 				x_min = x;
 			} 
@@ -144,11 +146,16 @@ for(int x = 0; x < width; x++){
 // mid point color detection output
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// Need to denoise if want accurate result
 int x_center = (x_max + x_min)/2;
 int y_center = (y_max + y_min)/2;
 // Depth, need to decode
 // 0 far away, 255 close
-int depth = depth.data[x_center][y_center][0];
+// need to figure out the actual distance
+pixelPtr = (uint8_t*) depth.data;
+uint8_t distance = pixelPtr[x_center * width + y_center * height];
+
+printf("%d, %d, %d\n", x_center, y_center, distance);
 
  // Display image in OpenCV window
  cv::resize(image, imageDisplay, displaySize);
