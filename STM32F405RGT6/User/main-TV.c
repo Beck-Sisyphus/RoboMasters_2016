@@ -12,46 +12,6 @@ extern arduino_data data_usart_3;
 //MPU6050_RAW_DATA    MPU6050_Raw_Data; 
 extern MPU6050_REAL_DATA   MPU6050_Real_Data;
 
-// int pitch_Position;
-// int yaw_Position;
-
-extern uint16_t temp_yaw_angle;
-extern uint16_t temp_pitch_angle;
-
-extern uint16_t temp_yaw_current;
-extern uint16_t temp_pitch_current;
-
-extern int16_t measured_yaw_angle;
-extern int16_t measured_pitch_angle;
-
-extern int16_t x101;
-extern int16_t x123;
-extern int16_t x145;
-extern int16_t x167;
-
-extern int16_t x201;
-extern int16_t x223;
-extern int16_t x245;
-extern int16_t x267;
-
-extern int16_t x301;
-extern int16_t x323;
-extern int16_t x345;
-extern int16_t x367;
-
-extern int16_t x401;
-extern int16_t x423;
-extern int16_t x445;
-extern int16_t x467;
-
-
-extern float mpu6050_angle_x;
-extern float mpu6050_angle_y;
-extern float mpu6050_angle_z;
-
-extern float angle_x_filtered;
-extern float angle_y_filtered;
-extern float angle_z_filtered;
 
 
 char greeting[6] = {'H', 'E', 'L', 'L', 'O', '\0'};
@@ -83,26 +43,21 @@ int main(void)
     }    
     MPU6050_Gyro_calibration();
     
-    // 
-        
-    // MPU6050_Interrupt_Configuration(); 
-    // MPU6050_ReadData();
-
-    // Friction motor speed
-    PWM1 = 0;
-    PWM2 = 0;
-
-    // Feeder motor speed
+    // delay_ms(1000);
+    PWM1 = 1500;
+    PWM2 = 1500;
     PWM3 = 1;
-    
-    Motor_Reset_Can_2();
-    // Motor_ManSet_Can_2();
 
+    // Motor_Reset_Can_2();
+    wheel_control(0, 0, 0);
+
+    // Motor_ManSet_Can_2();
     while(1)
     {
         // CurrentProtect(); // Overcurrent protection for motor controller
-
+        MPU6050_ReadData();
         Remote_Control();
+        // usart3_receive();
         // pitchyaw_control(data_usart_3.packet.yaw_req, data_usart_3.packet.pitch_req);
 
 
@@ -159,29 +114,3 @@ int main(void)
 // extern uint16_t x4data6;
 // extern uint16_t x4data7;
 
-
-// state_of_feeder_motor = 0
-// feeder_motor_on() {
-//     pwm
-//     asdf
-//     dsaf
-//     adsf
-//     asdf
-//     as
-//     dfdsa
-// }
-
-// feeder_motor_off() {
-    
-// }
-
-// usart3_receive() {
-//     packet = receive_packet()
-//     packet.feeder_motor_state
-
-//     if (packet.feeder_motor_state == 1) {
-//         feeder_motor_on()
-//     } else {
-//         feeder_motor_off()
-//     }
-// }

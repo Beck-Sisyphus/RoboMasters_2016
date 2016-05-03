@@ -2,14 +2,14 @@
 extern RC_Ctl_t RC_Ctl;
 uint8_t Remote_On = 0;
 
-extern int16_t pitch_Position;
-extern int16_t yaw_Position;
-extern int16_t pitch_Velocity;
-extern int16_t yaw_Velocity;
+volatile extern int16_t pitch_Position;
+volatile extern int16_t yaw_Position;
+volatile extern int16_t pitch_Velocity;
+volatile extern int16_t yaw_Velocity;
 
 // for velocity controlling pitch and yaw with remote
-extern int16_t remote_pitch_change;
-extern int16_t remote_yaw_change;
+volatile extern int16_t remote_pitch_change;
+volatile extern int16_t remote_yaw_change;
 
 
 /*************************************************************************

@@ -5,14 +5,14 @@ extern RC_Ctl_t RC_Ctl;
 extern int16_t measured_yaw_angle;
 extern int16_t measured_pitch_angle;
 
-int16_t pitch_Position;
-int16_t yaw_Position;
-int16_t pitch_Velocity;
-int16_t yaw_Velocity;
+volatile int16_t pitch_Position;
+volatile int16_t yaw_Position;
+volatile int16_t pitch_Velocity;
+volatile int16_t yaw_Velocity;
 
 // for velocity controlling pitch and yaw with remote
-int16_t remote_pitch_change;
-int16_t remote_yaw_change;
+volatile int16_t remote_pitch_change;
+volatile int16_t remote_yaw_change;
 
 // extern MPU6050_REAL_DATA MPU6050_Real_Data;
 
@@ -190,7 +190,8 @@ float Velocity_Control_205(float current_velocity_205,float target_velocity_205)
     static float output = 0;
     static float inte = 0;
 
-    if(abs(current_velocity_205) < GAP)
+    if((abs(current_velocity_205) < GAP) ||
+        (RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN))
     {
         current_velocity_205 = 0.0;
     }
@@ -259,7 +260,8 @@ float Velocity_Control_206(float current_velocity_206,float target_velocity_206,
     static float output = 0;
     static float inte = 0;
 
-    if(abs(current_velocity_206) < GAP)
+    if((abs(current_velocity_206) < GAP) || 
+        (RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN))
     {
         current_velocity_206 = 0.0;
     }
