@@ -9,7 +9,7 @@
     2~5 Soldiers we manufacture in 2016
     6 Base robot
     7 Hero robot */
-#define ROBOT_SERIAL_NUMBER 1
+#define ROBOT_SERIAL_NUMBER BLUE_ROBOT
 
 unsigned char USART_BUF[24] = {0};
 extern arduino_data data_usart_3;

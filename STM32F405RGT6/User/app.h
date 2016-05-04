@@ -32,10 +32,10 @@ void set_Yaw_Position(int16_t);
 void set_Pitch_Yaw_Position(int16_t, int16_t);
 
 float Velocity_Control_205(float, float);
-float Position_Control_205(float, float);
+static float Position_Control_205(float, float);
 
-float Velocity_Control_206(float, float, float);
-float Position_Control_206(float, float);
+float Velocity_Control_206(float, float);
+static float Position_Control_206(float, float);
 
 static long map(long x, long in_min, long in_max, long out_min, long out_max);
 

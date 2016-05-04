@@ -19,5 +19,22 @@
 #include <string.h>
 #include <math.h>
 
+/*  Define the robot as
+    0 Blue sample robot
+    1 Red sample robot
+    2~5 Soldiers we manufacture in 2016
+    6 Base robot
+    7 Hero robot */
+#define ROBOT_SERIAL_NUMBER 1
+
+// For Blue motor and all 2016 soldier robots
+#define BLUE_SAMPLE_ROBOT   0
+#define RED_SAMPLE_ROBOT    1
+#define SOLDIER_2           2
+#define SOLDIER_3           3
+#define SOLDIER_4           4
+#define SOLDIER_5           5
+#define BASE_ROBOT       		6
+#define HERO_ROBOT       		7
 
 #endif

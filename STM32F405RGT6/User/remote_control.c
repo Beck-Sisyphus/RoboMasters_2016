@@ -1,6 +1,7 @@
 #include "main.h"
-extern RC_Ctl_t RC_Ctl;
+volatile extern RC_Ctl_t RC_Ctl;
 uint8_t Remote_On = 0;
+volatile int manual_Control_Turret = 0;
 
 volatile extern int16_t pitch_Position;
 volatile extern int16_t yaw_Position;
@@ -38,22 +39,25 @@ void Remote_Control() {
 
     } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
         // Velocity control with remote
-        pitch = (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET) / 10;  
-        yaw = (RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET) / 10;   
+        pitch = (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET) / 10;
+        yaw = (RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET) / 10;
     }
 
 
     if(Remote_On == 1) {
         if(RC_Ctl.rc.s1 == RC_SW_UP && RC_Ctl.rc.s2 == RC_SW_UP) {
             wheel_control(drive, strafe, rotate);
+            manual_Control_Turret = 0;
         } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
             remote_pitch_change = pitch;
             remote_yaw_change = yaw;
+            manual_Control_Turret = 1;
             // pitch_Position = pitch;
             // yaw_Position = yaw;
         } else {
             // Motor_Reset_Can_2();
             wheel_control(0, 0, 0);
+            manual_Control_Turret = 0;
         }
     }
 }

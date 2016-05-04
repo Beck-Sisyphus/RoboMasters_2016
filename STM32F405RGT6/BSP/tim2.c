@@ -16,8 +16,8 @@ void TIM2_Configuration(void)
     TIM_TimeBaseInitTypeDef  tim;
     NVIC_InitTypeDef         nvic;
 
-    pitch_Position = 1000;
-    yaw_Position = 900;
+    pitch_Position = 1571; // 90 degree
+    yaw_Position = 0;
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE);
 
@@ -50,16 +50,17 @@ void TIM2_IRQHandler(void)
         //     MPU6050_ReadData();
         // }
 
-        if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-            //remote velocity control
-            set_Pitch_Yaw_Position(remote_pitch_change, remote_yaw_change);
-        } else {
-            //set point velocity control
-            set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
-        }
+        // if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
+        //     //remote velocity control
+        //     set_Pitch_Yaw_Position(remote_pitch_change, remote_yaw_change);
+        // } else {
+        //     //set point velocity control
+        set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
+        // }
 
         // float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_Velocity);
-        // float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_Velocity);
+        float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_Velocity);
         // pitchyaw_control((int16_t) yaw_velocity_change, (int16_t)pitch_velocity_change);
+        pitchyaw_control((int16_t) yaw_velocity_change, 0);
     }
 }

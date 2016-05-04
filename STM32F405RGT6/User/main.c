@@ -1,7 +1,7 @@
 #include "main.h"
 
-///Turns on Beck's trying for PID controller
-#define PID true
+/// Turns on to print the reading
+#define DEBUG true
 
 unsigned char USART_BUF[24] = {0};
 extern arduino_data data_usart_3;
@@ -51,7 +51,7 @@ int main(void)
     PWM1 = 1500;
     PWM2 = 1500;
 
-		#if !PID
+		#if DEBUG
 				printf("Front right; Front left; Back left; Back right");
 		#endif
     count = 0;
@@ -61,13 +61,10 @@ int main(void)
     while(1)
     {
         // CurrentProtect();
+        MPU6050_ReadData();
 			  Remote_Control();
-			  MPU6050_ReadData();
-
 			 // wheel_control(2000 , 0, 0);
-       #if PID
-
-       #else
+       #if DEBUG
             pitchyaw_control(0, -1500);
             count = count + 20;
            // printf("%i, %i", measured_yaw_angle, measured_pitch_angle);
