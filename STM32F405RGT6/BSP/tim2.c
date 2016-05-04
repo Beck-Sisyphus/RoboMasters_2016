@@ -59,8 +59,8 @@ void TIM2_IRQHandler(void)
         // }
 
         // float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_Velocity);
-        float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_Velocity);
+        // float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_Velocity);
         // pitchyaw_control((int16_t) yaw_velocity_change, (int16_t)pitch_velocity_change);
-        pitchyaw_control((int16_t) yaw_velocity_change, 0);
+        // pitchyaw_control((int16_t) yaw_velocity_change, 0);
     }
 }

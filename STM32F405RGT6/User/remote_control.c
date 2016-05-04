@@ -32,28 +32,19 @@ void Remote_Control() {
         Remote_On = 1;
     }
 
-    if(RC_Ctl.rc.s1 == RC_SW_UP && RC_Ctl.rc.s2 == RC_SW_UP) {
-        drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
-        strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
-        rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
-
-    } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-        // Velocity control with remote
-        pitch = (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET) / 10;
-        yaw = (RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET) / 10;
-    }
-
-
     if(Remote_On == 1) {
         if(RC_Ctl.rc.s1 == RC_SW_UP && RC_Ctl.rc.s2 == RC_SW_UP) {
+            drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
+            strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
+            rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
             wheel_control(drive, strafe, rotate);
             manual_Control_Turret = 0;
         } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-            remote_pitch_change = pitch;
-            remote_yaw_change = yaw;
+            pitch = (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET) / 10;
+            yaw = (RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET) / 10;
             manual_Control_Turret = 1;
-            // pitch_Position = pitch;
-            // yaw_Position = yaw;
+            pitch_Position += pitch;
+            yaw_Position += yaw;
         } else {
             // Motor_Reset_Can_2();
             wheel_control(0, 0, 0);

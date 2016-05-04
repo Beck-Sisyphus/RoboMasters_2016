@@ -5,11 +5,11 @@
 #include "led.h"
 
 
-volatile unsigned char arduino_rx_buffer_usart_3[16]; 
-DMA_InitTypeDef dma_usart_3; 
+volatile unsigned char arduino_rx_buffer_usart_3[16];
+DMA_InitTypeDef dma_usart_3;
 // RC_Ctl_t RC_Ctl_usart_3;
 arduino_data data_usart_3;
-int16_t testData; 
+int16_t testData;
 
 /*-----USART3_TX-----PB10---*/
 /*-----USART3_RX-----PB11---*/
@@ -23,8 +23,8 @@ void USART3_Configuration(void)
     /* -------------- Enable Module Clock Source ----------------------------*/
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB | RCC_AHB1Periph_DMA1,ENABLE);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3,ENABLE);
-    GPIO_PinAFConfig(GPIOB,GPIO_PinSource11,GPIO_AF_USART3); 
-    GPIO_PinAFConfig(GPIOB,GPIO_PinSource10,GPIO_AF_USART3); 
+    GPIO_PinAFConfig(GPIOB,GPIO_PinSource11,GPIO_AF_USART3);
+    GPIO_PinAFConfig(GPIOB,GPIO_PinSource10,GPIO_AF_USART3);
 
     /* -------------- Configure GPIO ---------------------------------------*/
     gpio.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_10;
@@ -54,26 +54,26 @@ void USART3_Configuration(void)
     nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);
 
-    /* -------------- Configure DMA -----------------------------------------*/ 
-    DMA_DeInit(DMA1_Stream1); 
-    dma_usart_3.DMA_Channel = DMA_Channel_4; 
+    /* -------------- Configure DMA -----------------------------------------*/
+    DMA_DeInit(DMA1_Stream1);
+    dma_usart_3.DMA_Channel = DMA_Channel_4;
     dma_usart_3.DMA_PeripheralBaseAddr = (uint32_t)&(USART3->DR);
-    dma_usart_3.DMA_Memory0BaseAddr = (uint32_t)arduino_rx_buffer_usart_3; 
-    dma_usart_3.DMA_DIR = DMA_DIR_PeripheralToMemory; 
-    dma_usart_3.DMA_BufferSize = 16; 
-    dma_usart_3.DMA_PeripheralInc = DMA_PeripheralInc_Disable; 
-    dma_usart_3.DMA_MemoryInc = DMA_MemoryInc_Enable; 
-    dma_usart_3.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte; 
+    dma_usart_3.DMA_Memory0BaseAddr = (uint32_t)arduino_rx_buffer_usart_3;
+    dma_usart_3.DMA_DIR = DMA_DIR_PeripheralToMemory;
+    dma_usart_3.DMA_BufferSize = 16;
+    dma_usart_3.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+    dma_usart_3.DMA_MemoryInc = DMA_MemoryInc_Enable;
+    dma_usart_3.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
     dma_usart_3.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-    dma_usart_3.DMA_Mode = DMA_Mode_Circular; 
-    dma_usart_3.DMA_Priority = DMA_Priority_VeryHigh; 
-    dma_usart_3.DMA_FIFOMode = DMA_FIFOMode_Disable; 
-    dma_usart_3.DMA_FIFOThreshold = DMA_FIFOThreshold_1QuarterFull; 
-    dma_usart_3.DMA_MemoryBurst = DMA_Mode_Normal; 
-    dma_usart_3.DMA_PeripheralBurst = DMA_PeripheralBurst_Single; 
-    DMA_Init(DMA1_Stream1,&dma_usart_3); 
-    DMA_ITConfig(DMA1_Stream1,DMA_IT_TC,ENABLE); 
-    DMA_Cmd(DMA1_Stream1,ENABLE); 
+    dma_usart_3.DMA_Mode = DMA_Mode_Circular;
+    dma_usart_3.DMA_Priority = DMA_Priority_VeryHigh;
+    dma_usart_3.DMA_FIFOMode = DMA_FIFOMode_Disable;
+    dma_usart_3.DMA_FIFOThreshold = DMA_FIFOThreshold_1QuarterFull;
+    dma_usart_3.DMA_MemoryBurst = DMA_Mode_Normal;
+    dma_usart_3.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+    DMA_Init(DMA1_Stream1,&dma_usart_3);
+    DMA_ITConfig(DMA1_Stream1,DMA_IT_TC,ENABLE);
+    DMA_Cmd(DMA1_Stream1,ENABLE);
 }
 
 void USART3_SendChar(unsigned char b)
@@ -86,54 +86,16 @@ void USART3_SendChar(unsigned char b)
 int fputc(int ch, FILE *f)
 {
     while (USART_GetFlagStatus(USART3,USART_FLAG_TC) == RESET);
-    USART_SendData(USART3, (uint8_t)ch);    
+    USART_SendData(USART3, (uint8_t)ch);
     return ch;
 }
-
-
-// static u16 RS232_VisualScope_CRC16_USART3( u8 *Array, u16 Len )
-// {
-//  u16 USART_IX, USART_IY, USART_CRC;
-
-//  USART_CRC = 0xffff;
-//  for(USART_IX=0; USART_IX<Len; USART_IX++) {
-//    USART_CRC = USART_CRC^(u16)(Array[USART_IX]);
-//    for(USART_IY=0; USART_IY<=7; USART_IY++) {
-//      if((USART_CRC&1)!=0)
-//        USART_CRC = (USART_CRC>>1)^0xA001;
-//      else
-//        USART_CRC = USART_CRC>>1;
-//    }
-//  }
-//  return(USART_CRC);
-// }
-
-
-
-// void RS232_VisualScope_USART3( USART_TypeDef* USARTx, u8 *pWord, u16 Len )
-// {
-//  u8 i = 0;
-//  u16 Temp = 0;
-
-//  Temp = RS232_VisualScope_CRC16(pWord, Len);
-//  pWord[8] = Temp&0x00ff;
-//  pWord[9] = (Temp&0xff00)>>8;
-
-//  for(i=0; i<10; i++) {
-//    USART_SendData(USARTx, (uint8_t)*pWord);
-//    while(USART_GetFlagStatus(USARTx, USART_FLAG_TC) == RESET);
-//    pWord++;
-//  }
-// }
-
-
 
 void USART3_IRQHandler(void)
 {
     if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)
     {
         USART_ClearITPendingBit(USART3,USART_IT_RXNE);
-        
+
     }
 }
 
@@ -141,8 +103,8 @@ void DMA1_Stream1_IRQHandler(void)
 {
     if(DMA_GetITStatus(DMA1_Stream1, DMA_IT_TCIF1)) // DMA_IT_TCI_F1 because we are clearing stream 1
     {
-        DMA_ClearFlag(DMA1_Stream1, DMA_FLAG_TCIF1); 
-        DMA_ClearITPendingBit(DMA1_Stream1, DMA_IT_TCIF1); 
+        DMA_ClearFlag(DMA1_Stream1, DMA_FLAG_TCIF1);
+        DMA_ClearITPendingBit(DMA1_Stream1, DMA_IT_TCIF1);
 
         data_usart_3.packet.header = (((int16_t) arduino_rx_buffer_usart_3[0] << 8)) | (arduino_rx_buffer_usart_3[1] & 255);
         data_usart_3.packet.feeder_motor_state = arduino_rx_buffer_usart_3[2] & 255;
@@ -151,80 +113,5 @@ void DMA1_Stream1_IRQHandler(void)
         data_usart_3.packet.yaw_req = (((int16_t) arduino_rx_buffer_usart_3[6] << 8)) | (arduino_rx_buffer_usart_3[7] & 255);
         data_usart_3.packet.feeder_motor_pwm = (((int16_t) arduino_rx_buffer_usart_3[8] << 8)) | (arduino_rx_buffer_usart_3[9] & 255);
         data_usart_3.packet.friction_motor_pwm = (((int16_t) arduino_rx_buffer_usart_3[10] << 8)) | (arduino_rx_buffer_usart_3[11] & 255);
-
-        // for testing sending and receiving data packets to Arduino
-        // testData = (((int16_t) arduino_rx_buffer_usart_3[4] << 8)) | (arduino_rx_buffer_usart_3[5] & 255);
-        
-        // // if(testData / 100 == 123) {
-        // // }
-
-        // if(testData == -314) {
-        //     LED1_ON();
-        //     LED2_OFF();
-        // } else if (testData / 100 == 123) {
-        //     LED1_OFF();
-        //     LED2_ON();
-        // } else if (testData == 314) {
-        //     LED1_OFF();
-        //     LED2_OFF();   
-        // }
-        
     }
 }
-
-
-// ===============================================================================
-//                             Data transfers functions
-//  ===============================================================================  
-
-//   This subsection provides a set of functions allowing to manage the USART data 
-//   transfers.
-  
-//   During an USART reception, data shifts in least significant bit first through 
-//   the RX pin. In this mode, the USART_DR register consists of a buffer (RDR) 
-//   between the internal bus and the received shift register.
-
-//   When a transmission is taking place, a write instruction to the USART_DR register 
-//   stores the data in the TDR register and which is copied in the shift register 
-//   at the end of the current transmission.
-
-//   The read access of the USART_DR register can be done using the USART_ReceiveData()
-//   function and returns the RDR buffered value. Whereas a write access to the USART_DR 
-//   can be done using USART_SendData() function and stores the written data into 
-//   TDR buffer.
-
-// @endverbatim
-//   * @{
-//   */
-
-// /**
-//   * @brief  Transmits single data through the USARTx peripheral.
-//   * @param  USARTx: where x can be 1, 2, 3, 4, 5 or 6 to select the USART or 
-//   *         UART peripheral.
-//   * @param  Data: the data to transmit.
-//   * @retval None
-//   */
-// void USART_SendData(USART_TypeDef* USARTx, uint16_t Data)
-// {
-//   /* Check the parameters */
-//   assert_param(IS_USART_ALL_PERIPH(USARTx));
-//   assert_param(IS_USART_DATA(Data)); 
-    
-//   /* Transmit Data */
-//   USARTx->DR = (Data & (uint16_t)0x01FF);
-// }
-
-// /**
-//   * @brief  Returns the most recent received data by the USARTx peripheral.
-//   * @param  USARTx: where x can be 1, 2, 3, 4, 5 or 6 to select the USART or 
-//   *         UART peripheral.
-//   * @retval The received data.
-//   */
-// uint16_t USART_ReceiveData(USART_TypeDef* USARTx)
-// {
-//   /* Check the parameters */
-//   assert_param(IS_USART_ALL_PERIPH(USARTx));
-  
-//   /* Receive Data */
-//   return (uint16_t)(USARTx->DR & (uint16_t)0x01FF);
-// }
