@@ -3,14 +3,6 @@
 /// Turns on to print the reading
 #define DEBUG true
 
-/*  Define the robot as
-    0 Blue sample robot
-    1 Red sample robot
-    2~5 Soldiers we manufacture in 2016
-    6 Base robot
-    7 Hero robot */
-#define ROBOT_SERIAL_NUMBER BLUE_ROBOT
-
 unsigned char USART_BUF[24] = {0};
 extern arduino_data data_usart_3;
 
@@ -39,8 +31,6 @@ int count = 0;
 int main(void)
 {
     int i = 0;
-    pitch_Position = 1571; // 90 degree in radian
-    yaw_Position = 0;
     BSP_Init();
     //delay 500ms, wait MPU6050 for stable signal
     delay_ms(500);
@@ -50,7 +40,7 @@ int main(void)
     }
     MPU6050_Gyro_calibration();
 
-    // MPU6050_Interrupt_Configuration();
+    MPU6050_Interrupt_Configuration();
 
 
     PWM_Configuration();
@@ -69,7 +59,7 @@ int main(void)
     while(1)
     {
         // CurrentProtect();
-        MPU6050_ReadData();
+        // MPU6050_ReadData();
 			  Remote_Control();
 			 // wheel_control(2000 , 0, 0);
        #if DEBUG

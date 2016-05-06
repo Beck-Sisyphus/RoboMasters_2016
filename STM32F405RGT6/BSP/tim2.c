@@ -45,22 +45,12 @@ void TIM2_IRQHandler(void)
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     {
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+        // set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
 
-        // if (!(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN)) {
-        //     MPU6050_ReadData();
-        // }
-
-        // if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-        //     //remote velocity control
-        //     set_Pitch_Yaw_Position(remote_pitch_change, remote_yaw_change);
-        // } else {
-        //     //set point velocity control
-        set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
-        // }
 
         // float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_Velocity);
-        // float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_Velocity);
+        float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, 0);
         // pitchyaw_control((int16_t) yaw_velocity_change, (int16_t)pitch_velocity_change);
-        // pitchyaw_control((int16_t) yaw_velocity_change, 0);
+        pitchyaw_control((int16_t) yaw_velocity_change, 0);
     }
 }
