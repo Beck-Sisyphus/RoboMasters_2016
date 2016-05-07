@@ -1,10 +1,12 @@
+
 #!/usr/bin/env python
 import rospy
 import numpy as np
 import math
 import sys
 from sensor_msgs.msg import LaserScan
-
+#This node tracks the largest object within a threshold and determines how the robot should move in order to follow it
+#I haven't yet implemented the code to communicate the motion to the board controller node
 mapper = {} #maps scans to indices and range values of 'largest' 
 #object detected within a certain threshold (right now, .5)
 #( it's half the most recent value that was not half less than the value prior.)
