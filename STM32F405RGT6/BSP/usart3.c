@@ -1,13 +1,12 @@
 #include "usart3.h"
 #include "laser.h"
 //#include "main.h"
-#include "usart1.h" // ONLY for the RC_Ctl_t, remove this when we use diff. type
+// #include "usart1.h" // ONLY for the RC_Ctl_t, remove this when we use diff. type
 #include "led.h"
 
 
 volatile unsigned char arduino_rx_buffer_usart_3[16];
 DMA_InitTypeDef dma_usart_3;
-// RC_Ctl_t RC_Ctl_usart_3;
 arduino_data data_usart_3;
 int16_t testData;
 
@@ -113,5 +112,6 @@ void DMA1_Stream1_IRQHandler(void)
         data_usart_3.packet.yaw_req = (((int16_t) arduino_rx_buffer_usart_3[6] << 8)) | (arduino_rx_buffer_usart_3[7] & 255);
         data_usart_3.packet.feeder_motor_pwm = (((int16_t) arduino_rx_buffer_usart_3[8] << 8)) | (arduino_rx_buffer_usart_3[9] & 255);
         data_usart_3.packet.friction_motor_pwm = (((int16_t) arduino_rx_buffer_usart_3[10] << 8)) | (arduino_rx_buffer_usart_3[11] & 255);
+        LED1_TOGGLE();
     }
 }

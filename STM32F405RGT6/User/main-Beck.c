@@ -53,8 +53,6 @@ int main(void)
 			  Remote_Control();
 
        #if DEBUG
-            pitchyaw_control(0, -1500);
-            count = count + 20;
            // printf("%i, %i", measured_yaw_angle, measured_pitch_angle);
            // printf("%i, %i, %i, %i", motor_front_right_cur, motor_front_left_cur, motor_back_left_cur, motor_back_right_cur);
            printf("%i, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f", count, MPU6050_Real_Data.Gyro_X,

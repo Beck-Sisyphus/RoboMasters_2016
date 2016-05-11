@@ -11,6 +11,7 @@ volatile extern int16_t yaw_Position;
 // for velocity controlling pitch and yaw with remote
 volatile extern int16_t remote_pitch_change;
 volatile extern int16_t remote_yaw_change;
+extern arduino_data data_usart_3;
 
 
 /*************************************************************************
@@ -38,6 +39,8 @@ void Remote_Control() {
             strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
             rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
             wheel_control(drive, strafe, rotate);
+            pitch_Position = data_usart_3.packet.pitch_req;
+            yaw_Position = data_usart_3.packet.yaw_req;
             manual_Control_Turret = 0;
         } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
             pitch = (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET) / 100;
