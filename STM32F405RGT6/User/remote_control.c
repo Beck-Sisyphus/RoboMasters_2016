@@ -5,8 +5,8 @@ volatile int manual_Control_Turret = 0;
 
 volatile extern int16_t pitch_Position;
 volatile extern int16_t yaw_Position;
-volatile extern int16_t pitch_Velocity;
-volatile extern int16_t yaw_Velocity;
+// volatile extern int16_t pitch_Velocity;
+// volatile extern int16_t yaw_Velocity;
 
 // for velocity controlling pitch and yaw with remote
 volatile extern int16_t remote_pitch_change;
@@ -40,8 +40,8 @@ void Remote_Control() {
             wheel_control(drive, strafe, rotate);
             manual_Control_Turret = 0;
         } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-            pitch = (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET) / 10;
-            yaw = (RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET) / 10;
+            pitch = (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET) / 100;
+            yaw = (RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET) / 100;
             manual_Control_Turret = 1;
             pitch_Position += pitch;
             yaw_Position += yaw;

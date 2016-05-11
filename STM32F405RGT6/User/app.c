@@ -5,8 +5,8 @@ extern int16_t measured_pitch_angle;
 
 volatile int16_t pitch_Position;
 volatile int16_t yaw_Position;
-volatile int16_t pitch_Velocity;
-volatile int16_t yaw_Velocity;
+// volatile int16_t pitch_Velocity;
+// volatile int16_t yaw_Velocity;
 
 // for velocity controlling pitch and yaw with remote
 volatile int16_t remote_pitch_change;
@@ -28,7 +28,7 @@ const float l_d_205 = 0.0;
 const float v_p_206 = 10.0;
 const float v_i_206 = 0.0;
 const float v_d_206 = 0.0;
-const float l_p_206 = 0.1;
+const float l_p_206 = 1.0;
 const float l_i_206 = 0.0;
 const float l_d_206 = 0.0;
 
@@ -39,7 +39,6 @@ const float l_d_206 = 0.0;
 */
 void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
 {
-
     float target_pitch_angle;
     float pitch_position_change;
     float pitch_velocity_change;
@@ -106,7 +105,17 @@ float Velocity_Control_205(float current_velocity_205,float target_velocity_205)
         output = -ESC_MAX;
     }
 
-    return -output; // For Blue rover, position reading is in inverse direction
+    switch (ROBOT_SERIAL_NUMBER) {
+      case BLUE_SAMPLE_ROBOT:
+              // Blue pitch motor need negative feedback
+              output = -output; break;
+      case RED_SAMPLE_ROBOT:
+              // red pitch motor need positive feedback
+              break;
+      default:break;
+    }
+
+    return output;
 }
 
 /********************************************************************************
@@ -161,9 +170,6 @@ float Velocity_Control_206(float current_velocity_206,float target_velocity_206)
     error_v[1] = target_velocity_206 - current_velocity_206;
     inte += error_v[1];
 
-    // output = error_v[1] * v_p_206
-    //          + inte * v_i_206
-    //          + (error_v[1] - error_v[0]) * v_d_206;
     output = error_v[1] * v_p_206
              + inte * v_i_206
              + (error_v[1] - error_v[0]) * v_d_206;

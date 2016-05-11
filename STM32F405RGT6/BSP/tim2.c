@@ -2,8 +2,8 @@
 
 volatile extern int16_t pitch_Position;
 volatile extern int16_t yaw_Position;
-volatile extern int16_t pitch_Velocity;
-volatile extern int16_t yaw_Velocity;
+// volatile extern int16_t pitch_Velocity;
+// volatile extern int16_t yaw_Velocity;
 
 // for velocity controlling pitch and yaw with remote
 volatile extern int16_t remote_pitch_change;
@@ -45,12 +45,11 @@ void TIM2_IRQHandler(void)
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     {
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-        // set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
+        set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
 
-
-        // float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_Velocity);
-        float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, 0);
+        // float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, 0);
+        // float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, 0);
         // pitchyaw_control((int16_t) yaw_velocity_change, (int16_t)pitch_velocity_change);
-        pitchyaw_control((int16_t) yaw_velocity_change, 0);
+        // pitchyaw_control((int16_t) yaw_velocity_change, 0);
     }
 }

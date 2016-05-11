@@ -22,10 +22,12 @@
 #define BLUE_YAW_RIGHT 100  // 507740
 #define BLUE_YAW_LEFT 4871  //
 // Encoder reading
-#define RED_PITCH_LOW 3092
-#define RED_PITCH_HIGH 2584
-#define RED_YAW_RIGHT 2284
-#define RED_YAW_LEFT 6888
+#define RED_PITCH_LOW  5238 // 3092
+//#define RED_PITCH_MID 4500
+#define RED_PITCH_HIGH 4039 // 2584
+#define RED_YAW_RIGHT  0    // 2284
+//#define RED_YAW_MID 2320
+#define RED_YAW_LEFT   4640 // 6888
 
 void set_Pitch_Position(int16_t);
 void set_Yaw_Position(int16_t);

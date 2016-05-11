@@ -1,17 +1,10 @@
 #include "main.h"
 
 /// Turns on to print the reading
-#define DEBUG true
+#define DEBUG false
 
 unsigned char USART_BUF[24] = {0};
 extern arduino_data data_usart_3;
-
-extern uint16_t measured_yaw_angle;
-extern uint16_t measured_yaw_current;
-extern int16_t target_yaw_current;
-extern int16_t measured_pitch_angle;
-extern int16_t measured_pitch_current;
-extern int16_t target_pitch_current;
 
 extern int16_t motor_front_right_cur;
 extern int16_t motor_front_left_cur;
@@ -24,8 +17,6 @@ extern MPU6050_RAW_DATA MPU6050_Raw_Data;
 extern MPU6050_REAL_DATA MPU6050_Real_Data;
 extern int16_t pitch_Position;
 extern int16_t yaw_Position;
-
-int count = 0;
 
 
 int main(void)
@@ -40,7 +31,7 @@ int main(void)
     }
     MPU6050_Gyro_calibration();
 
-    MPU6050_Interrupt_Configuration();
+    // MPU6050_Interrupt_Configuration();
 
 
     PWM_Configuration();
@@ -52,16 +43,15 @@ int main(void)
 		#if DEBUG
 				printf("Front right; Front left; Back left; Back right");
 		#endif
-    count = 0;
 
     Motor_Reset_Can_2();
 
     while(1)
     {
         // CurrentProtect();
-        // MPU6050_ReadData();
+        MPU6050_ReadData();
 			  Remote_Control();
-			 // wheel_control(2000 , 0, 0);
+
        #if DEBUG
             pitchyaw_control(0, -1500);
             count = count + 20;
