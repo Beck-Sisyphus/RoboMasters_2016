@@ -44,9 +44,9 @@ void EXTI4_IRQHandler(void)
         // USe MPU6050 gyro output as the close-loop feedback for speed
         // If only use the mechanical angle from motor controller for feedback
         // Significant oscillation occur
-
+			  MPU6050_ReadData();
         EXTI_ClearFlag(EXTI_Line5);
         EXTI_ClearITPendingBit(EXTI_Line5);
-			  MPU6050_ReadData();
+			  // MPU6050_ReadData();
     }
 }

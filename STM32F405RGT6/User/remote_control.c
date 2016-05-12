@@ -11,7 +11,7 @@ volatile extern int16_t yaw_Position;
 // for velocity controlling pitch and yaw with remote
 volatile extern int16_t remote_pitch_change;
 volatile extern int16_t remote_yaw_change;
-extern arduino_data data_usart_3;
+volatile extern arduino_data data_usart_3;
 
 
 /*************************************************************************
@@ -51,6 +51,8 @@ void Remote_Control() {
         } else {
             // Motor_Reset_Can_2();
             wheel_control(0, 0, 0);
+            pitch_Position = data_usart_3.packet.pitch_req;
+            yaw_Position = data_usart_3.packet.yaw_req;
             manual_Control_Turret = 0;
         }
     }

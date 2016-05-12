@@ -7,7 +7,7 @@
 
 volatile unsigned char arduino_rx_buffer_usart_3[16];
 DMA_InitTypeDef dma_usart_3;
-arduino_data data_usart_3;
+volatile arduino_data data_usart_3;
 int16_t testData;
 
 /*-----USART3_TX-----PB10---*/

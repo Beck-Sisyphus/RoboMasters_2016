@@ -8,8 +8,8 @@
 char id[3];
 unsigned char USART_BUF[24] = {0};
 // extern RC_Ctl_t RC_Ctl_usart_3;
-extern arduino_data data_usart_3;
-//MPU6050_RAW_DATA    MPU6050_Raw_Data; 
+volatile extern arduino_data data_usart_3;
+//MPU6050_RAW_DATA    MPU6050_Raw_Data;
 extern MPU6050_REAL_DATA   MPU6050_Real_Data;
 
 
@@ -21,28 +21,28 @@ char ay = 'A';
 int main(void)
 {
     int i = 0;
-    BSP_Init();    
-    //delay 500ms, wait MPU6050 for stable signal  
-    delay_ms(500);    
+    BSP_Init();
+    //delay 500ms, wait MPU6050 for stable signal
+    delay_ms(500);
 
-    while(MPU6050_Initialization() == 0xff) 
+    while(MPU6050_Initialization() == 0xff)
     {
-        i++;     // try again if initialization failed          
+        i++;     // try again if initialization failed
         if(i>2) // buzzer starts if initialization fail for more than 10 times and give up
         {
-            /*while(i <= 11) 
+            /*while(i <= 11)
             {
                                 i++;
                 LED1_TOGGLE();
                 delay_ms(50);
-                                
-                        
-                
+
+
+
             }*/
-        }  
-    }    
+        }
+    }
     MPU6050_Gyro_calibration();
-    
+
     // delay_ms(1000);
     PWM1 = 1500;
     PWM2 = 1500;
@@ -66,7 +66,7 @@ int main(void)
         /////////// For testing
         // MPU6050_ReadData();
         // printf("%.2f %.2f %.2f \n", MPU6050_Real_Data.Gyro_X, MPU6050_Real_Data.Gyro_Y, MPU6050_Real_Data.Gyro_Z);
-        // printf("%i %i %i %i \n", 1000, 2000, 3000, 4000); 
+        // printf("%i %i %i %i \n", 1000, 2000, 3000, 4000);
         // printf("201 %i %i %i %i \n", x101, x123, x145, x167);
         // printf("202 %i %i %i %i \n", x201, x223, x245, x267);
         // printf("203 %i %i %i %i \n", x301, x323, x345, x367);
@@ -113,4 +113,3 @@ int main(void)
 // extern uint16_t x4data5;
 // extern uint16_t x4data6;
 // extern uint16_t x4data7;
-
