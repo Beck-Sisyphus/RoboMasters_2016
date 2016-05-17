@@ -12,6 +12,7 @@
 #include "laser.h"
 #include "usart3.h"
 #include "tim2.h"
+#include "tim6.h"
 
 void BSP_Init(void);
 
