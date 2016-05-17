@@ -6,13 +6,24 @@ Lead: Yufang Sun @mandary
 
 branch: compvis
 
-Platform: NVIDIA Jetson TX1 and TK1 board.
+Computing Platform: NVIDIA Jetson TX1 board.
+
+Mechanical Platform: 17mm on Soldier, Hero, and Base, and 42mm on Cannon.
+
+### Middleware in ROS
+Lead: Pico Premvuti @pico737
+
+branch: move to https://github.com/pico737/robomasters_ros
+
+Computing Platform: NVIDIA Jetson TX1 and Manifold board.
+
+Mechanical Platform: Soldier, Hero, Drone, and Base
 
 ### Embedded and Control
-Lead: Pico Premvuti @pico737
+Lead: Beck Pang @Beck-Sisyphus
 
 branch: master, embedded
 
-Platform: the trapezoid board with STM32F405RGT6 core. 
+Computing Platform: the trapezoid board with STM32F405RGT6 core. 
 
-
+Mechanical Platform: Soldier, Hero, and Base
