@@ -30,3 +30,9 @@
 
 # Debug files
 *.dSYM/
+.DS_Store
+
+# LaTeX output
+*.aux
+*.log
+*.synctex.gz
