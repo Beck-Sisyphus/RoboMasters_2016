@@ -1,7 +1,7 @@
-int8_t front_left_pin = 9; 
-int8_t front_right_pin = 8;
-int8_t rear_left_pin = 7;
-int8_t rear_right_pin = 6;
+int8_t front_left_pin = 10; 
+int8_t front_right_pin = 9;
+int8_t rear_left_pin = 8;
+int8_t rear_right_pin = 7;
 
 void setup() {
   pinMode(front_left_pin, OUTPUT);
