@@ -1,16 +1,16 @@
 int Distance = 0;  // Record the number of steps we've taken
 
 void setup() {                
-  pinMode(8, OUTPUT);     
-  pinMode(9, OUTPUT);
-  digitalWrite(8, LOW);
-  digitalWrite(9, LOW);
+  pinMode(5, OUTPUT);     
+  pinMode(6, OUTPUT);
+  digitalWrite(5, LOW);
+  digitalWrite(6, LOW);
 }
 
 void loop() {
-  digitalWrite(9, HIGH);
+  digitalWrite(6, HIGH);
   delayMicroseconds(100);          
-  digitalWrite(9, LOW); 
+  digitalWrite(6, LOW); 
   delayMicroseconds(100);
   Distance = Distance + 1;   // record this step
   
@@ -18,13 +18,13 @@ void loop() {
   if (Distance == 3600)
   {
     // We are! Reverse direction (invert DIR signal)
-    if (digitalRead(8) == LOW)
+    if (digitalRead(5) == LOW)
     {
-      digitalWrite(8, HIGH);
+      digitalWrite(5, HIGH);
     }
     else
     {
-      digitalWrite(8, LOW);
+      digitalWrite(5, LOW);
     }
     // Reset our distance back to zero since we're
     // starting a new move
