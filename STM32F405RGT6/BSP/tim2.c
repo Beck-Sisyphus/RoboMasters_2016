@@ -1,4 +1,4 @@
-#include "timer2.h"
+#include "tim2.h"
 
 //Timer 2 32-bit counter
 //Timer Clock is 168MHz / 4 * 2 = 84M
