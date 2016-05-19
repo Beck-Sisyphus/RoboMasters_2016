@@ -422,16 +422,6 @@
               <FilePath>..\User\stm32f4xx_it.c</FilePath>
             </File>
             <File>
-              <FileName>app.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\app.c</FilePath>
-            </File>
-            <File>
-              <FileName>app.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\app.h</FilePath>
-            </File>
-            <File>
               <FileName>global_define.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\User\global_define.h</FilePath>
@@ -452,14 +442,24 @@
               <FilePath>..\User\main.h</FilePath>
             </File>
             <File>
-              <FileName>map.c</FileName>
+              <FileName>remote_control.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\map.c</FilePath>
+              <FilePath>..\User\remote_control.c</FilePath>
             </File>
             <File>
-              <FileName>map.h</FileName>
+              <FileName>remote_control.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\User\map.h</FilePath>
+              <FilePath>..\User\remote_control.h</FilePath>
+            </File>
+            <File>
+              <FileName>pid.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\pid.h</FilePath>
+            </File>
+            <File>
+              <FileName>pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\pid.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -510,16 +510,6 @@
               <FileName>bsp.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\BSP\bsp.h</FilePath>
-            </File>
-            <File>
-              <FileName>can1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BSP\can1.c</FilePath>
-            </File>
-            <File>
-              <FileName>can1.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\BSP\can1.h</FilePath>
             </File>
             <File>
               <FileName>can2.c</FileName>
@@ -621,6 +611,16 @@
               <FileType>5</FileType>
               <FilePath>..\BSP\tim2.h</FilePath>
             </File>
+            <File>
+              <FileName>can1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\can1.c</FilePath>
+            </File>
+            <File>
+              <FileName>can1.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\BSP\can1.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -699,22 +699,42 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>HMC5883</GroupName>
+          <GroupName>APP</GroupName>
           <Files>
             <File>
-              <FileName>HMC5883L.c</FileName>
+              <FileName>app.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\HMC5883\HMC5883L.c</FilePath>
+              <FilePath>..\APP\app.c</FilePath>
             </File>
             <File>
-              <FileName>HAL_HMC5883L.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\HMC5883\HAL_HMC5883L.h</FilePath>
+              <FileName>app_chassis.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\app_chassis.c</FilePath>
             </File>
             <File>
-              <FileName>HMC5883L.h</FileName>
+              <FileName>app.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\HMC5883\HMC5883L.h</FilePath>
+              <FilePath>..\APP\app.h</FilePath>
+            </File>
+            <File>
+              <FileName>app_chassis.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\APP\app_chassis.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>RmLib</GroupName>
+          <Files>
+            <File>
+              <FileName>common.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\RmLib\common.h</FilePath>
+            </File>
+            <File>
+              <FileName>pid_regulator.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\RmLib\pid_regulator.h</FilePath>
             </File>
           </Files>
         </Group>
