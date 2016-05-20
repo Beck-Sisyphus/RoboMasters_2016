@@ -1,5 +1,5 @@
-#ifndef __APP_H__
-#define __APP_H__
+#ifndef __PID_H__
+#define __PID_H__
 #include <stm32f4xx.h>
 #include "can1.h"
 

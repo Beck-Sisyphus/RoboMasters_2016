@@ -3,7 +3,7 @@
 #include <stm32f4xx.h>
 
 #define abs(x) ((x)>0? (x):(-(x)))
-// #define GAP 0.0f
+#define GAP 0.0f
 #define ESC_MAX 50000.0f
 
 void Velocity_Control_201(float target_velocity_201);

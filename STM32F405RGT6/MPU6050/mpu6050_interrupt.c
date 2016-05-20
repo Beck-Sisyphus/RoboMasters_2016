@@ -16,10 +16,9 @@ void MPU6050_Interrupt_Configuration(void)
     gpio.GPIO_Mode = GPIO_Mode_IN;
     gpio.GPIO_OType = GPIO_OType_PP;
     gpio.GPIO_PuPd = GPIO_PuPd_UP;
-    gpio.GPIO_Speed = GPIO_Speed_2MHz;
+    gpio.GPIO_Speed = GPIO_Speed_50MHz;
 	  GPIO_Init(GPIOA, &gpio);
 
-    // SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA,GPIO_PinSource4);
 	  SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA,EXTI_PinSource4);
 
     exti.EXTI_Line = EXTI_Line4;
@@ -29,8 +28,8 @@ void MPU6050_Interrupt_Configuration(void)
     EXTI_Init(&exti);
 
     nvic.NVIC_IRQChannel = EXTI4_IRQn;
-    nvic.NVIC_IRQChannelPreemptionPriority = 0x0F; // Lowest prioity
-    nvic.NVIC_IRQChannelSubPriority = 0x0F;
+    nvic.NVIC_IRQChannelPreemptionPriority = 2; // Lowest prioity
+    nvic.NVIC_IRQChannelSubPriority = 0;
     nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);
 }
@@ -38,15 +37,15 @@ void MPU6050_Interrupt_Configuration(void)
 //MPU6050 external interrupt handler
 void EXTI4_IRQHandler(void)
 {
-    if(EXTI_GetITStatus(EXTI_Line5) == SET)
+    if(EXTI_GetITStatus(EXTI_Line4) != RESET)
     {
         // Read MPU6050 data out to control the gimbal smoother
         // USe MPU6050 gyro output as the close-loop feedback for speed
         // If only use the mechanical angle from motor controller for feedback
         // Significant oscillation occur
-			  MPU6050_ReadData();
+
         EXTI_ClearFlag(EXTI_Line5);
         EXTI_ClearITPendingBit(EXTI_Line5);
-			  // MPU6050_ReadData();
+			  MPU6050_ReadData();
     }
 }

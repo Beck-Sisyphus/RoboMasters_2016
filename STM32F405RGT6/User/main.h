@@ -2,7 +2,7 @@
 #define __MAIN_H__
 
 #include "common.h"
-#include "stm32f4xx.h"
+#include <stm32f4xx.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
@@ -17,6 +17,7 @@
 #include "remote_control.h"
 #include "pid.h"
 #include "pid_regulator.h"
+#include "CanBusTask.h"
 
 /*  Define the robot as
     0 Blue sample robot

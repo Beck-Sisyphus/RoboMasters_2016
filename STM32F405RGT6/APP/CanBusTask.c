@@ -1,3 +1,5 @@
+#include "main.h"
+
 float target_pitch_angle;
 float target_yaw_angle;
 
@@ -74,16 +76,16 @@ For robot we build in 2016, with 820R motor drives:
     data 4,5, 6, and 7 are null.
 ***************/
 
-   if(rx_message.StdId == 0x201)
+   if(rx_message->StdId == 0x201)
     {
-        int16_t x1data0 = rx_message.Data[0];
-        int16_t x1data1 = rx_message.Data[1];
-        int16_t x1data2 = rx_message.Data[2];
-        int16_t x1data3 = rx_message.Data[3];
-        int16_t x1data4 = rx_message.Data[4];
-        int16_t x1data5 = rx_message.Data[5];
-        int16_t x1data6 = rx_message.Data[6];
-        int16_t x1data7 = rx_message.Data[7];
+        int16_t x1data0 = rx_message->Data[0];
+        int16_t x1data1 = rx_message->Data[1];
+        int16_t x1data2 = rx_message->Data[2];
+        int16_t x1data3 = rx_message->Data[3];
+        int16_t x1data4 = rx_message->Data[4];
+        int16_t x1data5 = rx_message->Data[5];
+        int16_t x1data6 = rx_message->Data[6];
+        int16_t x1data7 = rx_message->Data[7];
 
         measured_201_angle = ( x1data0 << 8 ) | x1data1;
         measured_201_speed = ( x1data2 << 8 ) | x1data3;
@@ -91,17 +93,17 @@ For robot we build in 2016, with 820R motor drives:
         x167 = ( x1data6 << 8 ) | x1data7;
     }
 
-    if(rx_message.StdId == 0x202)
+    if(rx_message->StdId == 0x202)
     {
 
-        int16_t x2data0 = rx_message.Data[0];
-        int16_t x2data1 = rx_message.Data[1];
-        int16_t x2data2 = rx_message.Data[2];
-        int16_t x2data3 = rx_message.Data[3];
-        int16_t x2data4 = rx_message.Data[4];
-        int16_t x2data5 = rx_message.Data[5];
-        int16_t x2data6 = rx_message.Data[6];
-        int16_t x2data7 = rx_message.Data[7];
+        int16_t x2data0 = rx_message->Data[0];
+        int16_t x2data1 = rx_message->Data[1];
+        int16_t x2data2 = rx_message->Data[2];
+        int16_t x2data3 = rx_message->Data[3];
+        int16_t x2data4 = rx_message->Data[4];
+        int16_t x2data5 = rx_message->Data[5];
+        int16_t x2data6 = rx_message->Data[6];
+        int16_t x2data7 = rx_message->Data[7];
         measured_202_angle = ( x2data0 << 8 ) | x2data1;
         measured_202_speed = ( x2data2 << 8 ) | x2data3;
         x245 = ( x2data4 << 8 ) | x2data5;
@@ -109,33 +111,33 @@ For robot we build in 2016, with 820R motor drives:
 
     }
 
-    if(rx_message.StdId == 0x203)
+    if(rx_message->StdId == 0x203)
     {
-        int16_t x3data0 = rx_message.Data[0];
-        int16_t x3data1 = rx_message.Data[1];
-        int16_t x3data2 = rx_message.Data[2];
-        int16_t x3data3 = rx_message.Data[3];
-        int16_t x3data4 = rx_message.Data[4];
-        int16_t x3data5 = rx_message.Data[5];
-        int16_t x3data6 = rx_message.Data[6];
-        int16_t x3data7 = rx_message.Data[7];
+        int16_t x3data0 = rx_message->Data[0];
+        int16_t x3data1 = rx_message->Data[1];
+        int16_t x3data2 = rx_message->Data[2];
+        int16_t x3data3 = rx_message->Data[3];
+        int16_t x3data4 = rx_message->Data[4];
+        int16_t x3data5 = rx_message->Data[5];
+        int16_t x3data6 = rx_message->Data[6];
+        int16_t x3data7 = rx_message->Data[7];
         measured_203_angle = ( x3data0 << 8 ) | x3data1;
         measured_203_speed = ( x3data2 << 8 ) | x3data3;
         x345 = ( x3data4 << 8 ) | x3data5;
         x367 = ( x3data6 << 8 ) | x3data7;
     }
 
-    if(rx_message.StdId == 0x204)
+    if(rx_message->StdId == 0x204)
     {
 
-        int16_t x4data0 = rx_message.Data[0];
-        int16_t x4data1 = rx_message.Data[1];
-        int16_t x4data2 = rx_message.Data[2];
-        int16_t x4data3 = rx_message.Data[3];
-        int16_t x4data4 = rx_message.Data[4];
-        int16_t x4data5 = rx_message.Data[5];
-        int16_t x4data6 = rx_message.Data[6];
-        int16_t x4data7 = rx_message.Data[7];
+        int16_t x4data0 = rx_message->Data[0];
+        int16_t x4data1 = rx_message->Data[1];
+        int16_t x4data2 = rx_message->Data[2];
+        int16_t x4data3 = rx_message->Data[3];
+        int16_t x4data4 = rx_message->Data[4];
+        int16_t x4data5 = rx_message->Data[5];
+        int16_t x4data6 = rx_message->Data[6];
+        int16_t x4data7 = rx_message->Data[7];
         measured_204_angle = ( x4data0 << 8 ) | x4data1;
         measured_204_speed = ( x4data2 << 8 ) | x4data3;
         x445 = ( x4data4 << 8 ) | x4data5;
@@ -155,14 +157,14 @@ For robot we build in 2016, with 820R motor drives:
     // -750 current value = 24305 (yaw_data4)<<8|(yaw_data5) value
     // -500 current value = 16630 (yaw_data4)<<8|(yaw_data5) value
     // pitch has same current to (data4<<8)|(data5) conversion
-    if(rx_message.StdId == 0x205)
+    if(rx_message->StdId == 0x205)
     {
 
         // construct message from data[0] and data[1]
-        int16_t yaw_data0 = rx_message.Data[0];
-        int16_t yaw_data1 = rx_message.Data[1];
-        int16_t yaw_data4 = rx_message.Data[4];
-        int16_t yaw_data5 = rx_message.Data[5];
+        int16_t yaw_data0 = rx_message->Data[0];
+        int16_t yaw_data1 = rx_message->Data[1];
+        int16_t yaw_data4 = rx_message->Data[4];
+        int16_t yaw_data5 = rx_message->Data[5];
 
         measured_yaw_angle = (yaw_data0)<<8|(yaw_data1);
         target_yaw_current = (yaw_data4)<<8|(yaw_data5);
@@ -187,15 +189,15 @@ For robot we build in 2016, with 820R motor drives:
     // -750 current value = 24305 (pitch_data4)<<8|(pitch_data5) value
     // -500 current value = 16630 (pitch_data4)<<8|(pitch_data5) value
     // yaw has same current to (data4<<8)|(data5) conversion
-    if(rx_message.StdId == 0x206)
+    if(rx_message->StdId == 0x206)
     {
         // construct message from data[0] and data[1]
-        int16_t pitch_data0 = rx_message.Data[0];
-        int16_t pitch_data1 = rx_message.Data[1];
-        int16_t pitch_data2 = rx_message.Data[2];
-        int16_t pitch_data3 = rx_message.Data[3];
-        int16_t pitch_data4 = rx_message.Data[4];
-        int16_t pitch_data5 = rx_message.Data[5];
+        int16_t pitch_data0 = rx_message->Data[0];
+        int16_t pitch_data1 = rx_message->Data[1];
+        int16_t pitch_data2 = rx_message->Data[2];
+        int16_t pitch_data3 = rx_message->Data[3];
+        int16_t pitch_data4 = rx_message->Data[4];
+        int16_t pitch_data5 = rx_message->Data[5];
 
         measured_pitch_angle = (pitch_data0)<<8|(pitch_data1);
         measured_pitch_current = (pitch_data2)<<8|(pitch_data3);
@@ -312,10 +314,14 @@ void wheel_control(int16_t drive, int16_t strafe, int16_t rotate)
     // motor_front_left_cur  = 11 * motor_202_pos;
     // motor_back_left_cur   = 11 * motor_203_pos;
     // motor_back_right_cur  = 11 * motor_204_pos;
-    Velocity_Control_201(motor_201_pos);
-    Velocity_Control_204(motor_204_pos);
-    Velocity_Control_202(motor_202_pos);
-    Velocity_Control_203(motor_203_pos);
+    motor_front_right_cur = 6 * motor_201_pos;
+    motor_back_right_cur = 6 * motor_204_pos;
+    motor_front_left_cur = 6 * motor_202_pos;
+    motor_back_left_cur = 6 * motor_203_pos;
+    // Velocity_Control_201(motor_201_pos);
+    // Velocity_Control_204(motor_204_pos);
+    // Velocity_Control_202(motor_202_pos);
+    // Velocity_Control_203(motor_203_pos);
 
     Wheels_Address_Setup();
     Set_Wheels_Current();

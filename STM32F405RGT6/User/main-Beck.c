@@ -1,10 +1,10 @@
 #include "main.h"
 
 /// Turns on to print the reading
-#define DEBUG false
+//#define DEBUG false
 
 unsigned char USART_BUF[24] = {0};
-extern arduino_data data_usart_3;
+volatile extern arduino_data data_usart_3;
 
 extern int16_t motor_front_right_cur;
 extern int16_t motor_front_left_cur;
@@ -55,7 +55,7 @@ int main(void)
        #if DEBUG
            // printf("%i, %i", measured_yaw_angle, measured_pitch_angle);
            // printf("%i, %i, %i, %i", motor_front_right_cur, motor_front_left_cur, motor_back_left_cur, motor_back_right_cur);
-           printf("%i, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f", count, MPU6050_Real_Data.Gyro_X,
+           printf("%.2f, %.2f, %.2f, %.2f, %.2f, %.2f", MPU6050_Real_Data.Gyro_X,
            MPU6050_Real_Data.Gyro_Y, MPU6050_Real_Data.Gyro_Z,
            MPU6050_Real_Data.Accel_X, MPU6050_Real_Data.Accel_Y, MPU6050_Real_Data.Accel_Z);
            //printf("%i", measured_yaw_angle_401);

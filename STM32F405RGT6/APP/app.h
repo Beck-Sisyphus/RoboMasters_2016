@@ -2,8 +2,8 @@
 #define __APP_H__
 #include <stm32f4xx.h>
 
-#define ESC_MAX 50000.0f
-// #define GAP 1.0f
+// #define ESC_MAX 50000.0f
+#define GAP_P 1.0f
 #define abs(x) ((x)>0? (x):(-(x)))
 
 // Measured reading

@@ -373,7 +373,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries;..\User;..\BSP;..\MPU6050;..\HMC5883</IncludePath>
+              <IncludePath>..\Libraries;..\User;..\BSP;..\MPU6050;..\APP;..\RmLib</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -437,11 +437,6 @@
               <FilePath>..\User\main.c</FilePath>
             </File>
             <File>
-              <FileName>main.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\main.h</FilePath>
-            </File>
-            <File>
               <FileName>remote_control.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\remote_control.c</FilePath>
@@ -460,6 +455,11 @@
               <FileName>pid.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>main.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\main.h</FilePath>
             </File>
           </Files>
         </Group>

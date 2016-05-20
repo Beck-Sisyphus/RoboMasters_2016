@@ -82,7 +82,7 @@ float Velocity_Control_205(float current_velocity_205,float target_velocity_205)
     static float output = 0;
     static float inte = 0;
 
-    if((abs(current_velocity_205) < GAP))
+    if((abs(current_velocity_205) < GAP_P))
     {
         current_velocity_205 = 0.0;
     }
@@ -161,7 +161,7 @@ float Velocity_Control_206(float current_velocity_206,float target_velocity_206)
     static float output = 0;
     static float inte = 0;
 
-    if((abs(current_velocity_206) < GAP))
+    if((abs(current_velocity_206) < GAP_P))
     {
         current_velocity_206 = 0.0;
     }
