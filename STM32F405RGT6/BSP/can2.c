@@ -1,4 +1,5 @@
 #include "can2.h"
+#include "main.h"
 #include "CanBusTask.h"
 
 /*----CAN2_TX-----PB13----*/

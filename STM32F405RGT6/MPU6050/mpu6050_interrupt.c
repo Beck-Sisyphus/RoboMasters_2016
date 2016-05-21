@@ -3,6 +3,11 @@
 #include "stm32f4xx_syscfg.h"
 #include "misc.h"
 
+extern float mpu6050_angle_x;
+extern float mpu6050_angle_y;
+extern float mpu6050_angle_z;
+
+
 void MPU6050_Interrupt_Configuration(void)
 {
     GPIO_InitTypeDef    gpio;
@@ -39,11 +44,6 @@ void EXTI4_IRQHandler(void)
 {
     if(EXTI_GetITStatus(EXTI_Line4) != RESET)
     {
-        // Read MPU6050 data out to control the gimbal smoother
-        // USe MPU6050 gyro output as the close-loop feedback for speed
-        // If only use the mechanical angle from motor controller for feedback
-        // Significant oscillation occur
-
         EXTI_ClearFlag(EXTI_Line5);
         EXTI_ClearITPendingBit(EXTI_Line5);
 			  MPU6050_ReadData();

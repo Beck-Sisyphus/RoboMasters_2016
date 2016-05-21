@@ -13,6 +13,7 @@
 #include "usart3.h"
 #include "tim2.h"
 #include "tim6.h"
+#include "mpu6050_interrupt.h"
 
 void BSP_Init(void);
 

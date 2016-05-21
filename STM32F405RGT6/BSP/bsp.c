@@ -16,4 +16,5 @@ void BSP_Init(void){
     PWM_Configuration();
     TIM2_Configuration();
     TIM6_Configuration();
+    MPU6050_Interrupt_Configuration();
 }

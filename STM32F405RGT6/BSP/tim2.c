@@ -23,7 +23,8 @@ void TIM2_IRQHandler(void)
 		{
 			  TIM_ClearITPendingBit(TIM2,TIM_IT_Update);
         TIM_ClearFlag(TIM2, TIM_FLAG_Update);
-			  LED1_TOGGLE();
+        // Remote_Control();
+ 			  LED1_TOGGLE();
 		}
 }
 
