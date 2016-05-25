@@ -31,8 +31,8 @@ WorkState_e GetWorkState()
 void Control_Task(void)
 {
 	time_tick_1ms++;
-	WorkStateFSM();
-	WorkStateSwitchProcess();
+	// WorkStateFSM();
+	// WorkStateSwitchProcess();
 	// //启动后根据磁力计的数据初始化四元数
   // // Initialize quaternion coordinate from magnetometer
 	// if(time_tick_1ms <100) { Init_Quaternion(); }
@@ -47,18 +47,18 @@ void Control_Task(void)
   GMPitchControlLoop();
 	GMYawControlLoop();
 	SetGimbalMotorOutput();
-	//chassis motor control
-	if(time_tick_1ms%4 == 0)         //motor control frequency 4ms
-	{
-		// Supervise task //监控任务
-		SuperviseTask();
-		// Chassis control task//底盘控制任务
-		CMControlLoop();
-    // Shooting mechanism control task//发射机构控制任务
-		ShooterMControlLoop();
-	}
-}
 
+	// //chassis motor control
+	// if(time_tick_1ms%4 == 0)         //motor control frequency 4ms
+	// {
+	// 	// Supervise task //监控任务
+	// 	SuperviseTask();
+	// 	// Chassis control task//底盘控制任务
+	// 	CMControlLoop();
+  //   // Shooting mechanism control task//发射机构控制任务
+	// 	ShooterMControlLoop();
+	// }
+}
 
 void WorkStateFSM(void)
 {
@@ -133,13 +133,13 @@ static void WorkStateSwitchProcess(void)
 // Pitch axis double loop control
 void GMPitchControlLoop(void)
 {
-	GMPPositionPID.kp = PITCH_POSITION_KP_DEFAULTS + PitchPositionSavedPID.kp_offset;
-	GMPPositionPID.ki = PITCH_POSITION_KI_DEFAULTS + PitchPositionSavedPID.ki_offset;
-	GMPPositionPID.kd = PITCH_POSITION_KD_DEFAULTS + PitchPositionSavedPID.kd_offset;
+	GMPPositionPID.kp = PITCH_POSITION_KP_DEFAULTS;
+	GMPPositionPID.ki = PITCH_POSITION_KI_DEFAULTS;
+	GMPPositionPID.kd = PITCH_POSITION_KD_DEFAULTS;
 
-	GMPSpeedPID.kp = PITCH_SPEED_KP_DEFAULTS + PitchSpeedSavedPID.kp_offset;
-	GMPSpeedPID.ki = PITCH_SPEED_KI_DEFAULTS + PitchSpeedSavedPID.ki_offset;
-	GMPSpeedPID.kd = PITCH_SPEED_KD_DEFAULTS + PitchSpeedSavedPID.kd_offset;
+	GMPSpeedPID.kp = PITCH_SPEED_KP_DEFAULTS;
+	GMPSpeedPID.ki = PITCH_SPEED_KI_DEFAULTS;
+	GMPSpeedPID.kd = PITCH_SPEED_KD_DEFAULTS;
 
 	GMPPositionPID.ref = GimbalRef.pitch_angle_dynamic_ref;
 	// GMPPositionPID.fdb = -GMPitchEncoder.ecd_angle * GMPitchRamp.Calc(&GMPitchRamp);    // With ramp function
@@ -153,13 +153,13 @@ void GMPitchControlLoop(void)
 
 void GMYawControlLoop(void)
 {
-	GMYPositionPID.kp = YAW_POSITION_KP_DEFAULTS + YawPositionSavedPID.kp_offset;//  gAppParamStruct.YawPositionPID.kp_offset;  //may be bug if more operation  done
-	GMYPositionPID.ki = YAW_POSITION_KI_DEFAULTS + YawPositionSavedPID.ki_offset;
-	GMYPositionPID.kd = YAW_POSITION_KD_DEFAULTS + YawPositionSavedPID.kd_offset;
+	GMYPositionPID.kp = YAW_POSITION_KP_DEFAULTS;
+	GMYPositionPID.ki = YAW_POSITION_KI_DEFAULTS;
+	GMYPositionPID.kd = YAW_POSITION_KD_DEFAULTS;
 
-	GMYSpeedPID.kp = YAW_SPEED_KP_DEFAULTS + YawSpeedSavedPID.kp_offset;
-	GMYSpeedPID.ki = YAW_SPEED_KI_DEFAULTS + YawSpeedSavedPID.ki_offset;
-	GMYSpeedPID.kd = YAW_SPEED_KD_DEFAULTS + YawSpeedSavedPID.kd_offset;
+	GMYSpeedPID.kp = YAW_SPEED_KP_DEFAULTS;
+	GMYSpeedPID.ki = YAW_SPEED_KI_DEFAULTS;
+	GMYSpeedPID.kd = YAW_SPEED_KD_DEFAULTS;
 
   GMYPositionPID.ref = GimbalRef.yaw_angle_dynamic_ref;
   GMYPositionPID.fdb = -GMYawEncoder.ecd_angle;
@@ -168,6 +168,19 @@ void GMYawControlLoop(void)
 	GMYSpeedPID.ref = GMYPositionPID.output;
 	GMYSpeedPID.fdb = MPU6050_Real_Data.Gyro_Z;
 	GMYSpeedPID.Calc(&GMYSpeedPID);
+}
+
+void SetGimbalMotorOutput(void)
+{
+  // // Gimbal control output //云台控制输出
+	// if((GetWorkState() == STOP_STATE) ||Is_Serious_Error() || GetWorkState() == CALI_STATE)
+	// {
+	// 	Set_Gimbal_Current(0, 0);     //yaw + pitch
+	// }
+	// else
+	// {
+  Set_Gimbal_Current(-(int16_t)GMYSpeedPID.output, -(int16_t)GMPSpeedPID.output);
+	// }
 }
 
 // Control Task initialization //控制任务初始化程序

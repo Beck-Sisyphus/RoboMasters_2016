@@ -293,7 +293,7 @@ void Set_Wheels_Current() {
 
 
 // controls pitch and yaw using given currents
-void pitchyaw_control(int16_t yaw_current, int16_t pitch_current) {
+void Set_Gimbal_Current(int16_t yaw_current, int16_t pitch_current) {
 
   PitchYaw_Address_Setup();
   motor_yaw_cur = yaw_current;
@@ -310,18 +310,10 @@ void wheel_control(int16_t drive, int16_t strafe, int16_t rotate)
     int16_t motor_202_pos = (drive + strafe + rotate);
     int16_t motor_203_pos = (drive - strafe + rotate);
 
-    // motor_front_right_cur = 11 * motor_201_pos;
-    // motor_front_left_cur  = 11 * motor_202_pos;
-    // motor_back_left_cur   = 11 * motor_203_pos;
-    // motor_back_right_cur  = 11 * motor_204_pos;
-    motor_front_right_cur = 6 * motor_201_pos;
-    motor_back_right_cur = 6 * motor_204_pos;
-    motor_front_left_cur = 6 * motor_202_pos;
-    motor_back_left_cur = 6 * motor_203_pos;
-    // Velocity_Control_201(motor_201_pos);
-    // Velocity_Control_204(motor_204_pos);
-    // Velocity_Control_202(motor_202_pos);
-    // Velocity_Control_203(motor_203_pos);
+    motor_front_right_cur = CHASSIS_MOTOR_STRENGTH * motor_201_pos;
+    motor_back_right_cur = CHASSIS_MOTOR_STRENGTH * motor_204_pos;
+    motor_front_left_cur = CHASSIS_MOTOR_STRENGTH * motor_202_pos;
+    motor_back_left_cur = CHASSIS_MOTOR_STRENGTH * motor_203_pos;
 
     Wheels_Address_Setup();
     Set_Wheels_Current();

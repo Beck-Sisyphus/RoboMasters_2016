@@ -51,5 +51,6 @@ void TIM6_DAC_IRQHandler(void)
         TIM_ClearFlag(TIM6, TIM_FLAG_Update);
         // set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
         Remote_Control();
+        Control_Task();
     }
 }

@@ -13,6 +13,24 @@ typedef enum
     STOP_STATE,        	// The state without movement
 }WorkState_e;
 
+#define YAW_POSITION_KP_DEFAULTS  10.0
+#define YAW_POSITION_KI_DEFAULTS  0
+#define YAW_POSITION_KD_DEFAULTS  0
+
+#define YAW_SPEED_KP_DEFAULTS  1.0
+#define YAW_SPEED_KI_DEFAULTS  0
+#define YAW_SPEED_KD_DEFAULTS  0
+
+// avoid bang --->  position:20.0  speed:19.0
+//big bang   22.5 20.0
+#define PITCH_POSITION_KP_DEFAULTS  10.0
+#define PITCH_POSITION_KI_DEFAULTS  0
+#define PITCH_POSITION_KD_DEFAULTS  0
+
+#define PITCH_SPEED_KP_DEFAULTS  1.0
+#define PITCH_SPEED_KI_DEFAULTS  0
+#define PITCH_SPEED_KD_DEFAULTS  0
+
 #define GIMBAL_MOTOR_PITCH_POSITION_PID_DEFAULT \
 {\
 	0,\

@@ -3,6 +3,7 @@
 
 #define pitch_max 15.0
 #define yaw_max 720.0
+#define CHASSIS_MOTOR_STRENGTH 11
 
 // For Red motor
 // #define MOTOR_YAW 				1
@@ -29,6 +30,6 @@ void Wheels_Address_Setup(void);
 void Set_PitchYaw_Current(void);
 void Set_Wheels_Current(void);
 void Motor_ManSet_Can_2(void);
-void pitchyaw_control(int16_t, int16_t);
+void Set_Gimbal_Current(int16_t, int16_t);
 void wheel_control(int16_t, int16_t, int16_t);
 #endif
