@@ -1,11 +1,18 @@
+// For controling servo and friction wheels
+// Servo range [0, 180]
+#include <Servo.h>
+Servo myServo;
+
 int8_t front_left_pin = 10; 
 int8_t front_right_pin = 9;
 int8_t rear_left_pin = 8;
 int8_t rear_right_pin = 7;
 
-int8_t i = 0;
+// for initialize 1 at a time
+int i = 0;
 
 void setup() {
+  myServo.attach(11);
   pinMode(front_left_pin, OUTPUT);
   pinMode(front_right_pin, OUTPUT);
   pinMode(rear_left_pin, OUTPUT);
@@ -39,9 +46,12 @@ void loop() {
       analogWrite(front_right_pin, 255 * 0.9);
       analogWrite(rear_left_pin, 255 * 0.9);
       analogWrite(rear_right_pin, 255 * 0.9);
+      
+      // spins servo
+      myServo.write(0);
+      delay(750);
+      myServo.write(180);
+      delay(750);
   }
-
-  
-
 }
 
