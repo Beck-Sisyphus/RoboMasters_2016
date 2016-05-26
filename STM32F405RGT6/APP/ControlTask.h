@@ -128,4 +128,19 @@ extern PID_Regulator_t GMPSpeedPID;      		//pitch axis velocity PID loop
 extern PID_Regulator_t GMYPositionPID;			//yaw axis position PID loop
 extern PID_Regulator_t GMYSpeedPID;      		//yaw axis velocity PID loop
 
+WorkState_e GetWorkState(void);
+void ControtLoopTaskInit(void);
+void Control_Task(void);
+void WorkStateFSM(void);
+static void WorkStateSwitchProcess(void);
+void GMPitchControlLoop(void);
+void GMYawControlLoop(void);
+void SetGimbalMotorOutput(void);
+void ControtLoopTaskInit(void);
+
+//模式切换处理，得到位置环的设定值和给定值
+// Mode switch process, to get the position target value and measured value
+void GimbalYawControlModeSwitch(void);
+void SetGimbalMotorOutput(void);
+
 #endif

@@ -1,210 +1,158 @@
 #include "main.h"
 
-float target_pitch_angle;
-float target_yaw_angle;
+static uint32_t can_count = 0;
 
-// yaw and pitch angle rx messages from CAN
-int16_t measured_yaw_angle;   // range from 0~8191, 0x1FFF
-int16_t measured_pitch_angle; // range from 0~8191, 0x1FFF
+volatile Encoder CM1Encoder = {0,0,0,0,0,0,0,0,0};
+volatile Encoder CM2Encoder = {0,0,0,0,0,0,0,0,0};
+volatile Encoder CM3Encoder = {0,0,0,0,0,0,0,0,0};
+volatile Encoder CM4Encoder = {0,0,0,0,0,0,0,0,0};
+volatile Encoder GMYawEncoder = {0,0,0,0,0,0,0,0,0};
+volatile Encoder GMPitchEncoder = {0,0,0,0,0,0,0,0,0};
+float ZGyroModuleAngle = 0.0f;
+/*
+***********************************************************************************************
+*Name          :GetEncoderBias
+*Input         :can message
+*Return        :void
+*Description   :to get the initiatial encoder of the chassis motor 201 202 203 204
+*
+*
+***********************************************************************************************
+*/
 
-// Beck read from the datasheet, and guess it is the measured current
-// yaw and pitch measured current rx messages from CAN
-int16_t measured_yaw_current;
-int16_t measured_pitch_current;
-
-// yaw and pitch current rx messages from CAN
-int16_t target_yaw_current;
-int16_t target_pitch_current;
-
-int16_t measured_201_angle;
-int16_t measured_201_speed;
-int16_t x145;
-int16_t x167;
-
-int16_t measured_202_angle;
-int16_t measured_202_speed;
-int16_t x245;
-int16_t x267;
-
-int16_t measured_203_angle;
-int16_t measured_203_speed;
-int16_t x345;
-int16_t x367;
-
-int16_t measured_204_angle;
-int16_t measured_204_speed;
-int16_t x445;
-int16_t x467;
-
-/*******
-RX addresses
-0x201: Front right wheel
-0x202: Front left wheel
-0x203: Back left wheel
-0x204: Back right wheel
-0x205: Yaw
-0x206: Pitch
-
-All rx messages mapped the same way:
-data 0 and 1 measure angle
-data 4 and 5 relates to what current you are tx to motors
-data 4 and 5 NOT same as current tx value
-*******/
-void CanReceiveMsgProcess(CanRxMsg * rx_message)
+void GetEncoderBias(volatile Encoder *v, CanRxMsg * msg)
 {
-/***************
-Wheel RX Address
-0x201: Front right wheel
-0x202: Front left wheel
-0x203: Back left wheel
-0x204: Back right wheel
-
-For sample robot 2015, with EC60 motor drives:
-    data 0 and 1 measure position of wheel, from 0 to 8191
-    clockwise wheel rotation decreases wheel's position
-    wheel position value repeats (decrease from 0 means go back to 8200 again)
-
-    data 4 and 5 relates to what current you are tx to motors
-    data 4 and 5 NOT same as current tx value
-
-    data 2, 3, 6, 7 not useful
-
-For robot we build in 2016, with 820R motor drives:
-    You calibrate the CAN address in the first time
-    data 0 and 1 measure position of wheel, from 0 to 8191
-    data 2 and 3 measure rotational speed, in unit of RPM
-    data 4,5, 6, and 7 are null.
-***************/
-
-   if(rx_message->StdId == 0x201)
-    {
-        int16_t x1data0 = rx_message->Data[0];
-        int16_t x1data1 = rx_message->Data[1];
-        int16_t x1data2 = rx_message->Data[2];
-        int16_t x1data3 = rx_message->Data[3];
-        int16_t x1data4 = rx_message->Data[4];
-        int16_t x1data5 = rx_message->Data[5];
-        int16_t x1data6 = rx_message->Data[6];
-        int16_t x1data7 = rx_message->Data[7];
-
-        measured_201_angle = ( x1data0 << 8 ) | x1data1;
-        measured_201_speed = ( x1data2 << 8 ) | x1data3;
-        x145 = ( x1data4 << 8 ) | x1data5;
-        x167 = ( x1data6 << 8 ) | x1data7;
-    }
-
-    if(rx_message->StdId == 0x202)
-    {
-
-        int16_t x2data0 = rx_message->Data[0];
-        int16_t x2data1 = rx_message->Data[1];
-        int16_t x2data2 = rx_message->Data[2];
-        int16_t x2data3 = rx_message->Data[3];
-        int16_t x2data4 = rx_message->Data[4];
-        int16_t x2data5 = rx_message->Data[5];
-        int16_t x2data6 = rx_message->Data[6];
-        int16_t x2data7 = rx_message->Data[7];
-        measured_202_angle = ( x2data0 << 8 ) | x2data1;
-        measured_202_speed = ( x2data2 << 8 ) | x2data3;
-        x245 = ( x2data4 << 8 ) | x2data5;
-        x267 = ( x2data6 << 8 ) | x2data7;
-
-    }
-
-    if(rx_message->StdId == 0x203)
-    {
-        int16_t x3data0 = rx_message->Data[0];
-        int16_t x3data1 = rx_message->Data[1];
-        int16_t x3data2 = rx_message->Data[2];
-        int16_t x3data3 = rx_message->Data[3];
-        int16_t x3data4 = rx_message->Data[4];
-        int16_t x3data5 = rx_message->Data[5];
-        int16_t x3data6 = rx_message->Data[6];
-        int16_t x3data7 = rx_message->Data[7];
-        measured_203_angle = ( x3data0 << 8 ) | x3data1;
-        measured_203_speed = ( x3data2 << 8 ) | x3data3;
-        x345 = ( x3data4 << 8 ) | x3data5;
-        x367 = ( x3data6 << 8 ) | x3data7;
-    }
-
-    if(rx_message->StdId == 0x204)
-    {
-
-        int16_t x4data0 = rx_message->Data[0];
-        int16_t x4data1 = rx_message->Data[1];
-        int16_t x4data2 = rx_message->Data[2];
-        int16_t x4data3 = rx_message->Data[3];
-        int16_t x4data4 = rx_message->Data[4];
-        int16_t x4data5 = rx_message->Data[5];
-        int16_t x4data6 = rx_message->Data[6];
-        int16_t x4data7 = rx_message->Data[7];
-        measured_204_angle = ( x4data0 << 8 ) | x4data1;
-        measured_204_speed = ( x4data2 << 8 ) | x4data3;
-        x445 = ( x4data4 << 8 ) | x4data5;
-        x467 = ( x4data6 << 8 ) | x4data7;
-    }
-
-/************** End of Wheel Motor RX Code and Address **************/
-    /************ YAW ************/
-    // Yaw angle range is: [around 40, around 4800]
-    // 40 is right-most yaw position
-    // around 4800 is left-most yaw position
-    // data 0 and 1 measure angle
-
-    // data 4 and 5 relates to what current you are tx to motors
-    // data 4 and 5 NOT same as current tx value
-    // -1000 current value = 27852 (yaw_data4)<<8|(yaw_data5) value
-    // -750 current value = 24305 (yaw_data4)<<8|(yaw_data5) value
-    // -500 current value = 16630 (yaw_data4)<<8|(yaw_data5) value
-    // pitch has same current to (data4<<8)|(data5) conversion
-    if(rx_message->StdId == 0x205)
-    {
-
-        // construct message from data[0] and data[1]
-        int16_t yaw_data0 = rx_message->Data[0];
-        int16_t yaw_data1 = rx_message->Data[1];
-        int16_t yaw_data4 = rx_message->Data[4];
-        int16_t yaw_data5 = rx_message->Data[5];
-
-        measured_yaw_angle = (yaw_data0)<<8|(yaw_data1);
-        target_yaw_current = (yaw_data4)<<8|(yaw_data5);
-
-        // normalize angle range since default angle range is werid
-        if(measured_yaw_angle > 6000 && measured_yaw_angle < 8191) {
-            measured_yaw_angle = measured_yaw_angle - 6000;
-        } else {
-            measured_yaw_angle = measured_yaw_angle + 2190;
-        }
-    }
-
-    /************ PITCH ************/
-    // pitch angle range is [around 3520, around 4500]
-    // around 3520 is highest pitch position
-    // around 4500 is lowest pitch position
-    // data 0 and 1 measure angle
-
-    // data 4 and 5 relates to what current you are tx to motors
-    // data 4 and 5 NOT same as current tx value
-    // -1000 current value = 27852 (pitch_data4)<<8|(pitch_data5) value
-    // -750 current value = 24305 (pitch_data4)<<8|(pitch_data5) value
-    // -500 current value = 16630 (pitch_data4)<<8|(pitch_data5) value
-    // yaw has same current to (data4<<8)|(data5) conversion
-    if(rx_message->StdId == 0x206)
-    {
-        // construct message from data[0] and data[1]
-        int16_t pitch_data0 = rx_message->Data[0];
-        int16_t pitch_data1 = rx_message->Data[1];
-        int16_t pitch_data2 = rx_message->Data[2];
-        int16_t pitch_data3 = rx_message->Data[3];
-        int16_t pitch_data4 = rx_message->Data[4];
-        int16_t pitch_data5 = rx_message->Data[5];
-
-        measured_pitch_angle = (pitch_data0)<<8|(pitch_data1);
-        measured_pitch_current = (pitch_data2)<<8|(pitch_data3);
-        target_pitch_current = (pitch_data4)<<8|(pitch_data5);
-    }
+    v->ecd_bias = (msg->Data[0]<<8)|msg->Data[1];  //保存初始编码器值作为偏差
+    v->ecd_value = v->ecd_bias;
+    v->last_raw_value = v->ecd_bias;
+    v->temp_count++;
 }
 
+/*
+***********************************************************************************************
+*Name          :EncoderProcess
+*Input         :can message
+*Return        :void
+*Description   :to get the initiatial encoder of the chassis motor 201 202 203 204
+*
+*
+***********************************************************************************************
+*/
+void EncoderProcess(volatile Encoder *v, CanRxMsg * msg)
+{
+    int i=0;
+    int32_t temp_sum = 0;
+    v->last_raw_value = v->raw_value;
+    v->raw_value = (msg->Data[0]<<8)|msg->Data[1];
+    v->diff = v->raw_value - v->last_raw_value;
+    //两次编码器的反馈值差别太大，表示圈数发生了改变
+    // If the feeback from the encoder changes too much, the rotation is incremented
+    if(v->diff < -7500)
+    {
+      	v->round_cnt++;
+      	v->ecd_raw_rate = v->diff + 8192;
+    }
+    else if(v->diff>7500)
+    {
+      	v->round_cnt--;
+      	v->ecd_raw_rate = v->diff- 8192;
+    }
+    else
+    {
+      	v->ecd_raw_rate = v->diff;
+    }
+    //计算得到连续的编码器输出值
+    // Calculate the encoder output in a continous value domain
+    v->ecd_value = v->raw_value + v->round_cnt * 8192;
+    //计算得到角度值，范围正负无穷大
+    // Calculate the angle, range from negative infinite to positive infinite
+    v->ecd_angle = (float)(v->raw_value - v->ecd_bias)*360/8192 + v->round_cnt * 360;
+    v->rate_buf[v->buf_count++] = v->ecd_raw_rate;
+    if(v->buf_count == RATE_BUF_SIZE)
+    {
+      	v->buf_count = 0;
+    }
+    //计算速度平均值
+    // Calculate the average speed
+    for(i = 0;i < RATE_BUF_SIZE; i++)
+    {
+      	temp_sum += v->rate_buf[i];
+    }
+    v->filter_rate = (int32_t)(temp_sum/RATE_BUF_SIZE);
+}
+
+/*
+************************************************************************************************************************
+*Name        : CanReceiveMsgProcess
+* Description: This function process the can message representing the encoder data received from the CAN2 bus.
+* Arguments  : msg     is a pointer to the can message.
+* Returns    : void
+* Note(s)    : none
+************************************************************************************************************************
+*/
+void CanReceiveMsgProcess(CanRxMsg * msg)
+{
+    //GMYawEncoder.ecd_bias = yaw_ecd_bias;
+    can_count++;
+		switch(msg->StdId)
+		{
+				case CAN_BUS2_MOTOR1_FEEDBACK_MSG_ID:
+				{   (can_count<=50) ? GetEncoderBias(&CM1Encoder ,msg):EncoderProcess(&CM1Encoder ,msg);       //获取到编码器的初始偏差值
+				}break;
+				case CAN_BUS2_MOTOR2_FEEDBACK_MSG_ID:
+				{   (can_count<=50) ? GetEncoderBias(&CM2Encoder ,msg):EncoderProcess(&CM2Encoder ,msg);
+				}break;
+				case CAN_BUS2_MOTOR3_FEEDBACK_MSG_ID:
+				{   (can_count<=50) ? GetEncoderBias(&CM3Encoder ,msg):EncoderProcess(&CM3Encoder ,msg);
+				}break;
+				case CAN_BUS2_MOTOR4_FEEDBACK_MSG_ID:
+				{   (can_count<=50) ? GetEncoderBias(&CM4Encoder ,msg):EncoderProcess(&CM4Encoder ,msg);
+				}break;
+				case CAN_BUS2_MOTOR5_FEEDBACK_MSG_ID:
+				{
+            EncoderProcess(&GMYawEncoder ,msg);
+
+            // 比较保存编码器的值和偏差值，如果编码器的值和初始偏差之间差距超过阈值，将偏差值做处理，防止出现云台反方向运动
+            // Compare the saved encoder value and bias value, if the difference excceed the threshold, adjust the difference to provent gimbal to move the opposite direction
+            // if(can_count>=90 && can_count<=100)
+            //准备阶段要求二者之间的差值一定不能大于阈值，否则肯定是出现了临界切换
+            // In the prepare state the difference can't excceed the threshold, or something must be wrong
+            if(GetWorkState() == PREPARE_STATE)
+            {
+                if((GMYawEncoder.ecd_bias - GMYawEncoder.ecd_value) <-4000)
+                {
+                    GMYawEncoder.ecd_bias = GimbalSavedCaliData.GimbalYawOffset + 8192;
+                }
+                else if((GMYawEncoder.ecd_bias - GMYawEncoder.ecd_value) > 4000)
+                {
+                    GMYawEncoder.ecd_bias = GimbalSavedCaliData.GimbalYawOffset - 8192;
+                }
+            }
+				}break;
+				case CAN_BUS2_MOTOR6_FEEDBACK_MSG_ID:
+				{
+            EncoderProcess(&GMPitchEncoder ,msg);
+
+            if(can_count<=100)
+            {
+                if((GMPitchEncoder.ecd_bias - GMPitchEncoder.ecd_value) <-4000)
+                {
+                    GMPitchEncoder.ecd_bias = GimbalSavedCaliData.GimbalPitchOffset + 8192;
+                }
+                else if((GMPitchEncoder.ecd_bias - GMPitchEncoder.ecd_value) > 4000)
+                {
+                    GMPitchEncoder.ecd_bias = GimbalSavedCaliData.GimbalPitchOffset - 8192;
+                }
+            }
+				}break;
+				case CAN_BUS1_ZGYRO_FEEDBACK_MSG_ID:
+				{    ZGyroModuleAngle = -0.01f*((int32_t)(msg->Data[0]<<24)|(int32_t)(msg->Data[1]<<16) | (int32_t)(msg->Data[2]<<8) | (int32_t)(msg->Data[3]));
+				}break;
+				default:
+				{
+				}
+		}
+}
 
 /*************************************************************************
                           Code to Set Motor Current Values

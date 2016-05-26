@@ -54,7 +54,7 @@ void Control_Task(void)
 	// 	// Supervise task //监控任务
 	// 	SuperviseTask();
 	// 	// Chassis control task//底盘控制任务
-	// 	CMControlLoop();
+		// CMControlLoop();
   //   // Shooting mechanism control task//发射机构控制任务
 	// 	ShooterMControlLoop();
 	// }
@@ -191,7 +191,7 @@ void ControtLoopTaskInit(void)
 	// Parameter initialization	//程序参数初始化
 	AppParamInit();
 	// initialize parameter deviation after calibration	//校准后参数偏差值初始化
-	Sensor_Offset_Param_Init(&gAppParamStruct);
+	Sensor_Offset_Param_Init();
 	// Set the work state	//设置工作模式
 	SetWorkState(PREPARE_STATE);
 
@@ -204,19 +204,6 @@ void ControtLoopTaskInit(void)
 	// Initialize the given angle for gimbal	//云台给定角度初始化
 	GimbalRef.pitch_angle_dynamic_ref = 0.0f;
 	GimbalRef.yaw_angle_dynamic_ref = 0.0f;
-
-  // // monitoring task initialization //监控任务初始化
-  // LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_RC));
-  // LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_IMU));
-  // LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_ZGYRO));
-  // LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR1));
-  // LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR2));
-  // LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR3));
-  // LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR4));
-  // LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR5));
-  // LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR6));
-  // LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_DEADLOCK));
-  // LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_NOCALI));
 
 	// // PID initialization
 	// ShootMotorSpeedPID.Reset(&ShootMotorSpeedPID);
