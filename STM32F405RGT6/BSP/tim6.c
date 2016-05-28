@@ -13,6 +13,8 @@ extern RC_Ctl_t RC_Ctl;
 
 void TIM6_Configuration(void)
 {
+
+    ControtLoopTaskInit();
     pitch_Position = 1571; // 90 degree
     yaw_Position = 0;
 
@@ -50,7 +52,7 @@ void TIM6_DAC_IRQHandler(void)
     		TIM_ClearITPendingBit(TIM6,TIM_IT_Update);
         TIM_ClearFlag(TIM6, TIM_FLAG_Update);
         // set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
-        Remote_Control();
+        //Remote_Control();
         Control_Task();
     }
 }

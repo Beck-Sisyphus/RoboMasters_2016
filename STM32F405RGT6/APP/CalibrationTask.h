@@ -51,6 +51,8 @@ typedef __packed struct
   	PIDParamStruct_t   YawSpeedPID;
 }AppParam_t;
 
+extern GimbalCaliStruct_t GimbalSavedCaliData;
+
 void Sensor_Offset_Param_Init(void);
 
 #endif

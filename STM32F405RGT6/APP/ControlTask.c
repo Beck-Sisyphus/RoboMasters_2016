@@ -1,4 +1,5 @@
 #include "main.h"
+#include "ControlTask.h"
 
 PID_Regulator_t GMPPositionPID = GIMBAL_MOTOR_PITCH_POSITION_PID_DEFAULT;
 PID_Regulator_t GMPSpeedPID = GIMBAL_MOTOR_PITCH_SPEED_PID_DEFAULT;
@@ -8,8 +9,9 @@ PID_Regulator_t GMYSpeedPID = GIMBAL_MOTOR_YAW_SPEED_PID_DEFAULT;
 /*--------------------------------------------CTRL Variables----------------------------------------*/
 WorkState_e lastWorkState = PREPARE_STATE;
 WorkState_e workState = PREPARE_STATE;
-
+Gimbal_Ref_t GimbalRef;
 static uint32_t time_tick_1ms = 0;
+
 /*
 *********************************************************************************************************
 *                                            FUNCTIONS
@@ -43,7 +45,7 @@ void Control_Task(void)
 	// Gimbal control
   //模式切换处理，得到位置环的设定值和给定值
   // Mode switch method, to get the target and measured value of position loop
-	GimbalYawControlModeSwitch();
+	//GimbalYawControlModeSwitch();
   GMPitchControlLoop();
 	GMYawControlLoop();
 	SetGimbalMotorOutput();
@@ -60,64 +62,64 @@ void Control_Task(void)
 	// }
 }
 
-void WorkStateFSM(void)
-{
-	lastWorkState = workState;
-	switch(workState)
-	{
-		case PREPARE_STATE:
-		{
-			if(GetInputMode() == STOP || Is_Serious_Error())
-			{
-				workState = STOP_STATE;
-			}
-			else if(time_tick_1ms > PREPARE_TIME_TICK_MS)
-			{
-				workState = SEMI_AUTONOMOUS_STATE;
-			}
-		}break;
-		case SEMI_AUTONOMOUS_STATE:
-		{
-			if(GetInputMode() == STOP || Is_Serious_Error())
-			{
-				workState = STOP_STATE;
-			}
-			else if((!IsRemoteBeingAction() ||(Get_Lost_Error(LOST_ERROR_RC) == LOST_ERROR_RC)) && GetShootState() != SHOOTING)
-			{
-				workState = STANDBY_STATE;
-			}
-		}break;
-    case MANUAL_STATE:
-    {
-      if(GetInputMode() == STOP || Is_Serious_Error())
-      {
-        workState = STOP_STATE;
-      }
-    }break;
-		case STANDBY_STATE:
-		{
-			if(GetInputMode() == STOP || Is_Serious_Error())
-			{
-				workState = STOP_STATE;
-			}
-			else if(IsRemoteBeingAction() || (GetShootState()==SHOOTING) || GetFrictionState() == FRICTION_WHEEL_START_TURNNING)
-			{
-				workState = SEMI_AUTONOMOUS_STATE;
-			}
-		}break;
-		case STOP_STATE:
-		{
-			if(GetInputMode() != STOP && !Is_Serious_Error())
-			{
-				workState = PREPARE_STATE;
-			}
-		}break;
-		default:
-		{
-
-		}
-	}
-}
+// void WorkStateFSM(void)
+// {
+// 	lastWorkState = workState;
+// 	switch(workState)
+// 	{
+// 		case PREPARE_STATE:
+// 		{
+// 			if(GetInputMode() == STOP || Is_Serious_Error())
+// 			{
+// 				workState = STOP_STATE;
+// 			}
+// 			else if(time_tick_1ms > PREPARE_TIME_TICK_MS)
+// 			{
+// 				workState = SEMI_AUTONOMOUS_STATE;
+// 			}
+// 		}break;
+// 		case SEMI_AUTONOMOUS_STATE:
+// 		{
+// 			if(GetInputMode() == STOP || Is_Serious_Error())
+// 			{
+// 				workState = STOP_STATE;
+// 			}
+// 			else if((!IsRemoteBeingAction() ||(Get_Lost_Error(LOST_ERROR_RC) == LOST_ERROR_RC)) && GetShootState() != SHOOTING)
+// 			{
+// 				workState = STANDBY_STATE;
+// 			}
+// 		}break;
+//     case MANUAL_STATE:
+//     {
+//       if(GetInputMode() == STOP || Is_Serious_Error())
+//       {
+//         workState = STOP_STATE;
+//       }
+//     }break;
+// 		case STANDBY_STATE:
+// 		{
+// 			if(GetInputMode() == STOP || Is_Serious_Error())
+// 			{
+// 				workState = STOP_STATE;
+// 			}
+// 			else if(IsRemoteBeingAction() || (GetShootState()==SHOOTING) || GetFrictionState() == FRICTION_WHEEL_START_TURNNING)
+// 			{
+// 				workState = SEMI_AUTONOMOUS_STATE;
+// 			}
+// 		}break;
+// 		case STOP_STATE:
+// 		{
+// 			if(GetInputMode() != STOP && !Is_Serious_Error())
+// 			{
+// 				workState = PREPARE_STATE;
+// 			}
+// 		}break;
+// 		default:
+// 		{
+//
+// 		}
+// 	}
+// }
 
 static void WorkStateSwitchProcess(void)
 {
@@ -126,7 +128,7 @@ static void WorkStateSwitchProcess(void)
 	if((lastWorkState != workState) && (workState == PREPARE_STATE))
 	{
 		ControtLoopTaskInit();
-		RemoteTaskInit();
+		// RemoteTaskInit();
 	}
 }
 
@@ -189,7 +191,7 @@ void ControtLoopTaskInit(void)
 	// Clear the timing  //计数初始化
 	time_tick_1ms = 0;   // Clear the count in the interrupt //中断中的计数清零
 	// Parameter initialization	//程序参数初始化
-	AppParamInit();
+	// AppParamInit();
 	// initialize parameter deviation after calibration	//校准后参数偏差值初始化
 	Sensor_Offset_Param_Init();
 	// Set the work state	//设置工作模式
@@ -202,8 +204,8 @@ void ControtLoopTaskInit(void)
 	// GMYawRamp.ResetCounter(&GMYawRamp);
 
 	// Initialize the given angle for gimbal	//云台给定角度初始化
-	GimbalRef.pitch_angle_dynamic_ref = 0.0f;
-	GimbalRef.yaw_angle_dynamic_ref = 0.0f;
+	GimbalRef.pitch_angle_dynamic_ref = 1000;
+	GimbalRef.yaw_angle_dynamic_ref = 1000;
 
 	// // PID initialization
 	// ShootMotorSpeedPID.Reset(&ShootMotorSpeedPID);

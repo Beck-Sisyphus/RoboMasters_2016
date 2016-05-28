@@ -18,6 +18,8 @@
 #include "pid.h"
 #include "pid_regulator.h"
 #include "CanBusTask.h"
+#include "ControlTask.h"
+#include "CalibrationTask.h"
 
 /*  Define the robot as
     0 Blue sample robot

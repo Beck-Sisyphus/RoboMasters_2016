@@ -3,8 +3,8 @@ volatile extern RC_Ctl_t RC_Ctl;
 uint8_t Remote_On = 0;
 volatile int manual_Control_Turret = 0;
 
-volatile extern int16_t pitch_Position;
-volatile extern int16_t yaw_Position;
+volatile int16_t pitch_Position;
+volatile int16_t yaw_Position;
 // volatile extern int16_t pitch_Velocity;
 // volatile extern int16_t yaw_Velocity;
 

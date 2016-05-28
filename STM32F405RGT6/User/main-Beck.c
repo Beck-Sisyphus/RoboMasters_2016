@@ -40,19 +40,7 @@ int main(void)
     PWM1 = 1500;
     PWM2 = 1500;
     Motor_Reset_Can_2();
-
     while(1)
     {
-        // CurrentProtect();
-
-      //  #if DEBUG
-      //      // printf("%i, %i", measured_yaw_angle, measured_pitch_angle);
-      //      // printf("%i, %i, %i, %i", motor_front_right_cur, motor_front_left_cur, motor_back_left_cur, motor_back_right_cur);
-      //      printf("%.2f, %.2f, %.2f, %.2f, %.2f, %.2f", MPU6050_Real_Data.Gyro_X,
-      //      MPU6050_Real_Data.Gyro_Y, MPU6050_Real_Data.Gyro_Z,
-      //      MPU6050_Real_Data.Accel_X, MPU6050_Real_Data.Accel_Y, MPU6050_Real_Data.Accel_Z);
-      //      //printf("%i", measured_yaw_angle_401);
-      //      delay_ms(1000);
-      //  #endif
     }
 }

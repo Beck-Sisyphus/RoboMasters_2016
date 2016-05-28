@@ -1,5 +1,6 @@
 #include "main.h"
 #include "protocal.h"
+#include "CalibrationTask.h"
 
 static int16_t GimbalPitchOffset = 4500;
 static int16_t GimbalYawOffset = 2320;

@@ -1,4 +1,5 @@
 #include "main.h"
+#include "CanBusTask.h"
 
 static uint32_t can_count = 0;
 
@@ -9,6 +10,8 @@ volatile Encoder CM4Encoder = {0,0,0,0,0,0,0,0,0};
 volatile Encoder GMYawEncoder = {0,0,0,0,0,0,0,0,0};
 volatile Encoder GMPitchEncoder = {0,0,0,0,0,0,0,0,0};
 float ZGyroModuleAngle = 0.0f;
+extern GimbalCaliStruct_t GimbalSavedCaliData;
+
 /*
 ***********************************************************************************************
 *Name          :GetEncoderBias

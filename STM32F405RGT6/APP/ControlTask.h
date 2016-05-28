@@ -99,7 +99,11 @@ typedef enum
 	&PID_Calc,\
 	&PID_Reset,\
 }\
+#define GimbalRef \
+{
 
+
+}
 #define GIMBAL_MOTOR_YAW_SPEED_PID_DEFAULT \
 {\
 	0,\
