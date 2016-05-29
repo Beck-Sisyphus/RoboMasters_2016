@@ -42,5 +42,8 @@ int main(void)
     Motor_Reset_Can_2();
     while(1)
     {
+        // system_micrsecond = Get_Time_Micros();
+        UploadParameter();   //upload data to the PC
+        delay_ms(1);
     }
 }
