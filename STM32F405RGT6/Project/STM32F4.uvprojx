@@ -181,7 +181,7 @@
           <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
-          <pFcarmGrp></pFcarmGrp>
+          <pFcarmGrp>User</pFcarmGrp>
           <pFcArmRoot></pFcArmRoot>
           <FcArmLst>0</FcArmLst>
         </Utilities>
@@ -373,7 +373,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries;..\User;..\BSP;..\MPU6050;..\APP;..\RmLib</IncludePath>
+              <IncludePath>..\Libraries;..\User;..\BSP;..\MPU6050;..\APP;..\RmLib;..\Protocol</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -437,16 +437,6 @@
               <FilePath>..\User\main.c</FilePath>
             </File>
             <File>
-              <FileName>remote_control.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\remote_control.c</FilePath>
-            </File>
-            <File>
-              <FileName>remote_control.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\remote_control.h</FilePath>
-            </File>
-            <File>
               <FileName>pid.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\User\pid.h</FilePath>
@@ -460,6 +450,11 @@
               <FileName>main.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\User\main.h</FilePath>
+            </File>
+            <File>
+              <FileName>rm2016</FileName>
+              <FileType>1</FileType>
+              <FilePath>rm2016</FilePath>
             </File>
           </Files>
         </Group>
@@ -702,24 +697,44 @@
           <GroupName>APP</GroupName>
           <Files>
             <File>
-              <FileName>app.c</FileName>
+              <FileName>CanBusTask.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\APP\app.c</FilePath>
+              <FilePath>..\APP\CanBusTask.c</FilePath>
             </File>
             <File>
-              <FileName>app_chassis.c</FileName>
+              <FileName>CanBusTask.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\APP\CanBusTask.h</FilePath>
+            </File>
+            <File>
+              <FileName>ControlTask.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\APP\app_chassis.c</FilePath>
+              <FilePath>..\APP\ControlTask.c</FilePath>
             </File>
             <File>
-              <FileName>app.h</FileName>
+              <FileName>ControlTask.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\APP\app.h</FilePath>
+              <FilePath>..\APP\ControlTask.h</FilePath>
             </File>
             <File>
-              <FileName>app_chassis.h</FileName>
+              <FileName>CalibrationTask.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\APP\app_chassis.h</FilePath>
+              <FilePath>..\APP\CalibrationTask.h</FilePath>
+            </File>
+            <File>
+              <FileName>CalibrationTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\CalibrationTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>RemoteTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\RemoteTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>RemoteTask.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\APP\RemoteTask.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -735,6 +750,46 @@
               <FileName>pid_regulator.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\RmLib\pid_regulator.h</FilePath>
+            </File>
+            <File>
+              <FileName>fifo.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\RmLib\fifo.h</FilePath>
+            </File>
+            <File>
+              <FileName>LostCounter.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\RmLib\LostCounter.h</FilePath>
+            </File>
+            <File>
+              <FileName>ramp.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\RmLib\ramp.h</FilePath>
+            </File>
+            <File>
+              <FileName>RMLib.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\RmLib\RMLib.lib</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Protocol</GroupName>
+          <Files>
+            <File>
+              <FileName>MF_CRC16.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Protocol\MF_CRC16.h</FilePath>
+            </File>
+            <File>
+              <FileName>protocal.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Protocol\protocal.h</FilePath>
+            </File>
+            <File>
+              <FileName>Protocol.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\Protocol\Protocol.lib</FilePath>
             </File>
           </Files>
         </Group>
