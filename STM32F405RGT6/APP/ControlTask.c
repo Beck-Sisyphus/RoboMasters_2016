@@ -6,11 +6,13 @@ PID_Regulator_t GMPSpeedPID = GIMBAL_MOTOR_PITCH_SPEED_PID_DEFAULT;
 PID_Regulator_t GMYPositionPID = GIMBAL_MOTOR_YAW_POSITION_PID_DEFAULT;
 PID_Regulator_t GMYSpeedPID = GIMBAL_MOTOR_YAW_SPEED_PID_DEFAULT;
 
+extern Gimbal_Ref_t GimbalRef;
+static uint32_t time_tick_1ms = 0;
+
+
 /*--------------------------------------------CTRL Variables----------------------------------------*/
 WorkState_e lastWorkState = PREPARE_STATE;
 WorkState_e workState = PREPARE_STATE;
-Gimbal_Ref_t GimbalRef;
-static uint32_t time_tick_1ms = 0;
 
 /*
 *********************************************************************************************************

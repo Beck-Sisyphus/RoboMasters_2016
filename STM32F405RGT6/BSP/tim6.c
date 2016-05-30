@@ -1,16 +1,5 @@
 #include "main.h"
 
-volatile extern int16_t pitch_Position;
-volatile extern int16_t yaw_Position;
-// volatile extern int16_t pitch_Velocity;
-// volatile extern int16_t yaw_Velocity;
-
-// for velocity controlling pitch and yaw with remote
-volatile extern int16_t remote_pitch_change;
-volatile extern int16_t remote_yaw_change;
-
-extern RC_Ctl_t RC_Ctl;
-
 void TIM6_Configuration(void)
 {
 

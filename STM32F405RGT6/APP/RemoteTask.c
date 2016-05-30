@@ -1,19 +1,12 @@
 #include "main.h"
+
+Gimbal_Ref_t GimbalRef;
 volatile extern RC_Ctl_t RC_Ctl;
-uint8_t Remote_On = 0;
+
 volatile int manual_Control_Turret = 0;
+// volatile extern arduino_data data_usart_3;
 
-volatile int16_t pitch_Position;
-volatile int16_t yaw_Position;
-// volatile extern int16_t pitch_Velocity;
-// volatile extern int16_t yaw_Velocity;
-
-// for velocity controlling pitch and yaw with remote
-volatile extern int16_t remote_pitch_change;
-volatile extern int16_t remote_yaw_change;
-volatile extern arduino_data data_usart_3;
-
-
+static uint8_t Remote_On = 0;
 /*************************************************************************
               Code to Enable cannon to be driven with remote
 *************************************************************************/
@@ -39,20 +32,20 @@ void Remote_Control() {
             strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
             rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
             wheel_control(drive, strafe, rotate);
-            pitch_Position = data_usart_3.packet.pitch_req;
-            yaw_Position = data_usart_3.packet.yaw_req;
+            GimbalRef.pitch_angle_dynamic_ref = data_usart_3.packet.pitch_req;
+            GimbalRef.yaw_angle_dynamic_ref = data_usart_3.packet.yaw_req;
             manual_Control_Turret = 0;
         } else if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
             pitch = (RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET) / 100;
             yaw = (RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET) / 100;
             manual_Control_Turret = 1;
-            pitch_Position += pitch;
-            yaw_Position += yaw;
+            GimbalRef.pitch_angle_dynamic_ref += pitch;
+            GimbalRef.yaw_angle_dynamic_ref += yaw;
         } else {
             // Motor_Reset_Can_2();
             wheel_control(0, 0, 0);
-            pitch_Position = data_usart_3.packet.pitch_req;
-            yaw_Position = data_usart_3.packet.yaw_req;
+            GimbalRef.pitch_angle_dynamic_ref = data_usart_3.packet.pitch_req;
+            GimbalRef.yaw_angle_dynamic_ref = data_usart_3.packet.yaw_req;
             manual_Control_Turret = 0;
         }
     }
