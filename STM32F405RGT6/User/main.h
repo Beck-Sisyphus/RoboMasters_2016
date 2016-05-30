@@ -12,7 +12,6 @@
 #include "mpu6050_driver.h"
 #include "mpu6050_process.h"
 
-#include "app.h"
 #include "module_rs232.h"
 #include "pid.h"
 #include "pid_regulator.h"

@@ -11,7 +11,7 @@ void UploadParameter(void)
         case REIMU:
         {
             //GMPitchEncoder_ecder
-            IMU_Info_Send((int16_t)(angle[0]*10.0f),(int16_t)(angle[1]*10.0f),(int16_t)(angle[2]*10.0f),(int16_t)GMYawEncoder.raw_value,(int16_t)GMPitchEncoder.raw_value, 0);
+            // IMU_Info_Send((int16_t)(angle[0]*10.0f),(int16_t)(angle[1]*10.0f),(int16_t)(angle[2]*10.0f),(int16_t)GMYawEncoder.raw_value,(int16_t)GMPitchEncoder.raw_value, 0);
             upload_type = REVERSION; //更改状态
         }	break;
         // case REVERSION:
