@@ -4,7 +4,7 @@ Gimbal_Ref_t GimbalRef;
 volatile extern RC_Ctl_t RC_Ctl;
 
 volatile int manual_Control_Turret = 0;
-// volatile extern arduino_data data_usart_3;
+volatile extern arduino_data data_usart_3;
 
 static uint8_t Remote_On = 0;
 /*************************************************************************

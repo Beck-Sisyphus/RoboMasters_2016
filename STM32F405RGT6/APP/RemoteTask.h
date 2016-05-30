@@ -1,5 +1,5 @@
-#ifndef __REMOTE_CONTROL_H__
-#define __REMOTE_CONTROL_H__
+#ifndef __REMOTE_TASK_H__
+#define __REMOTE_TASK_H__
 #include <stm32f4xx.h>
 
 //remote data process

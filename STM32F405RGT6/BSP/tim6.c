@@ -4,8 +4,8 @@ void TIM6_Configuration(void)
 {
 
     ControtLoopTaskInit();
-    pitch_Position = 1571; // 90 degree
-    yaw_Position = 0;
+    // pitch_Position = 1571; // 90 degree
+    // yaw_Position = 0;
 
     TIM_TimeBaseInitTypeDef  tim;
     NVIC_InitTypeDef         nvic;

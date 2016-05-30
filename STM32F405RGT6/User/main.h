@@ -14,12 +14,12 @@
 
 #include "app.h"
 #include "module_rs232.h"
-#include "remote_control.h"
 #include "pid.h"
 #include "pid_regulator.h"
 #include "CanBusTask.h"
 #include "ControlTask.h"
 #include "CalibrationTask.h"
+#include "RemoteTask.h"
 
 /*  Define the robot as
     0 Blue sample robot
