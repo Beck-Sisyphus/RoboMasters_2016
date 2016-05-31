@@ -25,11 +25,5 @@ int main(void)
     system_micrsecond = Get_Time_Micros();
     while(1)
     {
-      if((Get_Time_Micros() - system_micrsecond) > upload_time)
-  		{
-  			system_micrsecond = Get_Time_Micros();
-  			UploadParameter();   //upload data to the PC
-  			delay_ms(1);
-  		}
     }
 }

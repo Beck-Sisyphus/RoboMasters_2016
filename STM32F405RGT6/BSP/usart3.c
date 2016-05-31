@@ -1,10 +1,7 @@
 #include "usart3.h"
-#include "main.h"
-#include "FIFO.h"
-#include "protocal.h"
+#include "laser.h"
+#include "led.h"
 
-FIFO_S_t* UART_TranFifo;
-static unsigned char rx_buffer[256];
 
 volatile unsigned char arduino_rx_buffer_usart_3[16];
 DMA_InitTypeDef dma_usart_3;
@@ -82,22 +79,6 @@ void USART3_SendChar(unsigned char b)
     USART_SendData(USART3,b);
 }
 
-void UART3_PrintCh(uint8_t ch)
-{
-    FIFO_S_Put(UART_TranFifo, ch);
-    USART_ITConfig(USART3, USART_IT_TXE, ENABLE);
-
-}
-
-void UART3_PrintBlock(uint8_t* pdata, uint8_t len)
-{
-	uint8_t i = 0;
-    for(i = 0; i < len; i++)
-    {
-        FIFO_S_Put(UART_TranFifo, pdata[i]);
-    }
-    USART_ITConfig(USART3, USART_IT_TXE, ENABLE);
-}
 
 int fputc(int ch, FILE *f)
 {
