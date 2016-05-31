@@ -5,7 +5,7 @@ static UploadParamType_e upload_type = REIMU;  //上传数据的类型
 
 void UploadParameter(void)
 {
-    static int16_t ax, ay, az, gx, gy, gz, hx, hy, hz;
+    // static int16_t ax, ay, az, gx, gy, gz, hx, hy, hz;
     switch(upload_type)
     {
         case REIMU:
@@ -26,19 +26,19 @@ void UploadParameter(void)
         }break;
         case REERROR:
         {
-            Robot_Error_Code_Send(Get_Lost_Error(LOST_ERROR_ALL));
+            // Robot_Error_Code_Send(Get_Lost_Error(LOST_ERROR_ALL));
             upload_type = REMOV;
         }break;
         case REMOV:
         {
-            MPU6050_getlastMotion6(&ax, &ay, &az, &gx, &gy, &gz);   //发送的是原始数据
-            HMC58X3_getlastValues(&hx, &hy, &hz);
-            Sensor_Info_Send(ax, ay, az, gx, gy, gz, hx, hy, hz);
+            // MPU6050_getlastMotion6(&ax, &ay, &az, &gx, &gy, &gz);   //发送的是原始数据
+            // HMC58X3_getlastValues(&hx, &hy, &hz);
+            // Sensor_Info_Send(ax, ay, az, gx, gy, gz, hx, hy, hz);
             upload_type = REHMC; //如果正在进行磁标定，则发送当前磁力计标定值
         }break;
         case REHMC:
         {
-            Mag_Cali_Info_Send(MagMaxMinData.MaxMagX,MagMaxMinData.MaxMagY,MagMaxMinData.MaxMagZ,MagMaxMinData.MinMagX,MagMaxMinData.MinMagY,MagMaxMinData.MinMagZ);
+            // Mag_Cali_Info_Send(MagMaxMinData.MaxMagX,MagMaxMinData.MaxMagY,MagMaxMinData.MaxMagZ,MagMaxMinData.MinMagX,MagMaxMinData.MinMagY,MagMaxMinData.MinMagZ);
             upload_type = REOFFSET;
         }break;
         case REOFFSET:         //发送校准数据

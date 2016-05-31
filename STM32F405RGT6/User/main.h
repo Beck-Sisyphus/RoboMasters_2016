@@ -19,6 +19,7 @@
 #include "ControlTask.h"
 #include "CalibrationTask.h"
 #include "RemoteTask.h"
+#include "IOTask.h"
 
 /*  Define the robot as
     0 Blue sample robot

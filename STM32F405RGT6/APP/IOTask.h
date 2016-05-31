@@ -15,4 +15,6 @@ typedef enum
 	REPID =7,
 }UploadParamType_e;
 
+void UploadParameter(void);
+
 #endif
