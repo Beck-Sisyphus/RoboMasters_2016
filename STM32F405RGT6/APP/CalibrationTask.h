@@ -30,6 +30,17 @@ typedef __packed struct
 
 typedef __packed struct
 {
+    int16_t     MagXOffset;
+    int16_t     MagYOffset;
+    int16_t     MagZOffset;
+    float       MagXScale;
+    float       MagYScale;
+    float       MagZScale;
+    uint8_t     MagCaliFlag;
+}MagCaliStruct_t;
+
+typedef __packed struct
+{
 	int8_t pid_type;		// position PID
 	int8_t motor_type;   //motor type ie: pitch yaw 201 202 203 204
 	int16_t kp_offset;
@@ -44,7 +55,7 @@ typedef __packed struct
     GimbalCaliStruct_t GimbalCaliData;    //gimbal pitch yaw encoder offset
     GyroCaliStruct_t   GyroCaliData;      //gyro offset data
     AccCaliStruct_t    AccCaliData;    		//ACC offset data
-    // MagCaliStruct_t    MagCaliData;				//Mag offset data
+    MagCaliStruct_t    MagCaliData;				//Mag offset data
   	PIDParamStruct_t   PitchPositionPID;
   	PIDParamStruct_t   PitchSpeedPID;
   	PIDParamStruct_t   YawPositionPID;
