@@ -8,6 +8,8 @@ PID_Regulator_t GMYSpeedPID = GIMBAL_MOTOR_YAW_SPEED_PID_DEFAULT;
 
 extern Gimbal_Ref_t GimbalRef;
 static uint32_t time_tick_1ms = 0;
+extern int16_t GimbalPitchOffset;
+extern int16_t GimbalYawOffset;
 
 
 /*--------------------------------------------CTRL Variables----------------------------------------*/
@@ -206,8 +208,8 @@ void ControtLoopTaskInit(void)
 	// GMYawRamp.ResetCounter(&GMYawRamp);
 
 	// Initialize the given angle for gimbal	//云台给定角度初始化
-	GimbalRef.pitch_angle_dynamic_ref = 1000;
-	GimbalRef.yaw_angle_dynamic_ref = 1000;
+	GimbalRef.pitch_angle_dynamic_ref = GimbalPitchOffset;
+	GimbalRef.yaw_angle_dynamic_ref = GimbalYawOffset;
 
 	// // PID initialization
 	// ShootMotorSpeedPID.Reset(&ShootMotorSpeedPID);

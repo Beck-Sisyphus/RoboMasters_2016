@@ -2,8 +2,8 @@
 #include "protocal.h"
 #include "CalibrationTask.h"
 
-static int16_t GimbalPitchOffset = 4500;
-static int16_t GimbalYawOffset = 2320;
+int16_t GimbalPitchOffset = 4500;
+int16_t GimbalYawOffset = 2320;
 
 // These struct are used in the application
 GimbalCaliStruct_t GimbalSavedCaliData;    	    //gimbal pitch yaw encoder offset

@@ -31,6 +31,31 @@ typedef enum
 #define PITCH_SPEED_KI_DEFAULTS  0
 #define PITCH_SPEED_KD_DEFAULTS  0
 
+// Measured reading
+#define REAL_PITCH_LOW 43  // real lowest angle value that the cannon can reach, measured by protractor
+#define REAL_PITCH_HIGH 114 // real lowest angle value that the cannon can reach, measured by protractor
+#define REAL_YAW_LOW -103
+#define REAL_YAW_HIGH 103
+
+/*
+#define REAL_PITCH_LOW 750  // real lowest angle value that the cannon can reach, measured by protractor
+#define REAL_PITCH_HIGH 1990 // real lowest angle value that the cannon can reach, measured by protractor
+#define REAL_YAW_LOW -1798
+#define REAL_YAW_HIGH 1798
+*/
+// Encoder reading
+#define BLUE_PITCH_LOW 7530 // 4789
+#define BLUE_PITCH_HIGH 6244 // 3544
+#define BLUE_YAW_RIGHT 100  // 507740
+#define BLUE_YAW_LEFT 4871  //
+// Encoder reading
+#define RED_PITCH_LOW  5238 // 3092
+//#define RED_PITCH_MID 4500
+#define RED_PITCH_HIGH 4039 // 2584
+#define RED_YAW_RIGHT  0    // 2284
+//#define RED_YAW_MID 2320
+#define RED_YAW_LEFT   4640 // 6888
+
 #define GIMBAL_MOTOR_PITCH_POSITION_PID_DEFAULT \
 {\
 	0,\
