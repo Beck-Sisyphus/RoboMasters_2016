@@ -2,6 +2,15 @@
 #include "protocal.h"
 
 static UploadParamType_e upload_type = REIMU;  //上传数据的类型
+AppParam_t gAppParamStruct;	// Setting information, saved the most recent calibration value //配置信息,这里保存着最新的校准值，并且与Flash中的内容同步
+uint8_t app_param_calied_flag = 0;
+
+//用于在SuperviseTask中设置错误标志位
+// Used at the SuperviseTask to set the error flag
+uint8_t Is_AppParam_Calied(void)
+{
+	return app_param_calied_flag;    //param未初始化
+}
 
 void UploadParameter(void)
 {

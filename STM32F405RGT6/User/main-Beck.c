@@ -2,6 +2,7 @@
 
 uint32_t Upload_Speed = 1;   // Data upload speed, unit: Hz
 #define upload_time (1000000/Upload_Speed)  //Calculating the upload speed, unit: us
+uint32_t system_micrsecond;   // System time, unit: ms
 
 int main(void)
 {
