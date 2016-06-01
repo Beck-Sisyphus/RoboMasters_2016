@@ -29,6 +29,12 @@
 //#define RED_YAW_MID 2320
 #define RED_YAW_LEFT   4640 // 6888
 
+// Encoder reading
+#define YELLOW_PITCH_LOW 7530 // 4789
+#define YELLOW_PITCH_HIGH 6244 // 3544
+#define YELLOW_YAW_RIGHT 4036  // 507740
+#define YELLOW_YAW_LEFT 4871  //
+
 void set_Pitch_Position(int16_t);
 void set_Yaw_Position(int16_t);
 void set_Pitch_Yaw_Position(int16_t, int16_t);

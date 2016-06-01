@@ -1,4 +1,4 @@
-#include "timer2.h"
+#include "tim2.h"
 
 //Timer 2 32-bit counter
 //Timer Clock is 168MHz / 4 * 2 = 84M
@@ -23,7 +23,7 @@ void TIM2_IRQHandler(void)
 		{
 			  TIM_ClearITPendingBit(TIM2,TIM_IT_Update);
         TIM_ClearFlag(TIM2, TIM_FLAG_Update);
-			  BOTH_LED_TOGGLE();
+			  //BOTH_LED_TOGGLE();
 		}
 }
 
