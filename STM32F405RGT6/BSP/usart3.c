@@ -5,6 +5,8 @@
 #include "led.h"
 
 
+
+
 volatile unsigned char arduino_rx_buffer_usart_3[16];
 DMA_InitTypeDef dma_usart_3;
 volatile arduino_data data_usart_3;
@@ -113,5 +115,8 @@ void DMA1_Stream1_IRQHandler(void)
         data_usart_3.packet.feeder_motor_pwm = (((int16_t) arduino_rx_buffer_usart_3[8] << 8)) | (arduino_rx_buffer_usart_3[9] & 255);
         data_usart_3.packet.friction_motor_pwm = (((int16_t) arduino_rx_buffer_usart_3[10] << 8)) | (arduino_rx_buffer_usart_3[11] & 255);
         LED1_TOGGLE();
+
+
+
     }
 }

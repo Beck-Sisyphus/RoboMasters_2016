@@ -15,46 +15,29 @@ volatile int16_t remote_pitch_change;
 volatile int16_t remote_yaw_change;
 
 // extern MPU6050_REAL_DATA MPU6050_Real_Data;
-
-/* Pitch Constants  */
-// from Xian jiangtong University
-// const float v_p_205 = 15.0;
-// const float v_i_205 = 0.03;
-// const float v_d_205 = 1.0;
-// Constants from Northeast Forestry University
-// const float v_p_205 = 25.0;
-// const float v_i_205 = 0.0;
-// const float v_d_205 = 12.0;
-// Beck's testing on Constants
-const float v_p_205 = 10.0;
-const float v_i_205 = 0.0;
-const float v_d_205 = 0.0;
-
-// Constants from Xian jiangtong University
-// const float l_p_205 = 16;
-// const float l_i_205 = 0.0;
-// const float l_d_205 = 0.6;
-// Constants from Northeast Forestry University
-// const float l_p_205 = 30;
-// const float l_i_205 = 0.01;
-// const float l_d_205 = 30.0;
-// Beck's testing on constants
-const float l_p_205 = 1.0;
-const float l_i_205 = 0.0;
-const float l_d_205 = 0.0;
-
 /* Yaw Constants*/
 
 // 100 v_p for remote control velocity control for yaw
 const float v_p_206_remote = 100.0;
 const float v_p_206 = 20.0;
 
+// extern MPU6050_REAL_DATA MPU6050_Real_Data;
+/* Pitch Constants  */
+const float v_p_205 = 15.0;
+const float v_i_205 = 0.0;
+const float v_d_205 = 0.01;
+const float l_p_205 = 1.0;
+const float l_i_205 = 0.0;
+const float l_d_205 = 0.0;
+
+/* Yaw Constants*/
+// const float v_p_206_remote = 100.0;
+const float v_p_206 = 10.0;
 const float v_i_206 = 0.0;
 const float v_d_206 = 0.0;
-const float l_p_206 = 0.6;//3#5#:0.760
+const float l_p_206 = 1.0;
 const float l_i_206 = 0.0;
-const float l_d_206 = 0.0;//3.5;
-
+const float l_d_206 = 0.0;
 /*
 @@ Description: Top level Function to implement PID control on Pitch Servo
  @ Input:       Real angle from z axis to the position, medium 90
@@ -89,13 +72,13 @@ void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
 
     /********** Red Motor **********/
     if (RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-        // Pitch, yaw velocity control with remote        
+        // Pitch, yaw velocity control with remote
         // PID for pitch
         pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, real_angle_pitch, v_p_206_remote);
 
 
         // PID for yaw
-        yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, real_angle_yaw, v_p_206_remote); 
+        yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, real_angle_yaw, v_p_206_remote);
     } else {
         // Auto target control
         // PID for pitch

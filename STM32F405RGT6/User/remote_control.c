@@ -48,6 +48,8 @@ void Remote_Control() {
             manual_Control_Turret = 1;
             pitch_Position += pitch;
             yaw_Position += yaw;
+        } else if (RC_Ctl.rc.s2 == RC_SW_MID) {
+          /* code */
         } else {
             // Motor_Reset_Can_2();
             wheel_control(0, 0, 0);

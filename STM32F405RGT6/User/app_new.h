@@ -3,7 +3,7 @@
 #include <stm32f4xx.h>
 
 #define ESC_MAX 50000.0f
-#define GAP 1.0f
+#define GAP 0.1f
 #define abs(x) ((x)>0? (x):(-(x)))
 
 // Measured reading
@@ -44,10 +44,10 @@ void set_Pitch_Position(int16_t);
 void set_Yaw_Position(int16_t);
 void set_Pitch_Yaw_Position(int16_t, int16_t);
 
-float Velocity_Control_205(float, float, float);
+float Velocity_Control_205(float, float);
 static float Position_Control_205(float, float);
 
-float Velocity_Control_206(float, float, float);
+float Velocity_Control_206(float, float);
 static float Position_Control_206(float, float);
 
 static long map(long x, long in_min, long in_max, long out_min, long out_max);

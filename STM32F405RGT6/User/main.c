@@ -25,6 +25,23 @@ extern MPU6050_REAL_DATA MPU6050_Real_Data;
 extern int16_t pitch_Position;
 extern int16_t yaw_Position;
 
+extern volatile int16_t measured_201_angle;
+extern volatile int16_t measured_201_speed;
+
+
+
+extern volatile int16_t measured_202_angle;
+extern volatile int16_t measured_202_speed;
+
+
+extern volatile int16_t measured_203_angle;
+extern volatile int16_t measured_203_speed;
+
+
+extern volatile int16_t measured_204_angle;
+extern volatile int16_t measured_204_speed;
+
+
 int count = 0;
 
 
@@ -60,20 +77,27 @@ int main(void)
 
     while(1)
     {
-        // CurrentProtect();
+      //   // CurrentProtect();
         MPU6050_ReadData();
-			  Remote_Control();
-			 // wheel_control(2000 , 0, 0);
-       #if DEBUG
-            pitchyaw_control(0, -1500);
-            count = count + 20;
-           // printf("%i, %i", measured_yaw_angle, measured_pitch_angle);
-           // printf("%i, %i, %i, %i", motor_front_right_cur, motor_front_left_cur, motor_back_left_cur, motor_back_right_cur);
-           printf("%i, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f", count, MPU6050_Real_Data.Gyro_X,
-           MPU6050_Real_Data.Gyro_Y, MPU6050_Real_Data.Gyro_Z,
-           MPU6050_Real_Data.Accel_X, MPU6050_Real_Data.Accel_Y, MPU6050_Real_Data.Accel_Z);
-           //printf("%i", measured_yaw_angle_401);
-           delay_ms(1000);
-       #endif
+			// Remote_Control();
+			//  // wheel_control(2000 , 0, 0);
+      //  #if DEBUG
+      //       pitchyaw_control(0, -1500);
+      //       count = count + 20;
+      //      // printf("%i, %i", measured_yaw_angle, measured_pitch_angle);
+      //      // printf("%i, %i, %i, %i", motor_front_right_cur, motor_front_left_cur, motor_back_left_cur, motor_back_right_cur);
+      //      printf("%i, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f", count, MPU6050_Real_Data.Gyro_X,
+      //      MPU6050_Real_Data.Gyro_Y, MPU6050_Real_Data.Gyro_Z,
+      //      MPU6050_Real_Data.Accel_X, MPU6050_Real_Data.Accel_Y, MPU6050_Real_Data.Accel_Z);
+      //      //printf("%i", measured_yaw_angle_401);
+      //      delay_ms(1000);
+      //  #endif
+      // printf("%i\t\t%i\t\t%i\t\t%i\t\t", measured_201_speed, measured_202_speed, measured_203_speed, measured_204_speed);
+        //printf("HI");
+        //delay_ms(1000);
+			  //float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, 0);
+        //pitchyaw_control(0, (int16_t)pitch_velocity_change);
+        set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
+        delay_ms(1);
     }
 }

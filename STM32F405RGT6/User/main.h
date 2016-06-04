@@ -25,7 +25,7 @@
     2~5 Soldiers we manufacture in 2016
     6 Base robot
     7 Hero robot */
-#define ROBOT_SERIAL_NUMBER 1
+#define ROBOT_SERIAL_NUMBER 7
 
 // For Blue motor and all 2016 soldier robots
 #define BLUE_SAMPLE_ROBOT   0
@@ -35,6 +35,7 @@
 #define SOLDIER_4           4
 #define SOLDIER_5           5
 #define BASE_ROBOT       		6
-#define HERO_ROBOT       		7
+#define HERO_ROBOT_CANNON   7
+#define HERO_ROBOT_TURRET   8
 
 #endif

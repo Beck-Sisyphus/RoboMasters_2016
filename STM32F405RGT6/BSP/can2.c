@@ -155,23 +155,23 @@ int16_t measured_pitch_current;
 int16_t target_yaw_current;
 int16_t target_pitch_current;
 
-int16_t measured_201_angle;
-int16_t measured_201_speed;
+volatile int16_t measured_201_angle;
+volatile int16_t measured_201_speed;
 int16_t x145;
 int16_t x167;
 
-int16_t measured_202_angle;
-int16_t measured_202_speed;
+volatile int16_t measured_202_angle;
+volatile int16_t measured_202_speed;
 int16_t x245;
 int16_t x267;
 
-int16_t measured_203_angle;
-int16_t measured_203_speed;
+volatile int16_t measured_203_angle;
+volatile int16_t measured_203_speed;
 int16_t x345;
 int16_t x367;
 
-int16_t measured_204_angle;
-int16_t measured_204_speed;
+volatile int16_t measured_204_angle;
+volatile int16_t measured_204_speed;
 int16_t x445;
 int16_t x467;
 
@@ -521,14 +521,14 @@ void wheel_control(int16_t drive, int16_t strafe, int16_t rotate)
     int16_t motor_202_pos = (drive + strafe + rotate);
     int16_t motor_203_pos = (drive - strafe + rotate);
 
-    // motor_front_right_cur = 11 * motor_201_pos;
-    // motor_front_left_cur  = 11 * motor_202_pos;
-    // motor_back_left_cur   = 11 * motor_203_pos;
-    // motor_back_right_cur  = 11 * motor_204_pos;
-    Velocity_Control_201(motor_201_pos);
-    Velocity_Control_204(motor_204_pos);
-    Velocity_Control_202(motor_202_pos);
-    Velocity_Control_203(motor_203_pos);
+    motor_front_right_cur = 11 * motor_201_pos;
+    motor_front_left_cur  = 11 * motor_202_pos;
+    motor_back_left_cur   = 11 * motor_203_pos;
+    motor_back_right_cur  = 11 * motor_204_pos;
+    // Velocity_Control_201(motor_201_pos);
+    // Velocity_Control_204(motor_204_pos);
+    // Velocity_Control_202(motor_202_pos);
+    // Velocity_Control_203(motor_203_pos);
 
     Wheels_Address_Setup();
     Set_Wheels_Current();
