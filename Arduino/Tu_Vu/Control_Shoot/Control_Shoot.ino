@@ -14,7 +14,7 @@ int8_t rear_right_pin = 7;
 // j counter to avoid using delay and screwing communication
 int8_t direct = 2;
 int8_t spin = 3;
-int j = 0;
+int8_t j = 0;
 
 // servo motor
 // i counter to avoid using delay and screwing communication
@@ -26,7 +26,7 @@ bool sw = false;
 
 void setup() {
   Serial.begin(115200);
-//  Serial3.begin(115200);
+  Serial3.begin(115200);
 
   // Servo
   myServo.attach(serv);
@@ -88,24 +88,23 @@ void shoot() {
   analogWrite(rear_right_pin, 255 * 0.99);
 
   // servo
-  if(i < 7500 && !sw) {
+  if(i < 1000 && !sw) {
     myServo.write(50);    
-  } else if(i < 7500 && sw) {
+  } else if(i < 1000 && sw) {
     myServo.write(150);
-  } else if(i > 7500) {
+  } else if(i > 1000) {
     sw = !sw;
     i = 0;
   }
 
   // stepper
   // approximately delay(1) between writes
-  if(j < 15) {
+  if(j < 10) {
     digitalWrite(spin, HIGH);
   } else {
     digitalWrite(spin, LOW); 
     j = 0;
   }
-  
   i++;
   j++;
   
