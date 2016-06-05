@@ -17,15 +17,12 @@ int8_t rear_right_pin = 7;
 // j counter to avoid using delay and screwing communication
 int8_t direct = 2;
 int8_t spin = 3;
-int j = 0;
 
 // servo motor
 // i counter to avoid using delay and screwing communication
 // sw for direction change
 Servo myServo;
 int8_t serv = A0;
-int i = 0;
-bool sw = false;
 
 
 /*  For Communication between TX1, Arduino, Trapezoid */
@@ -56,10 +53,9 @@ int kalConstY = 100;
 int kalConstZ = 100;
 
  
-void setup()
-{
+void setup() {
   Serial.begin(115200);
-  //Serial1.begin(115200);
+  Serial1.begin(115200);
   // servo setup
   myServo.attach(serv);
   // stepper setup
@@ -68,7 +64,7 @@ void setup()
   digitalWrite(direct, LOW);
   digitalWrite(spin, LOW);
  
-//    // initialize Timer1
+//    // initialize Timer2
 //    cli();          // disable global interrupts
     TCCR2A = 0;     // set entire TCCR1A register to 0
     TCCR2B = 0;     // same for TCCR1B
@@ -84,17 +80,6 @@ void setup()
     TIMSK2 |= (1 << OCIE1A);
     // enable global interrupts:
 //    sei();
-//  TCCR2B = 0x00;        //Disbale Timer2 while we set it up
-//
-//  TCNT2  = 130;         //Reset Timer Count to 130 out of 255
-//
-//  TIFR2  = 0x00;        //Timer2 INT Flag Reg: Clear Timer Overflow Flag
-//
-//  TIMSK2 = 0x01;        //Timer2 INT Reg: Timer2 Overflow Interrupt Enable
-//
-//  TCCR2A = 0x00;        //Timer2 Control Reg A: Normal port operation, Wave Gen Mode normal
-//
-//  TCCR2B = 3;        //Timer2 Control Reg B: Timer Prescaler set to 128
 
   pinMode(front_left_pin, OUTPUT);
   pinMode(front_right_pin, OUTPUT);
@@ -114,12 +99,46 @@ void loop()
     Serial.readBytes((char*) rxTX1, 16);
     for(int i = 0; i < 16; i++) {
       rxTX1[i] = (rxTX1[i] & 255);
-      Serial1.println("hello");
     }
     
   
-  
+    // receive info from rx buffer
+    header = ((int16_t) rxTX1[0] << 8) | (rxTX1[1] & 255);
+    feeder_motor_state = rxTX1[2] & 255;
     friction_motor_state = rxTX1[3] & 255;
+    pitch_req = ((int16_t) rxTX1[4] << 8) | (rxTX1[5] & 255);
+    yaw_req = ((int16_t) rxTX1[6] << 8) | (rxTX1[7] & 255);
+    feeder_motor_pwm = ((int16_t) rxTX1[8] << 8) | (rxTX1[9]  & 255);
+    friction_motor_pwm = ((int16_t) rxTX1[10] << 8) | (rxTX1[11]  & 255);
+
+    //    // tx to TX1
+//    txTX1[0] = (header >> 8) & 255;
+//    txTX1[1] = header & 255;
+//    txTX1[2] = (kalIntX >> 8) & 255;
+//    txTX1[3] = kalIntX & 255;
+//    txTX1[4] = (kalIntY >> 8) & 255;
+//    txTX1[5] = kalIntY & 255;
+//    txTX1[6] = (kalIntZ >> 8) & 255;
+//    txTX1[7] = kalIntZ & 255;
+//    Serial.write((uint8_t*) txTX1, 16);
+//    
+//
+    // tx to trapezoid board
+    txTrap[0] = (header >> 8) & 255;
+    txTrap[1] = header & 255;
+    txTrap[2] = feeder_motor_state;
+    txTrap[3] = friction_motor_state;
+    txTrap[4] = (pitch_req >> 8) & 255;
+    txTrap[5] = pitch_req & 255;
+    txTrap[6] = (yaw_req >> 8) & 255;
+    txTrap[7] = yaw_req & 255;
+    txTrap[8] = (feeder_motor_pwm >> 8) & 255;
+    txTrap[9] = feeder_motor_pwm & 255;
+    txTrap[10] = (friction_motor_pwm >> 8) & 255;
+    txTrap[11] = friction_motor_pwm & 255;
+    Serial1.write((uint8_t*) txTrap, 16);
+
+    
     if(friction_motor_state == 1) {
       
       analogWrite(front_left_pin, 255 * 0.99);
@@ -139,8 +158,7 @@ void loop()
   }
 }
  
-ISR(TIMER2_COMPA_vect)
-{
+ISR(TIMER2_COMPA_vect) {
     if(friction_motor_state == 1) {
       digitalWrite(spin, HIGH);
       delay(1);
@@ -148,8 +166,4 @@ ISR(TIMER2_COMPA_vect)
       digitalWrite(spin, LOW);
       delay(1);
     }
-    
-//      TCNT2 = 130;           //Reset Timer to 130 out of 255
-//
-//  TIFR2 = 0x00;          //Timer2 INT Flag Reg: Clear Timer Overflow Flag
 }
