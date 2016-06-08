@@ -49,6 +49,7 @@ void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
     // Auto target control
     switch (ROBOT_SERIAL_NUMBER) {
       case BLUE_SAMPLE_ROBOT:
+              // TODO: need to double check on the yaw coordinate system mapping
               target_pitch_angle = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, BLUE_PITCH_LOW, BLUE_PITCH_HIGH);
               target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, BLUE_YAW_RIGHT, BLUE_YAW_LEFT);
               break;
@@ -57,8 +58,16 @@ void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
               target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, RED_YAW_RIGHT, RED_YAW_LEFT);
               break;
       case HERO_ROBOT_CANNON:
-              target_pitch_angle = map(real_angle_pitch, CANNON_PITCH_LOW_REAL, CANNON_PITCH_HIGH_REAL, CANNON_PITCH_LOW, CANNON_PITCH_HIGH);
-              target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, RED_YAW_RIGHT, RED_YAW_LEFT);
+              target_pitch_angle = map(real_angle_pitch, REAL_CANNON_PITCH_LOW, REAL_CANNON_PITCH_HIGH,
+                                                         CANNON_PITCH_LOW, CANNON_PITCH_HIGH + ENCODER_MAX);
+              target_yaw_angle = map(real_angle_yaw, REAL_CANNON_YAW_LEFT, REAL_CANNON_YAW_RIGHT,
+                                                     CANNON_YAW_LEFT + ENCODER_MAX, CANNON_YAW_RIGHT);
+              if (measured_pitch_angle < CANNON_PITCH_LOW - 100) {
+                  measured_pitch_angle = measured_pitch_angle + ENCODER_MAX;
+              }
+              if (measured_yaw_angle < CANNON_YAW_RIGHT - 100) {
+                  measured_yaw_angle = measured_yaw_angle + ENCODER_MAX;
+              }
               break;
       default:break;
     }

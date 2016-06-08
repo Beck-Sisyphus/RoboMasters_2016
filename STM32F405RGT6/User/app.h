@@ -6,12 +6,15 @@
 #define GAP 0.1f
 #define abs(x) ((x)>0? (x):(-(x)))
 
-// Measured reading
+#define ENCODER_MAX 8172
+
+// pitch-yaw-roll coordinate system in degree
 // #define REAL_PITCH_LOW 43  // real lowest angle value that the cannon can reach, measured by protractor
 // #define REAL_PITCH_HIGH 114 // real lowest angle value that the cannon can reach, measured by protractor
 // #define REAL_YAW_LOW -103
 // #define REAL_YAW_HIGH 103
 
+// pitch-yaw-roll coordinate system in radian for turret on sample robot
 #define REAL_PITCH_LOW 750  // real lowest angle value that the cannon can reach, measured by protractor
 #define REAL_PITCH_HIGH 1990 // real lowest angle value that the cannon can reach, measured by protractor
 #define REAL_YAW_LOW -1798
@@ -29,10 +32,17 @@
 //#define RED_YAW_MID 2320
 #define RED_YAW_LEFT   4640 // 6888
 
-#define CANNON_PITCH_HIGH 6934
-#define CANNON_PITCH_LOW  4750
-#define CANNON_PITCH_HIGH_REAL 2269 // 130 degree
-#define CANNON_PITCH_LOW_REAL 907 // 52 degree
+
+#define REAL_CANNON_PITCH_HIGH 2269 // 130 degree
+#define REAL_CANNON_PITCH_LOW 907 // 52 degree
+#define REAL_CANNON_YAW_LEFT -1798 // 130 degree
+#define REAL_CANNON_YAW_RIGHT 1798 // 52 degree
+
+#define CANNON_PITCH_HIGH 1363
+#define CANNON_PITCH_LOW  7426
+#define CANNON_YAW_LEFT 3016
+#define CANNON_YAW_RIGHT  6469
+
 
 // Encoder reading
 #define YELLOW_PITCH_LOW 7530 // 4789
