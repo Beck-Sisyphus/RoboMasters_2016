@@ -2,12 +2,12 @@
 
 volatile extern int16_t pitch_Position;
 volatile extern int16_t yaw_Position;
-volatile extern int16_t pitch_Velocity;
-volatile extern int16_t yaw_Velocity;
+// volatile extern int16_t pitch_Velocity;
+// volatile extern int16_t yaw_Velocity;
 
 // for velocity controlling pitch and yaw with remote
-volatile extern int16_t remote_pitch_change;
-volatile extern int16_t remote_yaw_change;
+// volatile extern int16_t remote_pitch_change;
+// volatile extern int16_t remote_yaw_change;
 volatile extern arduino_data data_usart_3;
 
 extern RC_Ctl_t RC_Ctl;
@@ -22,7 +22,7 @@ void TIM2_Configuration(void)
 
     // // initialize to stop drift problem
     // pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, 0);
-    // yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, 0, 100); 
+    // yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, 0, 100);
     // pitchyaw_control((int16_t) yaw_velocity_change, (int16_t)pitch_velocity_change);
 
     pitch_Position = 1000;
@@ -59,15 +59,15 @@ void TIM2_IRQHandler(void)
         //     MPU6050_ReadData();
         // }
 
-        if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-            //remote velocity control
-            set_Pitch_Yaw_Position(remote_pitch_change, remote_yaw_change);
-        } else {
-            //set point velocity control
-            pitch_Position = data_usart_3.packet.pitch_req;
-            yaw_Position = data_usart_3.packet.yaw_req;
-            set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
-        }
+        // if(RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
+        //     //remote velocity control
+        //     // set_Pitch_Yaw_Position(remote_pitch_change, remote_yaw_change);
+        // } else {
+        //     //set point velocity control
+        //     pitch_Position = data_usart_3.packet.pitch_req;
+        //     yaw_Position = data_usart_3.packet.yaw_req;
+        //     set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
+        // }
 
         // float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_Velocity);
         // float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_Velocity);

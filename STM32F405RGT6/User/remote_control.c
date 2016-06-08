@@ -34,10 +34,10 @@ void Remote_Control() {
     }
 
     if(Remote_On == 1) {
+        drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
+        strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
+        rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
         if(RC_Ctl.rc.s1 == RC_SW_UP && RC_Ctl.rc.s2 == RC_SW_UP) {
-            drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
-            strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
-            rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
             wheel_control(drive, strafe, rotate);
             pitch_Position = data_usart_3.packet.pitch_req;
             yaw_Position = data_usart_3.packet.yaw_req;

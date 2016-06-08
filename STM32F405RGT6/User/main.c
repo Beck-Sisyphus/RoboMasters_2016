@@ -79,7 +79,7 @@ int main(void)
     {
       //   // CurrentProtect();
         MPU6050_ReadData();
-			// Remote_Control();
+			  Remote_Control();
 			//  // wheel_control(2000 , 0, 0);
       //  #if DEBUG
       //       pitchyaw_control(0, -1500);
@@ -93,7 +93,6 @@ int main(void)
       //      delay_ms(1000);
       //  #endif
       // printf("%i\t\t%i\t\t%i\t\t%i\t\t", measured_201_speed, measured_202_speed, measured_203_speed, measured_204_speed);
-        //printf("HI");
         //delay_ms(1000);
 			  //float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, 0);
         //pitchyaw_control(0, (int16_t)pitch_velocity_change);

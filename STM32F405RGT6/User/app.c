@@ -1,25 +1,18 @@
 #include "main.h"
-extern RC_Ctl_t RC_Ctl;
-
 
 extern int16_t measured_yaw_angle;
 extern int16_t measured_pitch_angle;
 
 volatile int16_t pitch_Position;
 volatile int16_t yaw_Position;
-volatile int16_t pitch_Velocity;
-volatile int16_t yaw_Velocity;
+// volatile int16_t pitch_Velocity;
+// volatile int16_t yaw_Velocity;
 
 // for velocity controlling pitch and yaw with remote
-volatile int16_t remote_pitch_change;
-volatile int16_t remote_yaw_change;
+// volatile int16_t remote_pitch_change;
+// volatile int16_t remote_yaw_change;
 
-// extern MPU6050_REAL_DATA MPU6050_Real_Data;
-/* Yaw Constants*/
-
-// 100 v_p for remote control velocity control for yaw
-const float v_p_206_remote = 100.0;
-const float v_p_206 = 20.0;
+volatile extern int manual_Control_Turret;
 
 // extern MPU6050_REAL_DATA MPU6050_Real_Data;
 /* Pitch Constants  */
@@ -38,6 +31,7 @@ const float v_d_206 = 0.0;
 const float l_p_206 = 1.0;
 const float l_i_206 = 0.0;
 const float l_d_206 = 0.0;
+
 /*
 @@ Description: Top level Function to implement PID control on Pitch Servo
  @ Input:       Real angle from z axis to the position, medium 90
@@ -45,121 +39,39 @@ const float l_d_206 = 0.0;
 */
 void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
 {
-
     float target_pitch_angle;
     float pitch_position_change;
     float pitch_velocity_change;
-
     float target_yaw_angle;
     float yaw_position_change;
     float yaw_velocity_change;
 
-    /********** Blue Motor **********/
-    // // PID for pitch
-    // float target_pitch_angle = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, BLUE_PITCH_LOW, BLUE_PITCH_HIGH);
-    // float pitch_position_change = Position_Control_205((float)measured_pitch_angle, (float)target_pitch_angle);
-    // float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_position_change);
-
-    // // PID for yaw
-    // float target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, BLUE_YAW_RIGHT, BLUE_YAW_LEFT);
-    // float yaw_position_change = Position_Control_206((float)measured_yaw_angle, (float)target_yaw_angle);
-    // float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change);
-
-    // // pitchyaw_control((int16_t) yaw_position_change, (int16_t) pitch_position_change);
-    // pitchyaw_control((int16_t) yaw_velocity_change, (int16_t)pitch_velocity_change);
-
-
-
-    /********** Red Motor **********/
-    if (RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN) {
-        // Pitch, yaw velocity control with remote
-        // PID for pitch
-        pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, real_angle_pitch, v_p_206_remote);
-
-
-        // PID for yaw
-        yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, real_angle_yaw, v_p_206_remote);
-    } else {
-        // Auto target control
-        // PID for pitch
-        target_pitch_angle = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, RED_PITCH_LOW, RED_PITCH_HIGH);
-        pitch_position_change = Position_Control_205((float)measured_pitch_angle, (float)target_pitch_angle);
-        pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_position_change, v_p_205);
-
-        // PID for yaw
-        target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, RED_YAW_RIGHT, RED_YAW_LEFT);
-        yaw_position_change = Position_Control_206((float)measured_yaw_angle, (float)target_yaw_angle);
-        yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change, v_p_206);
+    // Auto target control
+    switch (ROBOT_SERIAL_NUMBER) {
+      case BLUE_SAMPLE_ROBOT:
+              target_pitch_angle = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, BLUE_PITCH_LOW, BLUE_PITCH_HIGH);
+              target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, BLUE_YAW_RIGHT, BLUE_YAW_LEFT);
+              break;
+      case RED_SAMPLE_ROBOT:
+              target_pitch_angle = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, RED_PITCH_LOW, RED_PITCH_HIGH);
+              target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, RED_YAW_RIGHT, RED_YAW_LEFT);
+              break;
+      case HERO_ROBOT_CANNON:
+              target_pitch_angle = map(real_angle_pitch, CANNON_PITCH_LOW_REAL, CANNON_PITCH_HIGH_REAL, CANNON_PITCH_LOW, CANNON_PITCH_HIGH);
+              target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, RED_YAW_RIGHT, RED_YAW_LEFT);
+              break;
+      default:break;
     }
 
-    //     // Auto target control
-    //     // PID for pitch
-    // float target_pitch_angle = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, RED_PITCH_LOW, RED_PITCH_HIGH);
-    // float pitch_position_change = Position_Control_205((float)measured_pitch_angle, (float)target_pitch_angle);
-    // float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_position_change);
+    // PID for pitch
+    pitch_position_change = Position_Control_205((float)measured_pitch_angle, (float)target_pitch_angle);
+    pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_position_change);
 
-    // // PID for yaw
-    // float target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, RED_YAW_RIGHT, RED_YAW_LEFT);
-    // float yaw_position_change = Position_Control_206((float)measured_yaw_angle, (float)target_yaw_angle);
-    // float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change);
+    // PID for yaw
+    yaw_position_change = Position_Control_206((float)measured_yaw_angle, (float)target_yaw_angle);
+    yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change);
 
-    // pitchyaw_control((int16_t) yaw_position_change, (int16_t) pitch_position_change);
     pitchyaw_control((int16_t) yaw_velocity_change, (int16_t)pitch_velocity_change);
-}
-
-/*
-@@ Description: Top level Function to implement PID control on Pitch Servo
- @ Input:       Real angle from z axis to the position, medium 90
- @ Output:      send command to pitch servo to execute
-*/
-void set_Pitch_Position(int16_t real_angle_pitch)
-{
-
-    // Blue Motor
-    // // PID for position
-    // float target_pitch_angle = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, BLUE_PITCH_LOW, BLUE_PITCH_HIGH);
-    // float pitch_position_change = Position_Control_205((float)measured_pitch_angle, (float)target_pitch_angle);
-    // float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_position_change);
-
-    // // pitchyaw_control(0, (int16_t) pitch_position_change);
-    // pitchyaw_control(0, (int16_t)pitch_velocity_change);
-
-    // Red Motor
-    // PID for position
-    float target_pitch_angle = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, RED_PITCH_LOW, RED_PITCH_HIGH);
-    float pitch_position_change = Position_Control_205((float)measured_pitch_angle, (float)target_pitch_angle);
-    float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_position_change, 10);
-
-    // pitchyaw_control(0, (int16_t) pitch_position_change);
-    pitchyaw_control(0, (int16_t)pitch_velocity_change);
-}
-
-/*
-@@ Description: Top level Function to implement PID control on Yaw Servo
- @ Input:       Real angle from x axis to the position, medium 0
- @ Output:      send command to pitch servo to execute
-*/
-void set_Yaw_Position(int16_t real_angle_yaw)
-{
-
-    // Blue Motor
-    // // PID for position
-    // float target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, BLUE_YAW_RIGHT, BLUE_YAW_LEFT);
-    // float yaw_position_change = Position_Control_206((float)measured_yaw_angle, (float)target_yaw_angle);
-    // float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change);
-
-    // // pitchyaw_control((int16_t) yaw_position_change, 0);
-    // pitchyaw_control((int16_t) yaw_velocity_change, 0);
-
-
-    // Red Motor
-    // PID for position
-    float target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, RED_YAW_RIGHT, RED_YAW_LEFT);
-    float yaw_position_change = Position_Control_206((float)measured_yaw_angle, (float)target_yaw_angle);
-    float yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change, v_p_206);
-
-    // pitchyaw_control((int16_t) yaw_position_change, 0);
-    pitchyaw_control((int16_t) yaw_velocity_change, 0);
 }
 
 /********************************************************************************
@@ -167,14 +79,13 @@ void set_Yaw_Position(int16_t real_angle_yaw)
  @ Input      : Current speed from pitch axis
  @ Output     : Target speed for pitch axis
 *********************************************************************************/
-float Velocity_Control_205(float current_velocity_205,float target_velocity_205, float V_p)
+float Velocity_Control_205(float current_velocity_205,float target_velocity_205)
 {
     static float error_v[2] = {0.0,0.0};
     static float output = 0;
     static float inte = 0;
 
-    if((abs(current_velocity_205) < GAP) ||
-        (RC_Ctl.rc.s1 == RC_SW_DOWN && RC_Ctl.rc.s2 == RC_SW_DOWN))
+    if((abs(current_velocity_205) < GAP))
     {
         current_velocity_205 = 0.0;
     }
@@ -183,7 +94,7 @@ float Velocity_Control_205(float current_velocity_205,float target_velocity_205,
     error_v[1] = target_velocity_205 - current_velocity_205;
     inte += error_v[1];
 
-    output = error_v[1] * V_p
+    output = error_v[1] * v_p_205
             + inte * v_i_205
              + (error_v[1] - error_v[0]) * v_d_205;
 
@@ -197,7 +108,20 @@ float Velocity_Control_205(float current_velocity_205,float target_velocity_205,
         output = -ESC_MAX;
     }
 
-    return -output; // For Blue rover, position reading is in inverse direction
+    switch (ROBOT_SERIAL_NUMBER) {
+      case BLUE_SAMPLE_ROBOT:
+              // Blue pitch motor need negative feedback for speed
+              output = -output; break;
+      case RED_SAMPLE_ROBOT:
+              // red pitch motor need positive feedback for speed
+              output = output; break;
+      case HERO_ROBOT_CANNON:
+              // hero cannon pitch motor need negative feedback for speed
+              output = -output; break;
+      default:break;
+    }
+
+    return output;
 }
 
 /********************************************************************************
@@ -205,7 +129,7 @@ float Velocity_Control_205(float current_velocity_205,float target_velocity_205,
  @ Input      : Current position from pitch axis
  @ Output     : Target position for pitch axis
 *********************************************************************************/
-float Position_Control_205(float current_position_205,float target_position_205)
+static float Position_Control_205(float current_position_205,float target_position_205)
 {
     static float error_l[2] = {0.0,0.0};
     static float output = 0;
@@ -229,7 +153,19 @@ float Position_Control_205(float current_position_205,float target_position_205)
         output = -ESC_MAX;
     }
 
-    return -output;
+    switch (ROBOT_SERIAL_NUMBER) {
+      case BLUE_SAMPLE_ROBOT:
+              // Blue pitch motor need negative feedback
+              output = -output; break;
+      case RED_SAMPLE_ROBOT:
+              // red pitch motor need positive feedback
+              output = -output; break;
+      case HERO_ROBOT_CANNON:
+              // hero cannon pitch motor need positive feedback for position
+              output = output; break;
+      default:break;
+    }
+    return output;
 }
 /********************************************************************************
 @@ Description: Close loop control for the yaw axis speed on motor controller
@@ -237,7 +173,7 @@ float Position_Control_205(float current_position_205,float target_position_205)
  @ Output     : Target speed for yaw axis
 *********************************************************************************/
 
-float Velocity_Control_206(float current_velocity_206,float target_velocity_206, float V_p)
+float Velocity_Control_206(float current_velocity_206,float target_velocity_206)
 {
     static float error_v[2] = {0.0,0.0};
     static float output = 0;
@@ -252,10 +188,7 @@ float Velocity_Control_206(float current_velocity_206,float target_velocity_206,
     error_v[1] = target_velocity_206 - current_velocity_206;
     inte += error_v[1];
 
-    // output = error_v[1] * v_p_206
-    //          + inte * v_i_206
-    //          + (error_v[1] - error_v[0]) * v_d_206;
-    output = error_v[1] * V_p
+    output = error_v[1] * v_p_206
              + inte * v_i_206
              + (error_v[1] - error_v[0]) * v_d_206;
 
@@ -277,7 +210,7 @@ float Velocity_Control_206(float current_velocity_206,float target_velocity_206,
  @ Input      : Current position from yaw axis
  @ Output     : Target position for yaw axis
 *********************************************************************************/
-float Position_Control_206(float current_position_206,float target_position_206)
+static float Position_Control_206(float current_position_206,float target_position_206)
 {
     static float error_l[2] = {0.0,0.0};
     static float output = 0;
