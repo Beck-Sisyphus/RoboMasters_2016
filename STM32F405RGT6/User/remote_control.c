@@ -51,8 +51,8 @@ void Remote_Control() {
             pitch_Position = min(pitch_Position, REAL_CANNON_PITCH_HIGH);
             pitch_Position = max(pitch_Position, REAL_CANNON_PITCH_LOW);
             yaw_Position += yaw;
-            yaw_Position = min(yaw_Position, REAL_CANNON_YAW_HIGH);
-            yaw_Position = max(yaw_Position, REAL_CANNON_YAW_LOW);
+            yaw_Position = min(yaw_Position, REAL_CANNON_YAW_RIGHT);
+            yaw_Position = max(yaw_Position, REAL_CANNON_YAW_LEFT);
         } else if (RC_Ctl.rc.s2 == RC_SW_MID) {
           /* code */
         } else {
