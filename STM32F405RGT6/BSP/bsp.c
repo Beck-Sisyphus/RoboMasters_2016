@@ -15,5 +15,5 @@ void BSP_Init(void){
     USART3_Configuration();
     PWM_Configuration();
     TIM2_Configuration();
-    TIM6_Configuration();
+    // TIM6_Configuration();
 }
