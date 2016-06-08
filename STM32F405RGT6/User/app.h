@@ -38,10 +38,12 @@
 #define REAL_CANNON_YAW_LEFT -1798 // 130 degree
 #define REAL_CANNON_YAW_RIGHT 1798 // 52 degree
 
-#define CANNON_PITCH_HIGH 1363
-#define CANNON_PITCH_LOW  7426
-#define CANNON_YAW_LEFT 3016
-#define CANNON_YAW_RIGHT  6469
+#define CANNON_PITCH_HIGH 1175
+#define CANNON_PITCH_LOW  7480
+#define CANNON_YAW_LEFT 5171
+#define CANNON_YAW_RIGHT 470
+
+// 1363 7426 3016 6469
 
 
 // Encoder reading
@@ -60,6 +62,6 @@ static float Position_Control_205(float, float);
 float Velocity_Control_206(float, float);
 static float Position_Control_206(float, float);
 
-static long map(long x, long in_min, long in_max, long out_min, long out_max);
+static int map(int x, int in_min, int in_max, int out_min, int out_max);
 
 #endif

@@ -19,7 +19,7 @@ volatile extern int manual_Control_Turret;
 const float v_p_205 = 15.0;
 const float v_i_205 = 0.0;
 const float v_d_205 = 0.01;
-const float l_p_205 = 1.0;
+const float l_p_205 = 0.75;
 const float l_i_205 = 0.0;
 const float l_d_205 = 0.0;
 
@@ -28,7 +28,7 @@ const float l_d_205 = 0.0;
 const float v_p_206 = 10.0;
 const float v_i_206 = 0.0;
 const float v_d_206 = 0.0;
-const float l_p_206 = 1.0;
+const float l_p_206 = 1;
 const float l_i_206 = 0.0;
 const float l_d_206 = 0.0;
 
@@ -61,12 +61,10 @@ void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
               target_pitch_angle = map(real_angle_pitch, REAL_CANNON_PITCH_LOW, REAL_CANNON_PITCH_HIGH,
                                                          CANNON_PITCH_LOW, CANNON_PITCH_HIGH + ENCODER_MAX);
               target_yaw_angle = map(real_angle_yaw, REAL_CANNON_YAW_LEFT, REAL_CANNON_YAW_RIGHT,
-                                                     CANNON_YAW_LEFT + ENCODER_MAX, CANNON_YAW_RIGHT);
-              if (measured_pitch_angle < CANNON_PITCH_LOW - 100) {
+                                                     CANNON_YAW_LEFT, CANNON_YAW_RIGHT);
+              // Break point for pitch
+              if (measured_pitch_angle < CANNON_PITCH_LOW - 1000) {
                   measured_pitch_angle = measured_pitch_angle + ENCODER_MAX;
-              }
-              if (measured_yaw_angle < CANNON_YAW_RIGHT - 100) {
-                  measured_yaw_angle = measured_yaw_angle + ENCODER_MAX;
               }
               break;
       default:break;
@@ -210,8 +208,20 @@ float Velocity_Control_206(float current_velocity_206,float target_velocity_206)
     {
         output = -ESC_MAX;
     }
+    switch (ROBOT_SERIAL_NUMBER) {
+      case BLUE_SAMPLE_ROBOT:
+              // Blue pitch motor need negative feedback for speed
+              output = -output; break;
+      case RED_SAMPLE_ROBOT:
+              // red pitch motor need positive feedback for speed
+              output = output; break;
+      case HERO_ROBOT_CANNON:
+              // hero cannon pitch motor need negative feedback for speed
+              output = output; break;
+      default:break;
+    }
 
-    return -output;
+    return output;
 }
 
 /********************************************************************************
@@ -242,11 +252,23 @@ static float Position_Control_206(float current_position_206,float target_positi
     {
         output = -ESC_MAX;
     }
+    switch (ROBOT_SERIAL_NUMBER) {
+      case BLUE_SAMPLE_ROBOT:
+              // Blue pitch motor need negative feedback for speed
+              output = -output; break;
+      case RED_SAMPLE_ROBOT:
+              // red pitch motor need positive feedback for speed
+              output = -output; break;
+      case HERO_ROBOT_CANNON:
+              // positive speed, moving right; negative feedback
+              output = -output; break;
+      default:break;
+    }
 
-    return -output;
+    return output;
 }
 
-static long map(long x, long in_min, long in_max, long out_min, long out_max)
+static int map(int x, int in_min, int in_max, int out_min, int out_max)
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }

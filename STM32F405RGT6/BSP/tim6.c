@@ -27,7 +27,7 @@ void TIM6_Configuration(void)
     nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);
 
-    tim.TIM_Prescaler = 84-1;        //84M internal clock
+    tim.TIM_Prescaler = 42-1;        //84M internal clock
     tim.TIM_CounterMode = TIM_CounterMode_Up;
     tim.TIM_ClockDivision = TIM_CKD_DIV1;
     tim.TIM_Period = 1000;  // 1 MHz down to 1 KHz (1 ms)

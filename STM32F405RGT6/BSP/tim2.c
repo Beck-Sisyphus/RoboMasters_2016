@@ -25,9 +25,6 @@ void TIM2_Configuration(void)
     // yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, 0, 100);
     // pitchyaw_control((int16_t) yaw_velocity_change, (int16_t)pitch_velocity_change);
 
-    pitch_Position = 1000;
-    yaw_Position = 900;
-
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE);
 
     nvic.NVIC_IRQChannel = TIM2_IRQn;
@@ -66,7 +63,7 @@ void TIM2_IRQHandler(void)
         //     //set point velocity control
         //     pitch_Position = data_usart_3.packet.pitch_req;
         //     yaw_Position = data_usart_3.packet.yaw_req;
-        //     set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
+        set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
         // }
 
         // float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, pitch_Velocity);
