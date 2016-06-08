@@ -452,14 +452,14 @@
               <FilePath>..\User\main.h</FilePath>
             </File>
             <File>
-              <FileName>map.c</FileName>
+              <FileName>remote_control.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\map.c</FilePath>
+              <FilePath>..\User\remote_control.c</FilePath>
             </File>
             <File>
-              <FileName>map.h</FileName>
+              <FileName>remote_control.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\User\map.h</FilePath>
+              <FilePath>..\User\remote_control.h</FilePath>
             </File>
           </Files>
         </Group>
