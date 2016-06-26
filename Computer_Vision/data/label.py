@@ -14,10 +14,12 @@ def convert():
 	for pic in pics:
 		filename = str.split(pic, '.')[0]
 		one, two = str.split(filename, '_')
-		x, y = str.split(one, ',')
+		onex, oney = str.split(one, ',')
 		twox, twoy = str.split(two, ',')
-		width = int(twox) - int(x)
-		height = int(twoy) - int(y)
+		width = int(twox) - int(onex)
+		height = int(twoy) - int(oney)
+		x = int(onex) + width / 2.0
+		y = int(oney) + height / 2.0
 		output = open(labeldir + filename + ".txt", 'w')
 		output.write("1 " + str(int(x)/WID) + " " + str(int(y)/HEI) + " " + str(width/WID) + " " + str(height/HEI))
 		output.close()
