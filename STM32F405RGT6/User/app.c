@@ -268,7 +268,7 @@ static float Position_Control_206(float current_position_206,float target_positi
     return output;
 }
 
-static int map(int x, int in_min, int in_max, int out_min, int out_max)
+int map(int x, int in_min, int in_max, int out_min, int out_max)
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }

@@ -62,6 +62,6 @@ static float Position_Control_205(float, float);
 float Velocity_Control_206(float, float);
 static float Position_Control_206(float, float);
 
-static int map(int x, int in_min, int in_max, int out_min, int out_max);
+int map(int x, int in_min, int in_max, int out_min, int out_max);
 
 #endif

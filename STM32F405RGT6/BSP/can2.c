@@ -1,5 +1,6 @@
-#include "can2.h"
-#include "app_chassis.h"
+// #include "can2.h"
+// #include "app_chassis.h"
+#include "main.h"
 
 /*----CAN2_TX-----PB13----*/
 /*----CAN2_RX-----PB12----*/
@@ -516,19 +517,19 @@ void pitchyaw_control(int16_t yaw_current, int16_t pitch_current) {
 // controls wheels using kinematic equations
 void wheel_control(int16_t drive, int16_t strafe, int16_t rotate)
 {
-    int16_t motor_201_pos = (-1*drive + strafe + rotate);
-    int16_t motor_204_pos = (-1*drive - strafe + rotate);
-    int16_t motor_202_pos = (drive + strafe + rotate);
-    int16_t motor_203_pos = (drive - strafe + rotate);
+    int16_t motor_201_vel = (-1*drive + strafe + rotate);
+    int16_t motor_204_vel = (-1*drive - strafe + rotate);
+    int16_t motor_202_vel = (drive + strafe + rotate);
+    int16_t motor_203_vel = (drive - strafe + rotate);
 
-    motor_front_right_cur = 11 * motor_201_pos;
-    motor_front_left_cur  = 11 * motor_202_pos;
-    motor_back_left_cur   = 11 * motor_203_pos;
-    motor_back_right_cur  = 11 * motor_204_pos;
-    // Velocity_Control_201(motor_201_pos);
-    // Velocity_Control_204(motor_204_pos);
-    // Velocity_Control_202(motor_202_pos);
-    // Velocity_Control_203(motor_203_pos);
+    // motor_front_right_cur = 11 * motor_201_vel;
+    // motor_front_left_cur  = 11 * motor_202_vel;
+    // motor_back_left_cur   = 11 * motor_203_vel;
+    // motor_back_right_cur  = 11 * motor_204_vel;
+    motor_front_right_cur = Velocity_Control_201(motor_201_vel);
+    // motor_back_right_cur = Velocity_Control_204(motor_204_vel);
+    // motor_front_left_cur = Velocity_Control_202(motor_202_vel);
+    // motor_back_left_cur = Velocity_Control_203(motor_203_vel);
 
     Wheels_Address_Setup();
     Set_Wheels_Current();
@@ -638,93 +639,94 @@ void Motor_Reset_Can_2(void) {
 
 
 // For manually setting currents to motors for testing
-void Motor_ManSet_Can_2(void) {
-
-
-    CanTxMsg tx_message1;
-    CanTxMsg tx_message2;
-
-    tx_message1.StdId = 0x200;
-    tx_message1.DLC = 0x08;
-    tx_message1.RTR = CAN_RTR_Data;
-    tx_message1.IDE = CAN_Id_Standard;
-
-    tx_message2.StdId = 0x1FF;
-    tx_message2.DLC = 0x08;
-    tx_message2.RTR = CAN_RTR_Data;
-    tx_message2.IDE = CAN_Id_Standard;
-
-/*****************************
-    tx_message1 Controls wheels
-*******************************/
-
-/*
-    tx_message.StdId = 0x200 for wheels
-
-    ************** For Red C Motor **************
-    Data 0 and 1 -> Front left wheel            Motor_ID 3
-    Data 2 and 3 -> back left wheel             Motor_ID 4
-    Data 4 and 5 -> front right wheel           Motor_ID 5
-    Data 6 and 7 -> back right wheel            Motor_ID 6
-
-    ************** For Blue C Motor **************
-    Data 0 and 1 -> Front right wheel           Motor_ID 3
-    Data 2 and 3 -> Front left wheel            Motor_ID 4
-    Data 4 and 5 -> Rear left wheel             Motor_ID 5
-    Data 6 and 7 -> Rear right wheel            Motor_ID 6
-
-    data is sent in little endian
-    positive values -> counter clockwise rotation
-    negative values -> clockwise rotation
-    I tested:
-    +500 to right front wheel. +500 = 0xF401z in little endian so:
-    tx_message1.Data[0] = 0xF4;
-    tx_message1.Data[1] = 0x01;
-    -500 to right front wheel. -500 = 0x0CFE in little endian so::
-    tx_message1.Data[0] = 0x0C;
-    tx_message1.Data[1] = 0xFE;
-*/
-    tx_message1.Data[0] = 0xF4;
-    tx_message1.Data[1] = 0x01;
-
-    tx_message1.Data[2] = 0xF4;
-    tx_message1.Data[3] = 0x01;
-
-    tx_message1.Data[4] = 0x0C;
-    tx_message1.Data[5] = 0xFE;
-
-    tx_message1.Data[6] = 0x0C;
-    tx_message1.Data[7] = 0xFE;
-
-
-/*****************************
-    tx_message2 Controls pitch and yaw
-*******************************/
-
-/*
-
-    tx_message.StdId = 0x1FF for pitch and yaw
-    Data 0 and 1 -> yaw (side to side)
-    Data 2 and 3 -> pitch (up, down)
-
-    data is sent in little endian
-    positive values -> yaw right turn        pitch up
-    negative values -> yaw left turn        pitch down
-    +1000 to yaw. +1000 = 0xE803 in little endian so:
-    tx_message1.Data[0] = 0xE8;
-    tx_message1.Data[1] = 0x03;
-    -1000 to yaw. -1000 = 0x18FC in little endian so::
-    tx_message1.Data[0] = 0x18;
-    tx_message1.Data[1] = 0xFC;
-*/
-    tx_message2.Data[0] = 0x00;
-    tx_message2.Data[1] = 0x00;
-    tx_message2.Data[2] = 0x00;
-    tx_message2.Data[3] = 0x00;
-    tx_message2.Data[4] = 0x00;
-    tx_message2.Data[5] = 0x00;
-    tx_message2.Data[6] = 0x00;
-    tx_message2.Data[7] = 0x00;
-
-    // CAN_Transmit(CAN2,&tx_message1);
-}
+//
+// void Motor_ManSet_Can_2(void) {
+//
+//
+//     CanTxMsg tx_message1;
+//     CanTxMsg tx_message2;
+//
+//     tx_message1.StdId = 0x200;
+//     tx_message1.DLC = 0x08;
+//     tx_message1.RTR = CAN_RTR_Data;
+//     tx_message1.IDE = CAN_Id_Standard;
+//
+//     tx_message2.StdId = 0x1FF;
+//     tx_message2.DLC = 0x08;
+//     tx_message2.RTR = CAN_RTR_Data;
+//     tx_message2.IDE = CAN_Id_Standard;
+//
+// /*****************************
+//     tx_message1 Controls wheels
+// *******************************/
+//
+// /*
+//     tx_message.StdId = 0x200 for wheels
+//
+//     ************** For Red C Motor **************
+//     Data 0 and 1 -> Front left wheel            Motor_ID 3
+//     Data 2 and 3 -> back left wheel             Motor_ID 4
+//     Data 4 and 5 -> front right wheel           Motor_ID 5
+//     Data 6 and 7 -> back right wheel            Motor_ID 6
+//
+//     ************** For Blue C Motor **************
+//     Data 0 and 1 -> Front right wheel           Motor_ID 3
+//     Data 2 and 3 -> Front left wheel            Motor_ID 4
+//     Data 4 and 5 -> Rear left wheel             Motor_ID 5
+//     Data 6 and 7 -> Rear right wheel            Motor_ID 6
+//
+//     data is sent in little endian
+//     positive values -> counter clockwise rotation
+//     negative values -> clockwise rotation
+//     I tested:
+//     +500 to right front wheel. +500 = 0xF401z in little endian so:
+//     tx_message1.Data[0] = 0xF4;
+//     tx_message1.Data[1] = 0x01;
+//     -500 to right front wheel. -500 = 0x0CFE in little endian so::
+//     tx_message1.Data[0] = 0x0C;
+//     tx_message1.Data[1] = 0xFE;
+// */
+//     tx_message1.Data[0] = 0xF4;
+//     tx_message1.Data[1] = 0x01;
+//
+//     tx_message1.Data[2] = 0xF4;
+//     tx_message1.Data[3] = 0x01;
+//
+//     tx_message1.Data[4] = 0x0C;
+//     tx_message1.Data[5] = 0xFE;
+//
+//     tx_message1.Data[6] = 0x0C;
+//     tx_message1.Data[7] = 0xFE;
+//
+//
+// /*****************************
+//     tx_message2 Controls pitch and yaw
+// *******************************/
+//
+// /*
+//
+//     tx_message.StdId = 0x1FF for pitch and yaw
+//     Data 0 and 1 -> yaw (side to side)
+//     Data 2 and 3 -> pitch (up, down)
+//
+//     data is sent in little endian
+//     positive values -> yaw right turn        pitch up
+//     negative values -> yaw left turn        pitch down
+//     +1000 to yaw. +1000 = 0xE803 in little endian so:
+//     tx_message1.Data[0] = 0xE8;
+//     tx_message1.Data[1] = 0x03;
+//     -1000 to yaw. -1000 = 0x18FC in little endian so::
+//     tx_message1.Data[0] = 0x18;
+//     tx_message1.Data[1] = 0xFC;
+// */
+//     tx_message2.Data[0] = 0x00;
+//     tx_message2.Data[1] = 0x00;
+//     tx_message2.Data[2] = 0x00;
+//     tx_message2.Data[3] = 0x00;
+//     tx_message2.Data[4] = 0x00;
+//     tx_message2.Data[5] = 0x00;
+//     tx_message2.Data[6] = 0x00;
+//     tx_message2.Data[7] = 0x00;
+//
+//     // CAN_Transmit(CAN2,&tx_message1);
+// }

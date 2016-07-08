@@ -26,6 +26,15 @@ extern int16_t pitch_Position;
 extern int16_t yaw_Position;
 
 
+extern int16_t measured_201_speed;
+extern int16_t measured_202_speed;
+extern int16_t measured_203_speed;
+extern int16_t measured_204_speed;
+
+extern int16_t drive;
+extern int16_t strafe;
+extern int16_t rotate;
+
 int count = 0;
 
 
@@ -76,11 +85,12 @@ int main(void)
       //      //printf("%i", measured_yaw_angle_401);
       //delay_ms(1000);
       //  #endif
-      // printf("%i\t\t%i\t\t%i\t\t%i\t\t", measured_201_speed, measured_202_speed, measured_203_speed, measured_204_speed);
-        //delay_ms(1000);
+    //  printf("%i\t\t%i\t\t%i\t\t%i\t\t\n", measured_201_speed, measured_202_speed, measured_203_speed, measured_204_speed);
+    //  printf("%i\t\t%i\t\t%i\t\t\n", drive, strafe, rotate);
+    // delay_ms(1000);
 			  //float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, 0);
         //pitchyaw_control(0, (int16_t)pitch_velocity_change);
         // set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
-        delay_ms(1);
+        //delay_ms(1);
     }
 }

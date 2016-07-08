@@ -17,9 +17,6 @@ void TIM2_Configuration(void)
     TIM_TimeBaseInitTypeDef  tim;
     NVIC_InitTypeDef         nvic;
 
-    float pitch_velocity_change;
-    float yaw_velocity_change;
-
     // // initialize to stop drift problem
     // pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, 0);
     // yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, 0, 100);

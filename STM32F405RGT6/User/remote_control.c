@@ -12,15 +12,17 @@ volatile extern int16_t yaw_Position;
 volatile extern int16_t remote_pitch_change;
 volatile extern int16_t remote_yaw_change;
 volatile extern arduino_data data_usart_3;
-
+int16_t drive;
+int16_t strafe;
+int16_t rotate;
 
 /*************************************************************************
               Code to Enable cannon to be driven with remote
 *************************************************************************/
 void Remote_Control() {
-    int16_t drive;
-    int16_t strafe;
-    int16_t rotate;
+    // int16_t drive;
+    // int16_t strafe;
+    // int16_t rotate;
     int16_t pitch;
     int16_t yaw;
 

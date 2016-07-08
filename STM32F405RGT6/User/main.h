@@ -9,6 +9,7 @@
 //#include "hmc5883_driver.h"
 
 #include "app.h"
+#include "app_chassis.h"
 #include "bsp.h"
 #include "module_rs232.h"
 #include "HAL_HMC5883L.h"
