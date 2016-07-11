@@ -3,6 +3,7 @@ cd darknet/
 make
 
 ./darknet yolo demo
+beck@beck-MS-7922:~/fork/darknet$ ./darknet yolo train cfg/yolo-tiny.cfg backup_tiny_two_rover_and_mix/yolo-tiny_10000.weights
 
 
 ![Darknet Logo](http://pjreddie.com/media/files/darknet-black-small.png)
