@@ -7,7 +7,7 @@
 #define GAP 0.1f
 #define abs(x) ((x)>0? (x):(-(x)))
 
-#define ENCODER_MAX 8172
+#define ENCODER_MAX 8171
 
 // pitch-yaw-roll coordinate system in radian for turret on sample robot
 #define REAL_PITCH_LOW 750  // real lowest angle value that the cannon can reach, measured by protractor
@@ -35,6 +35,8 @@
 #define CANNON_YAW_LEFT 5171
 #define CANNON_YAW_RIGHT 470
 
+int16_t set_chassis_motor_velocity(int can_address, int remote_receiver_velocity);
+void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw);
 static int16_t PID_Control(float measured, float target, int sign, const float p, const float i, const float d);
 static int map(int x, int in_min, int in_max, int out_min, int out_max);
 #endif

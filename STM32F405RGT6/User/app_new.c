@@ -1,6 +1,6 @@
 #include "app_new.h"
 
-#define PID_CHASSIS false
+#define PID_CHASSIS true
 
 /* variables for global control */
 volatile int16_t pitch_Position;
@@ -21,19 +21,19 @@ extern int16_t measured_yaw_angle;
 extern int16_t measured_pitch_angle;
 extern MPU6050_REAL_DATA MPU6050_Real_Data;
 
-const float v_p_201 = 1.0;
+const float v_p_201 = 5.0;
 const float v_i_201 = 0;
 const float v_d_201 = 0;
 
-const float v_p_202 = 1.0;
+const float v_p_202 = 5.0;
 const float v_i_202 = 0;
 const float v_d_202 = 0;
 
-const float v_p_203 = 1.0;
+const float v_p_203 = 5.0;
 const float v_i_203 = 0;
 const float v_d_203 = 0;
 
-const float v_p_204 = 1.0;
+const float v_p_204 = 5.0;
 const float v_i_204 = 0;
 const float v_d_204 = 0;
 
@@ -53,20 +53,20 @@ const float l_d_206 = 0.0;
 
 int16_t set_chassis_motor_velocity(int can_address, int remote_receiver_velocity)
 {
-    int target_velocity = map(remote_receiver_velocity, -660, 660, -7780, 7780);
+    int target_velocity = map(remote_receiver_velocity, -660, 660, -8171, 8171);
     int result_velocity;
     switch (can_address) {
         case 201:
-            result_velocity = PID_Control((float)measured_201_speed, (float)target_velocity, -1, v_p_201, v_i_201, v_d_201);
+            result_velocity = PID_Control((float)measured_201_speed, (float)target_velocity, 1, v_p_201, v_i_201, v_d_201);
             break;
         case 202:
-            result_velocity = PID_Control((float)measured_202_speed, (float)target_velocity, -1, v_p_202, v_i_202, v_d_202);
+            result_velocity = PID_Control((float)measured_202_speed, (float)target_velocity, 1, v_p_202, v_i_202, v_d_202);
             break;
         case 203:
-            result_velocity = PID_Control((float)measured_203_speed, (float)target_velocity, -1, v_p_203, v_i_203, v_d_203);
+            result_velocity = PID_Control((float)measured_203_speed, (float)target_velocity, 1, v_p_203, v_i_203, v_d_203);
             break;
         case 204:
-            result_velocity = PID_Control((float)measured_204_speed, (float)target_velocity, -1, v_p_204, v_i_204, v_d_204);
+            result_velocity = PID_Control((float)measured_204_speed, (float)target_velocity, 1, v_p_204, v_i_204, v_d_204);
             break;
         default:break;
     }
