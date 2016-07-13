@@ -1,7 +1,15 @@
 #include "main.h"
 
+/*  Define the robot as
+    0 Blue sample robot
+    1 Red sample robot
+    2~5 Soldiers we manufacture in 2016
+    6 Base robot
+    7 Hero robot */
+#define ROBOT_SERIAL_NUMBER 7
+
 /// Turns on to print the reading
-#define DEBUG true
+#define DEBUG false
 
 unsigned char USART_BUF[24] = {0};
 extern arduino_data data_usart_3;

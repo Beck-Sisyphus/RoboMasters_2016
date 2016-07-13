@@ -2,6 +2,39 @@
 // #include "app_chassis.h"
 #include "main.h"
 
+// yaw and pitch angle rx messages from CAN
+int16_t measured_yaw_angle;   // range from 0~8191, 0x1FFF
+int16_t measured_pitch_angle; // range from 0~8191, 0x1FFF
+
+// Beck read from the datasheet, and guess it is the measured current
+// yaw and pitch measured current rx messages from CAN
+int16_t measured_yaw_current;
+int16_t measured_pitch_current;
+
+// yaw and pitch current rx messages from CAN
+int16_t target_yaw_current;
+int16_t target_pitch_current;
+
+volatile int16_t measured_201_angle;
+volatile int16_t measured_201_speed;
+int16_t x145;
+int16_t x167;
+
+volatile int16_t measured_202_angle;
+volatile int16_t measured_202_speed;
+int16_t x245;
+int16_t x267;
+
+volatile int16_t measured_203_angle;
+volatile int16_t measured_203_speed;
+int16_t x345;
+int16_t x367;
+
+volatile int16_t measured_204_angle;
+volatile int16_t measured_204_speed;
+int16_t x445;
+int16_t x467;
+
 /*----CAN2_TX-----PB13----*/
 /*----CAN2_RX-----PB12----*/
 
@@ -65,117 +98,6 @@ void CAN2_Configuration(void)
 
     CAN_ITConfig(CAN2,CAN_IT_FMP0,ENABLE);
 }
-
-void GYRO_RST(void)
-{
-    CanTxMsg tx_message;
-
-    tx_message.StdId = 0x404;
-    tx_message.IDE = CAN_Id_Standard;
-    tx_message.RTR = CAN_RTR_Data;
-    tx_message.DLC = 0x08;
-
-    tx_message.Data[0] = 0x00;
-    tx_message.Data[1] = 0x01;
-    tx_message.Data[2] = 0x02;
-    tx_message.Data[3] = 0x03;
-    tx_message.Data[4] = 0x04;
-    tx_message.Data[5] = 0x05;
-    tx_message.Data[6] = 0x06;
-    tx_message.Data[7] = 0x07;
-
-    CAN_Transmit(CAN2,&tx_message);
-}
-
-void Encoder_sent(float encoder_angle)
-{
-    CanTxMsg tx_message;
-
-    tx_message.StdId = 0x601;
-    tx_message.IDE = CAN_Id_Standard;
-    tx_message.RTR = CAN_RTR_Data;
-    tx_message.DLC = 0x08;
-
-    encoder_angle = encoder_angle * 100.0f;
-    tx_message.Data[0] = (uint8_t)((int32_t)encoder_angle >>24);
-    tx_message.Data[1] = (uint8_t)((int32_t)encoder_angle >>16);
-    tx_message.Data[2] = (uint8_t)((int32_t)encoder_angle >>8);
-    tx_message.Data[3] = (uint8_t)((int32_t)encoder_angle);
-    tx_message.Data[4] = 0x00;
-    tx_message.Data[5] = 0x00;
-    tx_message.Data[6] = 0x00;
-    tx_message.Data[7] = 0x00;
-
-    CAN_Transmit(CAN2,&tx_message);
-}
-
-void Radio_Sent(const uint16_t * radio_channel)
-{
-    CanTxMsg tx_message;
-
-    tx_message.StdId = 0x402;
-    tx_message.DLC = 0x08;
-    tx_message.RTR = CAN_RTR_Data;
-    tx_message.IDE = CAN_Id_Standard;
-
-    tx_message.Data[0] = (uint8_t)(*(radio_channel+2)>>8);
-    tx_message.Data[1] = (uint8_t)(*(radio_channel+2));
-    tx_message.Data[2] = (uint8_t)(*(radio_channel+6)>>8);
-    tx_message.Data[3] = (uint8_t)(*(radio_channel+6));
-    tx_message.Data[4] = (uint8_t)(*(radio_channel+5)>>8);
-    tx_message.Data[5] = (uint8_t)(*(radio_channel+5));
-    tx_message.Data[6] = (uint8_t)(*(radio_channel+7)>>8);
-    tx_message.Data[7] = (uint8_t)(*(radio_channel+7));
-
-    CAN_Transmit(CAN2,&tx_message);
-}
-
-int32_t turn_cnt = 0;
-float dipan_gyro_angle = 0.0;
-int32_t temp_dipan_gyro = 0;
-
-float temp_pitch = 0;
-float temp_yaw = 0;
-uint8_t shooting_flag = 0;
-uint8_t mode_flag=0;
-uint8_t ShootFlag=0;
-
-float target_pitch_angle;
-float target_yaw_angle;
-
-// yaw and pitch angle rx messages from CAN
-int16_t measured_yaw_angle;   // range from 0~8191, 0x1FFF
-int16_t measured_pitch_angle; // range from 0~8191, 0x1FFF
-
-// Beck read from the datasheet, and guess it is the measured current
-// yaw and pitch measured current rx messages from CAN
-int16_t measured_yaw_current;
-int16_t measured_pitch_current;
-
-// yaw and pitch current rx messages from CAN
-int16_t target_yaw_current;
-int16_t target_pitch_current;
-
-volatile int16_t measured_201_angle;
-volatile int16_t measured_201_speed;
-int16_t x145;
-int16_t x167;
-
-volatile int16_t measured_202_angle;
-volatile int16_t measured_202_speed;
-int16_t x245;
-int16_t x267;
-
-volatile int16_t measured_203_angle;
-volatile int16_t measured_203_speed;
-int16_t x345;
-int16_t x367;
-
-volatile int16_t measured_204_angle;
-volatile int16_t measured_204_speed;
-int16_t x445;
-int16_t x467;
-
 
 /*************************************************************************
                           CAN2_RX0_IRQHandler
@@ -297,8 +219,6 @@ void CAN2_RX0_IRQHandler(void)
             x467 = ( x4data6 << 8 ) | x4data7;
         }
 
-/************** End of Wheel Motor RX Code and Address **************/
-
 
         /************ YAW ************/
         // Yaw angle range is: [around 40, around 4800]
@@ -361,61 +281,8 @@ void CAN2_RX0_IRQHandler(void)
             measured_pitch_current = (pitch_data2)<<8|(pitch_data3);
             target_pitch_current = (pitch_data4)<<8|(pitch_data5);
         }
-
-
-
-        // Rest of IRQHandler is provided old code I didn't use
-        /*
-
-        //Remote controller, mouse, and turret channel 遥控器 鼠标  云台通道
-        if(rx_message.StdId == 0x402)
-        {
-            temp_yaw = (uint16_t)(rx_message.Data[0]<<8)|(uint16_t)(rx_message.Data[1]);
-            temp_pitch = (uint16_t)(rx_message.Data[2]<<8)|(uint16_t)(rx_message.Data[3]);
-            shooting_flag = (uint8_t)rx_message.Data[4];
-            mode_flag = (uint8_t)rx_message.Data[6];//S2 switch
-
-            //for mouse
-            if(shooting_flag == 1)              //cyq: trigger shoot
-            {
-                if(ShootFlag == 1)
-                {
-                    Motor_PWM_Set(MOTOR_NUM1,-1000);
-                    ShootFlag=0;
-                }
-            }
-            else
-            {
-                if(ShootFlag == 0)
-                {
-                    ShootFlag=1;
-                }
-            }
-            if (mode_flag == 1)
-            {
-                target_pitch_angle += (temp_pitch - 1024)/66.0;//remote control
-                target_yaw_angle += (temp_yaw - 1024)/600.0 ;//cyq
-            }
-            else
-            {
-                target_pitch_angle -= (temp_pitch - 1024)/10.0;//cyq: mouse
-                target_yaw_angle += (temp_yaw - 1024)/10.0 ;//cyq: target new program
-            }
-            if(target_pitch_angle > pitch_max)
-            {
-                target_pitch_angle = pitch_max;
-            }
-            else if(target_pitch_angle < -pitch_max)
-            {
-                target_pitch_angle = -pitch_max;
-            }
-        }
-        */
     }
 }
-
-
-
 
 
 /*************************************************************************
@@ -515,23 +382,14 @@ void pitchyaw_control(int16_t yaw_current, int16_t pitch_current) {
 }
 
 // controls wheels using kinematic equations
-void wheel_control(int16_t drive, int16_t strafe, int16_t rotate)
+void wheel_control(int16_t motor_201_vel, int16_t motor_202_vel, int16_t motor_203_vel, int16_t motor_204_vel)
 {
-    int16_t motor_201_vel = (-1*drive + strafe + rotate);
-    int16_t motor_204_vel = (-1*drive - strafe + rotate);
-    int16_t motor_202_vel = (drive + strafe + rotate);
-    int16_t motor_203_vel = (drive - strafe + rotate);
-
-    // motor_front_right_cur = 11 * motor_201_vel;
-    // motor_front_left_cur  = 11 * motor_202_vel;
-    // motor_back_left_cur   = 11 * motor_203_vel;
-    // motor_back_right_cur  = 11 * motor_204_vel;
-    motor_front_right_cur = Velocity_Control_201(motor_201_vel);
-    // motor_back_right_cur = Velocity_Control_204(motor_204_vel);
-    // motor_front_left_cur = Velocity_Control_202(motor_202_vel);
-    // motor_back_left_cur = Velocity_Control_203(motor_203_vel);
-
     Wheels_Address_Setup();
+    motor_front_right_cur = motor_201_vel;
+    motor_front_left_cur  = motor_202_vel;
+    motor_back_left_cur   = motor_203_vel;
+    motor_back_right_cur  = motor_204_vel;
+
     Set_Wheels_Current();
     CAN_Transmit(CAN2, &tx_wheels_message);
 }
@@ -637,6 +495,130 @@ void Motor_Reset_Can_2(void) {
     CAN_Transmit(CAN2,&tx_message2);
 }
 
+/*
+
+void GYRO_RST(void)
+{
+    CanTxMsg tx_message;
+
+    tx_message.StdId = 0x404;
+    tx_message.IDE = CAN_Id_Standard;
+    tx_message.RTR = CAN_RTR_Data;
+    tx_message.DLC = 0x08;
+
+    tx_message.Data[0] = 0x00;
+    tx_message.Data[1] = 0x01;
+    tx_message.Data[2] = 0x02;
+    tx_message.Data[3] = 0x03;
+    tx_message.Data[4] = 0x04;
+    tx_message.Data[5] = 0x05;
+    tx_message.Data[6] = 0x06;
+    tx_message.Data[7] = 0x07;
+
+    CAN_Transmit(CAN2,&tx_message);
+}
+
+void Encoder_sent(float encoder_angle)
+{
+    CanTxMsg tx_message;
+
+    tx_message.StdId = 0x601;
+    tx_message.IDE = CAN_Id_Standard;
+    tx_message.RTR = CAN_RTR_Data;
+    tx_message.DLC = 0x08;
+
+    encoder_angle = encoder_angle * 100.0f;
+    tx_message.Data[0] = (uint8_t)((int32_t)encoder_angle >>24);
+    tx_message.Data[1] = (uint8_t)((int32_t)encoder_angle >>16);
+    tx_message.Data[2] = (uint8_t)((int32_t)encoder_angle >>8);
+    tx_message.Data[3] = (uint8_t)((int32_t)encoder_angle);
+    tx_message.Data[4] = 0x00;
+    tx_message.Data[5] = 0x00;
+    tx_message.Data[6] = 0x00;
+    tx_message.Data[7] = 0x00;
+
+    CAN_Transmit(CAN2,&tx_message);
+}
+
+void Radio_Sent(const uint16_t * radio_channel)
+{
+    CanTxMsg tx_message;
+
+    tx_message.StdId = 0x402;
+    tx_message.DLC = 0x08;
+    tx_message.RTR = CAN_RTR_Data;
+    tx_message.IDE = CAN_Id_Standard;
+
+    tx_message.Data[0] = (uint8_t)(*(radio_channel+2)>>8);
+    tx_message.Data[1] = (uint8_t)(*(radio_channel+2));
+    tx_message.Data[2] = (uint8_t)(*(radio_channel+6)>>8);
+    tx_message.Data[3] = (uint8_t)(*(radio_channel+6));
+    tx_message.Data[4] = (uint8_t)(*(radio_channel+5)>>8);
+    tx_message.Data[5] = (uint8_t)(*(radio_channel+5));
+    tx_message.Data[6] = (uint8_t)(*(radio_channel+7)>>8);
+    tx_message.Data[7] = (uint8_t)(*(radio_channel+7));
+
+    CAN_Transmit(CAN2,&tx_message);
+}
+
+
+*/
+
+        // Rest of IRQHandler is provided old code Tu Vu didn't use
+        /*
+        float temp_pitch = 0;
+        float temp_yaw = 0;
+        uint8_t shooting_flag = 0;
+        uint8_t mode_flag=0;
+        uint8_t ShootFlag=0;
+
+        float target_pitch_angle;
+        float target_yaw_angle;
+
+        //Remote controller, mouse, and turret channel 遥控器 鼠标  云台通道
+        if(rx_message.StdId == 0x402)
+        {
+            temp_yaw = (uint16_t)(rx_message.Data[0]<<8)|(uint16_t)(rx_message.Data[1]);
+            temp_pitch = (uint16_t)(rx_message.Data[2]<<8)|(uint16_t)(rx_message.Data[3]);
+            shooting_flag = (uint8_t)rx_message.Data[4];
+            mode_flag = (uint8_t)rx_message.Data[6];//S2 switch
+
+            //for mouse
+            if(shooting_flag == 1)              //cyq: trigger shoot
+            {
+                if(ShootFlag == 1)
+                {
+                    Motor_PWM_Set(MOTOR_NUM1,-1000);
+                    ShootFlag=0;
+                }
+            }
+            else
+            {
+                if(ShootFlag == 0)
+                {
+                    ShootFlag=1;
+                }
+            }
+            if (mode_flag == 1)
+            {
+                target_pitch_angle += (temp_pitch - 1024)/66.0;//remote control
+                target_yaw_angle += (temp_yaw - 1024)/600.0 ;//cyq
+            }
+            else
+            {
+                target_pitch_angle -= (temp_pitch - 1024)/10.0;//cyq: mouse
+                target_yaw_angle += (temp_yaw - 1024)/10.0 ;//cyq: target new program
+            }
+            if(target_pitch_angle > pitch_max)
+            {
+                target_pitch_angle = pitch_max;
+            }
+            else if(target_pitch_angle < -pitch_max)
+            {
+                target_pitch_angle = -pitch_max;
+            }
+        }
+        */
 
 // For manually setting currents to motors for testing
 //

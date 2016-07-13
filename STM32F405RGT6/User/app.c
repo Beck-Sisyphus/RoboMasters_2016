@@ -48,16 +48,15 @@ void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
 
     // Auto target control
     switch (ROBOT_SERIAL_NUMBER) {
-      case BLUE_SAMPLE_ROBOT:
-              // TODO: need to double check on the yaw coordinate system mapping
+      case BLUE_SAMPLE_ROBOT_0:
               target_pitch_angle = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, BLUE_PITCH_LOW, BLUE_PITCH_HIGH);
               target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, BLUE_YAW_RIGHT, BLUE_YAW_LEFT);
               break;
-      case RED_SAMPLE_ROBOT:
+      case RED_SAMPLE_ROBOT_1:
               target_pitch_angle = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, RED_PITCH_LOW, RED_PITCH_HIGH);
               target_yaw_angle = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, RED_YAW_RIGHT, RED_YAW_LEFT);
               break;
-      case HERO_ROBOT_CANNON:
+      case HERO_ROBOT_CANNON_7:
               target_pitch_angle = map(real_angle_pitch, REAL_CANNON_PITCH_LOW, REAL_CANNON_PITCH_HIGH,
                                                          CANNON_PITCH_LOW, CANNON_PITCH_HIGH + ENCODER_MAX);
               target_yaw_angle = map(real_angle_yaw, REAL_CANNON_YAW_LEFT, REAL_CANNON_YAW_RIGHT,
@@ -116,13 +115,13 @@ float Velocity_Control_205(float current_velocity_205,float target_velocity_205)
     }
 
     switch (ROBOT_SERIAL_NUMBER) {
-      case BLUE_SAMPLE_ROBOT:
+      case BLUE_SAMPLE_ROBOT_0:
               // Blue pitch motor need negative feedback for speed
               output = -output; break;
-      case RED_SAMPLE_ROBOT:
+      case RED_SAMPLE_ROBOT_1:
               // red pitch motor need positive feedback for speed
               output = output; break;
-      case HERO_ROBOT_CANNON:
+      case HERO_ROBOT_CANNON_7:
               // hero cannon pitch motor need negative feedback for speed
               output = -output; break;
       default:break;
@@ -161,13 +160,13 @@ static float Position_Control_205(float current_position_205,float target_positi
     }
 
     switch (ROBOT_SERIAL_NUMBER) {
-      case BLUE_SAMPLE_ROBOT:
+      case BLUE_SAMPLE_ROBOT_0:
               // Blue pitch motor need negative feedback
               output = -output; break;
-      case RED_SAMPLE_ROBOT:
+      case RED_SAMPLE_ROBOT_1:
               // red pitch motor need positive feedback
               output = -output; break;
-      case HERO_ROBOT_CANNON:
+      case HERO_ROBOT_CANNON_7:
               // hero cannon pitch motor need positive feedback for position
               output = output; break;
       default:break;
@@ -209,13 +208,13 @@ float Velocity_Control_206(float current_velocity_206,float target_velocity_206)
         output = -ESC_MAX;
     }
     switch (ROBOT_SERIAL_NUMBER) {
-      case BLUE_SAMPLE_ROBOT:
+      case BLUE_SAMPLE_ROBOT_0:
               // Blue pitch motor need negative feedback for speed
               output = -output; break;
-      case RED_SAMPLE_ROBOT:
+      case RED_SAMPLE_ROBOT_1:
               // red pitch motor need positive feedback for speed
               output = output; break;
-      case HERO_ROBOT_CANNON:
+      case HERO_ROBOT_CANNON_7:
               // hero cannon pitch motor need negative feedback for speed
               output = output; break;
       default:break;
@@ -253,13 +252,13 @@ static float Position_Control_206(float current_position_206,float target_positi
         output = -ESC_MAX;
     }
     switch (ROBOT_SERIAL_NUMBER) {
-      case BLUE_SAMPLE_ROBOT:
+      case BLUE_SAMPLE_ROBOT_0:
               // Blue pitch motor need negative feedback for speed
               output = -output; break;
-      case RED_SAMPLE_ROBOT:
+      case RED_SAMPLE_ROBOT_1:
               // red pitch motor need positive feedback for speed
               output = -output; break;
-      case HERO_ROBOT_CANNON:
+      case HERO_ROBOT_CANNON_7:
               // positive speed, moving right; negative feedback
               output = -output; break;
       default:break;
