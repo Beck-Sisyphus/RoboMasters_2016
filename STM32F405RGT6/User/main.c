@@ -1,7 +1,7 @@
 #include "main.h"
 
 /// Turns on to print the reading
-#define DEBUG true
+#define DEBUG false
 
 unsigned char USART_BUF[24] = {0};
 extern arduino_data data_usart_3;
@@ -72,7 +72,7 @@ int main(void)
     {
       //   // CurrentProtect();
         MPU6050_ReadData();
-			  Remote_Control();
+			  //Remote_Control();
 			//  // wheel_control(2000 , 0, 0);
       //  #if DEBUG
       //       pitchyaw_control(0, -1500);
@@ -85,9 +85,9 @@ int main(void)
       //      //printf("%i", measured_yaw_angle_401);
       //delay_ms(1000);
       //  #endif
-    //  printf("%i\t\t%i\t\t%i\t\t%i\t\t\n", measured_201_speed, measured_202_speed, measured_203_speed, measured_204_speed);
+    printf("%i\t\t%i\t\t%i\t\t%i\t\t\n", measured_201_speed, measured_202_speed, measured_203_speed, measured_204_speed);
     //  printf("%i\t\t%i\t\t%i\t\t\n", drive, strafe, rotate);
-    // delay_ms(1000);
+    delay_ms(1000);
 			  //float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, 0);
         //pitchyaw_control(0, (int16_t)pitch_velocity_change);
         // set_Pitch_Yaw_Position(pitch_Position, yaw_Position);

@@ -8,8 +8,9 @@
 #include "mpu6050_process.h"
 //#include "hmc5883_driver.h"
 
-#include "app.h"
-#include "app_chassis.h"
+//#include "app.h"
+//#include "app_chassis.h"
+#include "app_new.h"
 #include "bsp.h"
 #include "module_rs232.h"
 #include "HAL_HMC5883L.h"
@@ -29,14 +30,14 @@
 #define ROBOT_SERIAL_NUMBER 7
 
 // For Blue motor and all 2016 soldier robots
-#define BLUE_SAMPLE_ROBOT   0
-#define RED_SAMPLE_ROBOT    1
+#define BLUE_SAMPLE_ROBOT_0   0
+#define RED_SAMPLE_ROBOT_1    1
 #define SOLDIER_2           2
 #define SOLDIER_3           3
 #define SOLDIER_4           4
 #define SOLDIER_5           5
-#define BASE_ROBOT       		6
-#define HERO_ROBOT_CANNON   7
-#define HERO_ROBOT_TURRET   8
+#define BASE_ROBOT_6       		6
+#define HERO_ROBOT_CANNON_7   7
+#define HERO_ROBOT_TURRET_8   8
 
 #endif

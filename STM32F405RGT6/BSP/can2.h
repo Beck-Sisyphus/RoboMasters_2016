@@ -6,7 +6,6 @@
 #include "can1.h"
 #include "usart1.h"
 #include "usart3.h"
-#include "app.h"
 
 #define pitch_max 15.0
 #define yaw_max 720.0
@@ -28,8 +27,6 @@
 #define MOTOR_BACK_RIGHT 		6
 
 void CAN2_Configuration(void);
-void GYRO_RST(void);
-void Encoder_sent(float encoder_angle);
 
 void Motor_Reset_Can_2(void);
 
@@ -41,6 +38,9 @@ void Set_Wheels_Current(void);
 void Motor_ManSet_Can_2(void);
 
 void pitchyaw_control(int16_t, int16_t);
-void wheel_control(int16_t, int16_t, int16_t);
+void wheel_control(int16_t, int16_t, int16_t, int16_t);
+
+// void GYRO_RST(void);
+// void Encoder_sent(float encoder_angle);
 
 #endif

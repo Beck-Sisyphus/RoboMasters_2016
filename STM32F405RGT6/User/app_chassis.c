@@ -46,32 +46,9 @@ int16_t PID_Control(float measured, float target, const float p, const float i, 
     output = error_v[1] * p
             + inte * i
              + (error_v[1] - error_v[0]) * d;
-//             switch (Motor_NUM) {
-//               case 201:
-//                       // 201 motor
-//                       output = -output; break;
-//               case 202:
-//                       //motor 202
-//                       output = -output; break;
-//               case 203:
-//                       //motor 203
-//                       output = -output; break;
-//               case 204:
-//                      // motor 204
-//                      output = -output; break;
 
-//               default:break;
-//             }
-
-    if(output > ESC_MAX)
-    {
-        output = ESC_MAX;
-    }
-
-    if(output < -ESC_MAX)
-    {
-        output = -ESC_MAX;
-    }
+    if(output > ESC_MAX) { output = ESC_MAX; }
+    if(output < -ESC_MAX){ output = -ESC_MAX;}
 
     return -(int16_t)output; // For Blue rover, position reading is in inverse direction
 }
