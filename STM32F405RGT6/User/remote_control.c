@@ -1,21 +1,21 @@
 #include "main.h"
-volatile extern RC_Ctl_t RC_Ctl;
-uint8_t Remote_On = 0;
-volatile int manual_Control_Turret = 0;
 
-volatile extern int16_t pitch_Position;
-volatile extern int16_t yaw_Position;
+#define MOUSE_SENSITIVITY (10)
+
+volatile extern RC_Ctl_t RC_Ctl;
+//uint8_t Remote_On = 0;
+// volatile int manual_Control_Turret = 0;
+
+
 // volatile extern int16_t pitch_Velocity;
 // volatile extern int16_t yaw_Velocity;
 
 // for velocity controlling pitch and yaw with remote
-volatile extern int16_t remote_pitch_change;
-volatile extern int16_t remote_yaw_change;
+// volatile extern int16_t remote_pitch_change;
+// volatile extern int16_t remote_yaw_change;
 volatile extern arduino_data data_usart_3;
-volatile int16_t drive;
-volatile int16_t strafe;
-volatile int16_t rotate;
 
+#if 0
 /*************************************************************************
               Code to Enable cannon to be driven with remote
 *************************************************************************/
@@ -72,6 +72,95 @@ void Remote_Control() {
             pitch_Position = data_usart_3.packet.pitch_req;
             yaw_Position = data_usart_3.packet.yaw_req;
             manual_Control_Turret = 0;
+        }
+    }
+}
+#endif
+
+#define ROBOT_STATE_MANUAL (0)
+#define ROBOT_STATE_SEMI_AUTO (1)
+#define ROBOT_STATE_FULL_AUTO (2)
+
+// global control information req
+volatile int16_t drive;
+volatile int16_t strafe;
+volatile int16_t rotate;
+volatile extern int16_t pitch_Position;
+volatile extern int16_t yaw_Position;
+volatile int16_t friction_motor_state;
+volatile int16_t feeder_motor_state;
+
+uint8_t remote_on = 0;
+uint8_t robot_state = ROBOT_STATE_MANUAL;
+
+// this is run by tim2
+void Remote_Control() {
+
+    if (RC_Ctl.rc.ch2 < RC_CH_VALUE_MIN || RC_Ctl.rc.ch3 < RC_CH_VALUE_MIN) {
+        remote_on = 0;
+    } else {
+        remote_on = 1;
+    }
+
+    if (remote_on) {
+        // (1) read switch positions and store into state
+        // s1 for robot state
+        switch (RC_Ctl.rc.s1) {
+            case RC_SW_UP:
+                robot_state = ROBOT_STATE_MANUAL;
+                break;
+            case RC_SW_MID:
+                robot_state = ROBOT_STATE_SEMI_AUTO;
+                break;
+            case RC_SW_DOWN:
+                robot_state = ROBOT_STATE_FULL_AUTO;
+                break;
+        } 
+
+        // (2) set global control info requests
+        switch (robot_state) {
+            case ROBOT_STATE_MANUAL:
+                // driving
+                drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
+                strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
+                rotate = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
+
+                // shooting
+                friction_motor_state = (RC_Ctl.rc.s2 == RC_SW_MID || RC_Ctl.rc.s2 == RC_SW_DOWN);
+                feeder_motor_state = (RC_Ctl.rc.s2 == RC_SW_DOWN);
+
+                // aiming (untested) todo: limit these two
+                pitch_Position += (RC_Ctl.rc.ch1 - RC_CH_VALUE_OFFSET) / 100;
+                yaw_Position += (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) / 100;
+                break;
+            case ROBOT_STATE_SEMI_AUTO:
+                // driving
+                drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
+                strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
+                rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
+
+                // shooting
+                friction_motor_state = data_usart_3.packet.friction_motor_state;
+                feeder_motor_state = data_usart_3.packet.feeder_motor_state;
+
+                // aiming
+                pitch_Position = data_usart_3.packet.pitch_req;
+                yaw_Position = data_usart_3.packet.yaw_req;
+                break;
+            case ROBOT_STATE_FULL_AUTO:
+                // driving
+                drive = data_usart_3.packet.drive_req;
+                strafe = data_usart_3.packet.strafe_req;
+                rotate = data_usart_3.packet.rotate_req;
+
+                // shooting
+                friction_motor_state = data_usart_3.packet.friction_motor_state;
+                feeder_motor_state = data_usart_3.packet.feeder_motor_state;
+
+                // aiming
+                pitch_Position = data_usart_3.packet.pitch_req;
+                yaw_Position = data_usart_3.packet.yaw_req;
+                break;
         }
     }
 }
