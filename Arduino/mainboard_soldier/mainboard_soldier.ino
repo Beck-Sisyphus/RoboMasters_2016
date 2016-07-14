@@ -5,6 +5,7 @@
 #define STORAGE_DATA_SIZE (TX1_TPZ_PACKET_SIZE / 2)
 #define LED_PIN (13)
 #define OUTGOING_HEADER (0xFA)
+//#define MPU_ENABLE
 
 /******** kalman ********/
 #define RESTRICT_PITCH // Comment out to restrict roll to ±90deg instead - please read: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf
@@ -61,13 +62,16 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);
     Serial.begin(115200); // tx1
     Serial1.begin(115200); // tpz
-
+#ifdef MPU_ENABLE
     mpu_kalman_init();
+#endif
 }
 
 void loop() {
     // (1) process mpu kalman
+#ifdef MPU_ENABLE
     mpu_kalman_process();
+#endif
 
     // (2) process packet from tx1
     if (Serial.available() > TX1_TPZ_PACKET_SIZE - 1) {
@@ -103,7 +107,9 @@ void loop() {
         outgoing_buf[0] = OUTGOING_HEADER; // set the header
 
         // (b) insert kalman data to outgoing buffer
+#ifdef MPU_ENABLE
         insert_mpu_kalman_data();
+#endif
 
         // transmit to tpz the buffer
         Serial1.write((uint8_t*) outgoing_buf, TX1_TPZ_PACKET_SIZE);
