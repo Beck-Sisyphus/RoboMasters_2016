@@ -1,17 +1,13 @@
 #include "main.h"
 
 /// Turns on to print the reading
-#define DEBUG false
+#define DEBUG true
 
 unsigned char USART_BUF[24] = {0};
 extern arduino_data data_usart_3;
 
 extern uint16_t measured_yaw_angle;
-extern uint16_t measured_yaw_current;
-extern int16_t target_yaw_current;
 extern int16_t measured_pitch_angle;
-extern int16_t measured_pitch_current;
-extern int16_t target_pitch_current;
 
 extern int16_t motor_front_right_cur;
 extern int16_t motor_front_left_cur;
@@ -70,27 +66,19 @@ int main(void)
 
     while(1)
     {
-      //   // CurrentProtect();
+        // CurrentProtect();
         MPU6050_ReadData();
-			  //Remote_Control();
-			//  // wheel_control(2000 , 0, 0);
-      //  #if DEBUG
-      //       pitchyaw_control(0, -1500);
-      //       count = count + 20;
-      //printf("%i, %i", measured_yaw_angle, measured_pitch_angle);
-      //      // printf("%i, %i, %i, %i", motor_front_right_cur, motor_front_left_cur, motor_back_left_cur, motor_back_right_cur);
-      //      printf("%i, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f", count, MPU6050_Real_Data.Gyro_X,
-      //      MPU6050_Real_Data.Gyro_Y, MPU6050_Real_Data.Gyro_Z,
-      //      MPU6050_Real_Data.Accel_X, MPU6050_Real_Data.Accel_Y, MPU6050_Real_Data.Accel_Z);
-      //      //printf("%i", measured_yaw_angle_401);
-      //delay_ms(1000);
-      //  #endif
-    printf("%i\t\t%i\t\t%i\t\t%i\t\t\n", measured_201_speed, measured_202_speed, measured_203_speed, measured_204_speed);
-    //  printf("%i\t\t%i\t\t%i\t\t\n", drive, strafe, rotate);
-    delay_ms(1000);
-			  //float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, 0);
-        //pitchyaw_control(0, (int16_t)pitch_velocity_change);
-        // set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
-        //delay_ms(1);
+        //Remote_Control();
+        #if DEBUG
+            printf("%i\t\t%i\t\t\n", measured_yaw_angle, measured_pitch_angle);
+            // printf("%i, %i, %i, %i", motor_front_right_cur, motor_front_left_cur, motor_back_left_cur, motor_back_right_cur);
+            //  printf("%i, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f", count, MPU6050_Real_Data.Gyro_X,
+            //  MPU6050_Real_Data.Gyro_Y, MPU6050_Real_Data.Gyro_Z,
+            //  MPU6050_Real_Data.Accel_X, MPU6050_Real_Data.Accel_Y, MPU6050_Real_Data.Accel_Z);
+            //printf("%i", measured_yaw_angle_401);
+            // printf("%i\t\t%i\t\t%i\t\t%i\t\t\n", measured_201_speed, measured_202_speed, measured_203_speed, measured_204_speed);
+            //  printf("%i\t\t%i\t\t%i\t\t\n", drive, strafe, rotate);
+            delay_ms(1000);
+        #endif
     }
 }

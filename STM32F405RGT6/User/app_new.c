@@ -12,10 +12,10 @@ extern int16_t measured_202_speed;
 extern int16_t measured_203_speed;
 extern int16_t measured_204_speed;
 
-extern int16_t measured_201_angle;
-extern int16_t measured_202_angle;
-extern int16_t measured_203_angle;
-extern int16_t measured_204_angle;
+extern float measured_201_angle;
+extern float measured_202_angle;
+extern float measured_203_angle;
+extern float measured_204_angle;
 
 extern int16_t measured_yaw_angle;
 extern int16_t measured_pitch_angle;

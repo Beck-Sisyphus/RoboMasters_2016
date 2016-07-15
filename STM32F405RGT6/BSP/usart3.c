@@ -106,7 +106,7 @@ void USART3_IRQHandler(void)
 12 13 drive_req
 14 15 strafe_req
 16 17 rotate_req
-18 19 
+18 19
 20 21 mpu_roll
 22 23 mpu_pitch
 24 25 mpu_yaw
@@ -122,8 +122,8 @@ void DMA1_Stream1_IRQHandler(void)
         if (arduino_rx_buffer_usart_3[0] ^ 0xFA) {
             // restart the dma
             DMA_ClearFlag(DMA1_Stream1, DMA_FLAG_FEIF1|DMA_FLAG_DMEIF1|DMA_FLAG_TEIF1|DMA_FLAG_HTIF1|DMA_FLAG_TCIF1);
-            DMA_Cmd(DMA1_Stream1, DISABLE);
-            while (DMA1_Stream1->CR & DMA_SxCR_EN);
+            // DMA_Cmd(DMA1_Stream1, DISABLE);
+            // while (DMA1_Stream1->CR & DMA_SxCR_EN);
             DMA_Cmd(DMA1_Stream1, ENABLE);
         } else {
             data_usart_3.packet.header = (((int16_t) arduino_rx_buffer_usart_3[0] << 8)) | (arduino_rx_buffer_usart_3[1] & 255);
@@ -142,12 +142,12 @@ void DMA1_Stream1_IRQHandler(void)
             data_usart_3.packet.mpu_y = (((int16_t) arduino_rx_buffer_usart_3[22] << 8)) | (arduino_rx_buffer_usart_3[23] & 255);
             data_usart_3.packet.mpu_z = (((int16_t) arduino_rx_buffer_usart_3[24] << 8)) | (arduino_rx_buffer_usart_3[25] & 255);
 
-            LED1_TOGGLE();
-            if (data_usart_3.packet.feeder_motor_state) {
-                LED2_ON();
-            } else {
-                LED2_OFF();
-            }
+            // LED1_TOGGLE();
+            // if (data_usart_3.packet.feeder_motor_state) {
+            //     LED2_ON();
+            // } else {
+            //     LED2_OFF();
+            // }
         }
     }
 }

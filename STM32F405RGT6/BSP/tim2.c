@@ -52,7 +52,7 @@ void TIM2_IRQHandler(void)
     {
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
         Remote_Control();
-        set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
+        // set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
         int16_t target_velocity_201 = (-1*drive + strafe + rotate);
         int16_t target_velocity_202 = (drive + strafe + rotate);
         int16_t target_velocity_203 = (drive - strafe + rotate);
