@@ -35,10 +35,17 @@
 #define CANNON_YAW_LEFT 5171
 #define CANNON_YAW_RIGHT 470
 
-// typedef struct PID_Regulator
-// {
-//     float
-// }
+typedef struct PID_Regulator_t
+{
+    int sign;
+    float kp;
+    float ki;
+    float kd;
+    float ref;
+    float fdb;
+    float err[2];
+    float output;
+}PID_Regulator_t;
 
 int16_t set_chassis_motor_velocity(int can_address, int remote_receiver_velocity);
 void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw);

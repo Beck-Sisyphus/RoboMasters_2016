@@ -21,6 +21,17 @@ extern int16_t measured_yaw_angle;
 extern int16_t measured_pitch_angle;
 extern MPU6050_REAL_DATA MPU6050_Real_Data;
 
+PID_Regulator_t PitchPositionPID = PITCH_POSITION_PID_DEFAULT;
+PID_Regulator_t PitchSpeedPID = PITCH_SPEED_PID_DEFAULT;
+PID_Regulator_t YawPositionPID = YAW_POSITION_PID_DEFAULT;
+PID_Regulator_t YawSpeedPID = YAW_SPEED_PID_DEFAULT;
+
+PID_Regulator_t CMRotatePID = CHASSIS_MOTOR_ROTATE_PID_DEFAULT;
+PID_Regulator_t CM1SpeedPID = CHASSIS_MOTOR_SPEED_PID_DEFAULT;
+PID_Regulator_t CM2SpeedPID = CHASSIS_MOTOR_SPEED_PID_DEFAULT;
+PID_Regulator_t CM3SpeedPID = CHASSIS_MOTOR_SPEED_PID_DEFAULT;
+PID_Regulator_t CM4SpeedPID = CHASSIS_MOTOR_SPEED_PID_DEFAULT;
+
 const float v_p_201 = 5.0;
 const float v_i_201 = 0;
 const float v_d_201 = 0;
