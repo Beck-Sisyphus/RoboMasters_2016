@@ -147,14 +147,14 @@ void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
             sign_yaw_velocity_206 = 0;
             break;
         case SOLDIER_5:
-            target_pitch_angle_205 = map_motor(real_angle_pitch, &gimbal_5.pitch);
-            target_yaw_angle_206   = map_motor(real_angle_pitch, &gimbal_5.yaw);
-            // target_pitch_angle_205 = map(real_angle_pitch, REAL_PITCH_LOW, REAL_PITCH_HIGH, 0, 0);
-            // target_yaw_angle_206 = map(real_angle_yaw, REAL_YAW_LOW, REAL_YAW_HIGH, 0, 0);
-            sign_pitch_position_205 = 0;
-            sign_pitch_velocity_205 = 0;
-            sign_yaw_position_206 = 0;
-            sign_yaw_velocity_206 = 0;
+            // target_pitch_angle_205 = map_motor(real_angle_pitch, &gimbal_5.pitch);
+            // target_yaw_angle_206   = map_motor(real_angle_pitch, &gimbal_5.yaw);
+            target_pitch_angle_205 = map(real_angle_pitch, 1222, 2217, 6210, 7600);
+            target_yaw_angle_206 = map(real_angle_yaw, -1571, 1571, 6880, 2767);
+            sign_pitch_position_205 = 1;
+            sign_pitch_velocity_205 = 1;
+            sign_yaw_position_206 = 1;
+            sign_yaw_velocity_206 = 1;
             break;
         case BASE_ROBOT_6:
             target_pitch_angle_205 = map_motor(real_angle_pitch, &gimbal_6.pitch);
@@ -197,11 +197,13 @@ void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
 
     // PID for pitch
     float pitch_position_change_205 = PID_Control((float)measured_pitch_angle, (float)target_pitch_angle_205, sign_pitch_position_205, l_p_205, l_i_205, l_d_205);
-    float pitch_velocity_change_205 = PID_Control((float)MPU6050_Real_Data.Gyro_Y, pitch_position_change_205, sign_pitch_velocity_205, v_p_205, v_i_205, v_d_205);
+    // float pitch_velocity_change_205 = PID_Control((float)MPU6050_Real_Data.Gyro_Y, pitch_position_change_205, sign_pitch_velocity_205, v_p_205, v_i_205, v_d_205);
+    float pitch_velocity_change_205 = PID_Control((float)MPU6050_Real_Data.Gyro_Y, 0, sign_pitch_velocity_205, v_p_205, v_i_205, v_d_205);
 
     // PID for yaw
     float yaw_position_change_206 = PID_Control((float)measured_yaw_angle, (float)target_yaw_angle_206, sign_yaw_position_206, l_p_206, l_i_206, l_d_206);
-    float yaw_velocity_change_206 = PID_Control((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change_206, sign_yaw_velocity_206, v_p_206, v_i_206, v_d_206);
+    // float yaw_velocity_change_206 = PID_Control((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change_206, sign_yaw_velocity_206, v_p_206, v_i_206, v_d_206);
+    float yaw_velocity_change_206 = PID_Control((float)MPU6050_Real_Data.Gyro_Z, 0, sign_yaw_velocity_206, v_p_206, v_i_206, v_d_206);
 
     pitchyaw_control((int16_t) yaw_velocity_change_206, (int16_t)pitch_velocity_change_205);
 }

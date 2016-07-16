@@ -20,11 +20,6 @@ void TIM2_Configuration(void)
     TIM_TimeBaseInitTypeDef  tim;
     NVIC_InitTypeDef         nvic;
 
-    // // initialize to stop drift problem
-    // pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, 0);
-    // yaw_velocity_change = Velocity_Control_206((float)MPU6050_Real_Data.Gyro_Z, 0, 100);
-    // pitchyaw_control((int16_t) yaw_velocity_change, (int16_t)pitch_velocity_change);
-
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE);
 
     nvic.NVIC_IRQChannel = TIM2_IRQn;
@@ -52,7 +47,7 @@ void TIM2_IRQHandler(void)
     {
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
         Remote_Control();
-        // set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
+        set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
         int16_t target_velocity_201 = (-1*drive + strafe + rotate);
         int16_t target_velocity_202 = (drive + strafe + rotate);
         int16_t target_velocity_203 = (drive - strafe + rotate);
