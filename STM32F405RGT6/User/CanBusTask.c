@@ -79,25 +79,29 @@ void CanReceiveMsgProcess(CanRxMsg * rx_message)
     {
         case 0x201:
         {
-            (can_count<=50) ? GetEncoderBias(&CM1Encoder,rx_message):EncoderProcess(&CM1Encoder,rx_message);
+            // (can_count<=50) ? GetEncoderBias(&CM1Encoder,rx_message):EncoderProcess(&CM1Encoder,rx_message);
+            EncoderProcess(&CM1Encoder,rx_message);
             measured_201_angle = CM1Encoder.ecd_angle;
             measured_201_speed = CM1Encoder.velocity_raw;
         }break;
         case 0x202:
         {
-            (can_count<=50) ? GetEncoderBias(&CM2Encoder,rx_message):EncoderProcess(&CM2Encoder,rx_message);
+            // (can_count<=50) ? GetEncoderBias(&CM2Encoder,rx_message):EncoderProcess(&CM2Encoder,rx_message);
+            EncoderProcess(&CM2Encoder,rx_message);
             measured_202_angle = CM2Encoder.ecd_angle;
             measured_202_speed = CM2Encoder.velocity_raw;
         }break;
         case 0x203:
         {
-            (can_count<=50) ? GetEncoderBias(&CM3Encoder,rx_message):EncoderProcess(&CM3Encoder,rx_message);
+            // (can_count<=50) ? GetEncoderBias(&CM3Encoder,rx_message):EncoderProcess(&CM3Encoder,rx_message);
+            EncoderProcess(&CM3Encoder,rx_message);
             measured_203_angle = CM3Encoder.ecd_angle;
             measured_203_speed = CM3Encoder.velocity_raw;
         }break;
         case 0x204:
         {
-            (can_count<=50) ? GetEncoderBias(&CM4Encoder,rx_message):EncoderProcess(&CM4Encoder,rx_message);
+            // (can_count<=50) ? GetEncoderBias(&CM4Encoder,rx_message):EncoderProcess(&CM4Encoder,rx_message);
+            EncoderProcess(&CM4Encoder,rx_message);
             measured_204_angle = CM4Encoder.ecd_angle;
             measured_204_speed = CM4Encoder.velocity_raw;
         }break;
@@ -131,7 +135,6 @@ void EncoderProcess(volatile Encoder *v, CanRxMsg * rx_message)
     v->angle_raw    = ( rx_message->Data[0] << 8 ) | rx_message->Data[1];
     v->velocity_raw = ( rx_message->Data[2] << 8 ) | rx_message->Data[3];
     v->angle_diff = v->angle_raw - v->angle_raw_last;
-    //两次编码器的反馈值差别太大，表示圈数发生了改变
     // If the feeback from the encoder changes too much, the rotation is incremented
     if(v->angle_diff < -7500)
     {
@@ -219,8 +222,6 @@ void Set_PitchYaw_Current() {
 //     tx_wheels_message.Data[6] = motor_back_right_cur >> 8;
 //     tx_wheels_message.Data[7] = motor_back_right_cur & 0xFF;
 // }
-
-
 //*********** For Blue Motor
 // prepares whole 0x200 wheel CAN message for tx
 /*
@@ -237,8 +238,6 @@ void Set_Wheels_Current() {
     tx_wheels_message.Data[6] = motor_back_right_cur >> 8;
     tx_wheels_message.Data[7] = motor_back_right_cur & 0xFF;
 }
-
-
 
 // controls pitch and yaw using given currents
 void pitchyaw_control(int16_t yaw_current, int16_t pitch_current) {
@@ -262,8 +261,6 @@ void wheel_control(int16_t motor_201_vel, int16_t motor_202_vel, int16_t motor_2
     Set_Wheels_Current();
     CAN_Transmit(CAN2, &tx_wheels_message);
 }
-
-
 
 // turn wheels, pitch and yaw
 // tx_message1 for wheels
@@ -292,11 +289,11 @@ void Motor_Reset_Can_2(void) {
     tx_message2.RTR = CAN_RTR_Data;
     tx_message2.IDE = CAN_Id_Standard;
 
-/*****************************
-    tx_message1 Controls wheels
-*******************************/
+    /*****************************
+        tx_message1 Controls wheels
+    *******************************/
 
-/*
+    /*
     ************** For Red C Motor **************
     Data 0 and 1 -> Front left wheel            Motor_ID 3
     Data 2 and 3 -> back left wheel             Motor_ID 4
@@ -320,7 +317,7 @@ void Motor_Reset_Can_2(void) {
     -500 to right front wheel. -500 = 0x0CFE in little endian so::
     tx_message1.Data[0] = 0x0C;
     tx_message1.Data[1] = 0xFE;
-*/
+    */
     tx_message1.Data[0] = 0x00;
     tx_message1.Data[1] = 0x00;
     tx_message1.Data[2] = 0x00;
@@ -331,11 +328,11 @@ void Motor_Reset_Can_2(void) {
     tx_message1.Data[7] = 0x00;
 
 
-/*****************************
-    tx_message2 Controls pitch and yaw
-*******************************/
+    /*****************************
+        tx_message2 Controls pitch and yaw
+    *******************************/
 
-/*
+    /*
 
     tx_message.StdId = 0x1FF for pitch and yaw
     Data 0 and 1 -> yaw (side to side)
@@ -350,7 +347,7 @@ void Motor_Reset_Can_2(void) {
     -1000 to yaw. -1000 = 0x18FC in little endian so::
     tx_message1.Data[0] = 0x18;
     tx_message1.Data[1] = 0xFC;
-*/
+    */
     tx_message2.Data[0] = 0x00;
     tx_message2.Data[1] = 0x00;
     tx_message2.Data[2] = 0x00;
