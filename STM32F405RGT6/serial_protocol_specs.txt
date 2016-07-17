@@ -1,0 +1,91 @@
+UW RoboMasters
+Serial Protocol Specifications
+This document specifies all serial communication protocols on all robots.
+
+
+A: TX1 -> Arduino
+B: Arduino -> Trapezoid
+C: Trapezoid -> Arduino
+D: Arduino -> TX1
+
+Arduino Serial Interfaces
+Serial: TX1 (tx1)
+Serial1: Trapezoid (tpz)
+Serial2: Judgement System (js)
+Serial3: Hero Trapezoid (htpz) (Hero only)
+
+----A----
+byte
+0  1   header (0x00)
+2  3   feeder_motor_state | friction_motor_state
+4  5   pitch_req
+6  7   yaw_req
+8  9   feeder_motor_pwm
+10 11  friction_motor_pwm
+12 13  drive_req
+14 15  strafe_req
+16 17  rotate_req
+18 19  
+20 21  
+22 23  
+24 25  
+26 27  
+28 29  
+30 31  
+
+----B----
+byte
+0  1   header (0xFA)
+2  3   feeder_motor_state | friction_motor_state
+4  5   pitch_req
+6  7   yaw_req
+8  9   feeder_motor_pwm
+10 11  friction_motor_pwm
+12 13  drive_req
+14 15  strafe_req
+16 17  rotate_req
+18 19  
+20 21  mpu_roll
+22 23  mpu_pitch
+24 25  mpu_yaw
+26 27  
+28 29  
+30 31  
+
+----C----
+byte
+0  1   header (0xCE)
+2  3   feeder_motor_state | 0x00
+4  5   
+6  7   
+8  9   
+10 11  
+12 13  
+14 15  
+16 17  
+18 19  
+20 21  
+22 23  
+24 25  
+26 27  
+28 29  
+30 31  
+
+----D----
+byte
+0  1   
+2  3   
+4  5   
+6  7   
+8  9   
+10 11  
+12 13  
+14 15  
+16 17  
+18 19  
+20 21  
+22 23  
+24 25  
+26 27  
+28 29  
+30 31  
