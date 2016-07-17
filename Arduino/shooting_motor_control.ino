@@ -29,7 +29,7 @@ void setup() {
 int dir = 1;
 int ps = 0;
 int ns = 0;
-long pastMillis = 0;
+unsigned long pastMillis = 0;
 void loop() {
   // read voltage. Voltage drops when stalling
   v0 = analogRead(aPin0);
@@ -45,9 +45,10 @@ void loop() {
   Serial.println(ns);
   unsigned long currentMillis = millis();
 
+  Serial.println(currentMillis - pastMillis);
   spin(dir);
   
-  if(currentMillis - pastMillis > 300) {
+  if(currentMillis - pastMillis > 5 0) {
     if (isDangerous(v0, v1)) {
       ns = 1;
     } else {
@@ -56,11 +57,11 @@ void loop() {
     if (ns != ps && ps == 0) {
       
       dir = -dir;
-      pastMillis = currentMillis;
     } else {
       ns = 0;
     }
     ps = ns;
+    pastMillis = currentMillis;
   }
 }
 
