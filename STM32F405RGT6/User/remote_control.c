@@ -163,6 +163,11 @@ void Remote_Control() {
                 break;
         }
     }
+    if (feeder_motor_state) {
+        LED2_ON();
+    } else {
+        LED2_OFF();
+    }
 }
 
 int min(int a, int b) {

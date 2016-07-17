@@ -118,7 +118,7 @@ void USART3_IRQHandler(void)
 */
 void DMA1_Stream1_IRQHandler(void)
 {
-    LED1_TOGGLE();
+    
     if(DMA_GetITStatus(DMA1_Stream1, DMA_IT_TCIF1)) // DMA_IT_TCI_F1 because we are clearing stream 1
     {
         DMA_ClearFlag(DMA1_Stream1, DMA_FLAG_TCIF1);
@@ -128,8 +128,11 @@ void DMA1_Stream1_IRQHandler(void)
         if (arduino_rx_buffer_usart_3[0] ^ 0xFA) {
             // restart the dma
             DMA_ClearFlag(DMA1_Stream1, DMA_FLAG_FEIF1|DMA_FLAG_DMEIF1|DMA_FLAG_TEIF1|DMA_FLAG_HTIF1|DMA_FLAG_TCIF1);
-            USART3_Configuration();
+            DMA_Cmd(DMA1_Stream1, DISABLE);
+            while (DMA1_Stream1->CR & DMA_SxCR_EN);
+            DMA_Cmd(DMA1_Stream1, ENABLE);
         } else {
+            LED1_TOGGLE();
             // store received data into 
             data_usart_3.packet.header = (((int16_t) arduino_rx_buffer_usart_3[0] << 8)) | (arduino_rx_buffer_usart_3[1] & 255);
             data_usart_3.packet.feeder_motor_state = arduino_rx_buffer_usart_3[2] & 255;
@@ -160,11 +163,6 @@ void DMA1_Stream1_IRQHandler(void)
 #endif
 
             // debug actions
-            if (feeder_motor_state) {
-                LED2_ON();
-            } else {
-                LED2_OFF();
-            }
         }
     }
 }
