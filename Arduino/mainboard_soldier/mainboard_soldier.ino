@@ -7,6 +7,9 @@
 #define OUTGOING_HEADER (0xFA)
 //#define MPU_ENABLE
 
+#define LED_ON() digitalWrite(LED_PIN, HIGH)
+#define LED_OFF() digitalWrite(LED_PIN, LOW)
+
 /******** kalman ********/
 #define RESTRICT_PITCH // Comment out to restrict roll to ±90deg instead - please read: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf
 
@@ -51,9 +54,16 @@ int16_t kal_int_y;
 int16_t kal_int_z;
 /************************/
 
+// com buffers
 char incoming_buf[TX1_TPZ_PACKET_SIZE]; // incoming serial buffer
 char outgoing_buf[TX1_TPZ_PACKET_SIZE]; // outgoing serial buffer
+char tpz_in_buf[32];
+
+// data buffers
 int16_t tx1_tpz_data[STORAGE_DATA_SIZE]; // data in int
+
+// control variables
+int16_t feeder_motor_state_req;
 
 unsigned long timer_prev_time = 0;
 const long timer_period = 20; // time between transmitting packets
@@ -75,7 +85,6 @@ void loop() {
 
     // (2) process packet from tx1
     if (Serial.available() > TX1_TPZ_PACKET_SIZE - 1) {
-        //led_toggle();
         // receive from tx1 into buffer
         Serial.readBytes((char*) incoming_buf, TX1_TPZ_PACKET_SIZE);
 
@@ -89,8 +98,32 @@ void loop() {
             tx1_tpz_data[i * 2] = ((int16_t) incoming_buf[i * 2] << 8) | (incoming_buf[i * 2 + 1] & 255);
         }
 
-        if (incoming_buf[2]) {
-            led_toggle();
+        // if (incoming_buf[2]) {
+        //     led_toggle();
+        // }
+    }
+
+    // (2.5) process packet from tpz
+    if (Serial1.available() > 31) {
+        if (Serial1.peek() != 0xCE) {
+            while (Serial1.peek() != 0xCE) {
+                Serial1.read();
+            }
+        } else {
+            // receive from tpz into buffer
+            Serial1.readBytes((char*) tpz_in_buf, 32);
+
+            // cleanup buffer
+            for (int i = 0; i < 32; i++) {
+                tpz_in_buf[i] = (tpz_in_buf[i] & 255);
+            }
+
+            // debug actions
+            if (tpz_in_buf[2]) { // turn on led if feeder motor on
+                LED_ON();
+            } else {
+                LED_OFF();
+            }
         }
     }
 
@@ -134,9 +167,9 @@ void insert_mpu_kalman_data() {
 
 void led_toggle() {
     if (digitalRead(LED_PIN) == LOW) {
-        digitalWrite(LED_PIN, HIGH);
+        LED_ON();
     } else {
-        digitalWrite(LED_PIN, LOW);
+        LED_OFF();
     }
 }
 
