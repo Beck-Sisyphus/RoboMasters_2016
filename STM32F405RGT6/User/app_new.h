@@ -77,9 +77,9 @@ typedef struct PID_Regulator_t
 
 #define CHASSIS_MOTOR_ROTATE_PID_DEFAULT {\
   -1,\
-  0.0,\
-  0.0,\
-  0.0,\
+  1.20f,\
+  0.0f,\
+  0.0f,\
 }\
 
 #define CHASSIS_MOTOR_SPEED_PID_DEFAULT {\
@@ -115,8 +115,8 @@ typedef struct gimbal_mapping_t
   {\
     -1798,\
     1798,\
-    4871,\
-    100,\
+    5157,\
+    489,\
   },\
 }\
 
@@ -134,19 +134,19 @@ typedef struct gimbal_mapping_t
     0,\
   },\
 }\
-// 70 degree，127 degree
+// 72 degree，135 degree
 #define GIMBAL_SOLDIER_5 {\
   {\
-    1222,\
-    2217,\
-    6210,\
-    7600,\
+    1257,\
+    2356,\
+    6246,\
+    7615,\
   },\
   {\
     -1571,\
     1571,\
-    6880,\
-    2767,\
+    7064,\
+    3055,\
   },\
 }\
 
@@ -183,6 +183,7 @@ typedef struct gimbal_mapping_t
 
 int16_t set_chassis_motor_velocity(int can_address, int remote_receiver_velocity);
 void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw);
+void CMControlLoop(void);
 
 static int16_t PID_Control_test(float measured, float target, PID_Regulator_t * pid);
 static int16_t PID_Control(float measured, float target, int sign, const float p, const float i, const float d);

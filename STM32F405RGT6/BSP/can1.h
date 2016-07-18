@@ -3,6 +3,7 @@
 
 #include <stm32f4xx.h>
 #include "delay.h"
+#include "CanBusTask.h"
 
 #define abs(x) ((x)>0? (x):(-(x)))
 

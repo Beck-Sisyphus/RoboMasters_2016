@@ -25,6 +25,8 @@ volatile int16_t measured_203_speed;
 volatile float measured_204_angle;
 volatile int16_t measured_204_speed;
 
+float measured_yaw_angle_401 = 0.0f;
+
 int16_t x145;
 int16_t x167;
 int16_t x245;
@@ -125,6 +127,11 @@ void CanReceiveMsgProcess(CanRxMsg * rx_message)
 
             measured_pitch_angle = (pitch_data0)<<8|(pitch_data1);
         }break;
+        case 0x401:
+        {
+            measured_yaw_angle_401 = -(float)0.01f * ((int32_t)(rx_message->Data[0]<<24)|(int32_t)(rx_message->Data[1]<<16)\
+            | (int32_t)(rx_message->Data[2]<<8) | (int32_t)(rx_message->Data[3]));
+        }
         default:{}
     }
 }

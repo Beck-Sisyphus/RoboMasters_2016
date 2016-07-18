@@ -2,15 +2,7 @@
 
 volatile extern int16_t pitch_Position;
 volatile extern int16_t yaw_Position;
-volatile extern int16_t drive;
-volatile extern int16_t strafe;
-volatile extern int16_t rotate;
-// volatile extern int16_t pitch_Velocity;
-// volatile extern int16_t yaw_Velocity;
 
-// for velocity controlling pitch and yaw with remote
-// volatile extern int16_t remote_pitch_change;
-// volatile extern int16_t remote_yaw_change;
 volatile extern arduino_data data_usart_3;
 
 extern RC_Ctl_t RC_Ctl;
@@ -48,23 +40,6 @@ void TIM2_IRQHandler(void)
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
         Remote_Control();
         set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
-        int16_t target_velocity_201 = (-1*drive + strafe + rotate);
-        int16_t target_velocity_202 = (drive + strafe + rotate);
-        int16_t target_velocity_203 = (drive - strafe + rotate);
-        int16_t target_velocity_204 = (-1*drive - strafe + rotate);
-        // #if PID_CHASSIS
-            int16_t motor_201_vel = set_chassis_motor_velocity(201, target_velocity_201);
-            int16_t motor_202_vel = set_chassis_motor_velocity(202, target_velocity_202);
-            int16_t motor_203_vel = set_chassis_motor_velocity(203, target_velocity_203);
-            int16_t motor_204_vel = set_chassis_motor_velocity(204, target_velocity_204);
-        // #else
-            // int16_t motor_201_vel = 11 * target_velocity_201;
-            // int16_t motor_202_vel = 11 * target_velocity_202;
-            // int16_t motor_203_vel = 11 * target_velocity_203;
-            // int16_t motor_204_vel = 11 * target_velocity_204;
-        // #endif
-        wheel_control(motor_201_vel, motor_202_vel, motor_203_vel, motor_204_vel);
-				// wheel_control(-500, 500, 500, -500);
-
+        CMControlLoop();
     }
 }
