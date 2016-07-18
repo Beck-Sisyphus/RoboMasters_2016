@@ -1,5 +1,6 @@
 #include <Wire.h>
 #include "Kalman.h" // Source: https://github.com/TKJElectronics/KalmanFilter
+#include "dji_js.h"
 
 #define TX1_TPZ_PACKET_SIZE (32)
 #define STORAGE_DATA_SIZE (TX1_TPZ_PACKET_SIZE / 2)
@@ -54,6 +55,18 @@ int16_t kal_int_y;
 int16_t kal_int_z;
 /************************/
 
+/********dji_js********/
+
+// data structurs which store the information obtained from judgement system
+GENERAL_INFO *general_info;
+HEALTH_DATA *health_data;
+WEAPON_DATA *weapon_data;
+
+// The byte read from judgement system
+unsigned char rx_byte;
+
+/**********************/
+
 // com buffers
 char incoming_buf[TX1_TPZ_PACKET_SIZE]; // incoming serial buffer
 char outgoing_buf[TX1_TPZ_PACKET_SIZE]; // outgoing serial buffer
@@ -72,9 +85,18 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);
     Serial.begin(115200); // tx1
     Serial1.begin(115200); // tpz
+
 #ifdef MPU_ENABLE
+    // INIT mpu
     mpu_kalman_init();
 #endif
+
+    // INIT judgement system
+    Serial3.begin(115200);
+    general_info = (GENERAL_INFO *) malloc(sizeof(general_info));
+    general_info->gps_data = (GPS_DATA *) malloc(sizeof(GPS_DATA));
+    health_data = (HEALTH_DATA *) malloc(sizeof(health_data));
+    weapon_data = (WEAPON_DATA *) malloc(sizeof(weapon_data));
 }
 
 void loop() {
@@ -127,6 +149,15 @@ void loop() {
         }
     }
 
+    // (2.6) process packet from js
+    if (Serial3.available() > 0) {
+        rx_byte = Serial3.read();
+        if (rx_byte == 0xA5) {
+            receive(rx_byte);
+        }
+        Serial.println(general_info->realChassisOutV);
+    }
+
     // (3) transmit to tpz
     unsigned long timer_current_time = millis();
     if (timer_current_time - timer_prev_time >= timer_period) {
@@ -148,6 +179,78 @@ void loop() {
         Serial1.write((uint8_t*) outgoing_buf, TX1_TPZ_PACKET_SIZE);
     }
     delay(1);
+}
+
+void read_one() {
+    while (!Serial3.available()){}
+    rx_byte = Serial3.read();
+}
+
+/* 
+    **description: reciving the data from the judgement system and put them into
+    different data structure according to the different data type.
+    
+    **input: SOF, in this case the byte A5 received from judgement system
+
+    **output: none, data will be store in the globally declared & initiallized
+    data structure  
+*/
+void receive(unsigned char SOF) {
+
+    unsigned char buffer_1[4];
+    uint16_t data_size;  
+    uint16_t data_type; 
+
+    buffer_1[0] = SOF;
+    int itr = 1;
+
+    while (itr < 4) {
+        read_one();
+        buffer_1[itr] = rx_byte;
+        itr++;
+    }
+    if (Verify_CRC8_Check_Sum(buffer_1, 4)) {
+        data_size = buffer_1[1];
+        unsigned char buffer_2[SHARED_SIZE + data_size];
+        memcpy(buffer_2, buffer_1, 4);
+        while (itr < SHARED_SIZE + data_size) {
+            read_one();
+            buffer_2[itr] = rx_byte;
+            itr++;
+        }
+
+        // int i = 0;
+        // while (i < SHARED_SIZE + data_size) {
+        //     Serial.print(buffer_2[i], HEX);
+        //     Serial.print(" ");
+        //     i++;
+        // }
+        // Serial.println();
+    
+        // sometimes it does not pass the CRC test because the data is corrupted
+        if (Verify_CRC16_Check_Sum(buffer_2, SHARED_SIZE + data_size)) {            
+            data_type = buffer_2[4];
+        
+            // at this point we have got all the data from the js into the buffer_2 
+            if (data_type == 1) {
+                //Serial.println("data is 1");
+                memcpy(general_info, buffer_2 + 6, 20);
+                general_info->conveyorBelts0 = buffer_2[26] & 3;
+                general_info->conveyorBelts1 = (buffer_2[26] >> 2) & 3;
+                general_info->parkingApron0 = (buffer_2[26] >> 4) & 1;
+                general_info->parkingApron0 = (buffer_2[26] >> 5) & 1;
+                general_info->parkingApron0 = (buffer_2[26] >> 6) & 1;
+                general_info->parkingApron0 = (buffer_2[26] >> 7) & 1;
+                //memcpy(general_info->gps_data, buffer_2 + 27, 17);
+            } else if (data_type == 2) {
+                health_data->weakId = buffer_2[6];  
+                health_data->way = (buffer_2[6] >> 4) & 15;
+                memcpy(&(health_data->value), buffer_2 + 7, 2);
+            } else if (data_type == 3) {
+                memcpy(weapon_data, buffer_2 + 6, data_size);
+            }
+        }
+    }
 }
 
 // sets the kalman data into the outgoing buffer
