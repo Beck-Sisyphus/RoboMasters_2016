@@ -266,7 +266,8 @@ void receive(unsigned char SOF) {
 	
 		// sometimes it does not pass the CRC test because the data is corrupted
       	if (Verify_CRC16_Check_Sum(buffer_2, SHARED_SIZE + data_size)) {        	
-			data_type = buffer_2[5];
+			// data type is packed as 0100 not 0001
+			data_type = buffer_2[4];
 		
 			// at this point we have got all the data from the js into the buffer_2 
         	if (data_type == 1) {
@@ -277,6 +278,8 @@ void receive(unsigned char SOF) {
           		general_info->parkingApron0 = (buffer_2[26] >> 5) & 1;
           		general_info->parkingApron0 = (buffer_2[26] >> 6) & 1;
           		general_info->parkingApron0 = (buffer_2[26] >> 7) & 1;
+          		
+          		// works on my board
           		memcpy(general_info->gps_data, buffer_2 + 27, 17);
         	} else if (data_type == 2) {
           		health_data->weakId = buffer_2[6];  
@@ -284,6 +287,13 @@ void receive(unsigned char SOF) {
           		memcpy(&(health_data->value), buffer_2 + 7, 2);
         	} else if (data_type == 3) {
           		memcpy(weapon_data, buffer_2 + 6, data_size);
+        	}
+        	
+        	// send the whatever kind of data package it received through Serial3/(can't use parallel)
+        	int i = 6;
+        	while (i < 6 + data_size) {
+        		Serial3.write(buffer_2[i]);
+        		i++;
         	}
       	}
     }
@@ -297,7 +307,7 @@ void read_one() {
 void setup() {
 
   Serial.begin(115200);
-  while (!Serial.available()){}
+  //while (!Serial.available()){}
   Serial3.begin(115200);
 
   general_info = (GENERAL_INFO *) malloc(sizeof(general_info));
