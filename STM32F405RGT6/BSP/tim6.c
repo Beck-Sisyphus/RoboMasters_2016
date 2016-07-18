@@ -48,10 +48,6 @@ void TIM6_DAC_IRQHandler(void)
 	  {
     		TIM_ClearITPendingBit(TIM6,TIM_IT_Update);
         TIM_ClearFlag(TIM6, TIM_FLAG_Update);
-        // float pitch_velocity_change = Velocity_Control_205((float)MPU6050_Real_Data.Gyro_Y, 0);
-        // pitchyaw_control(0, (int16_t)pitch_velocity_change);
-        // set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
-        // Control_Task();
     }
 }
 

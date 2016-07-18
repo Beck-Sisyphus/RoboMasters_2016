@@ -151,9 +151,9 @@ void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
             // target_yaw_angle_206   = map_motor(real_angle_pitch, &gimbal_5.yaw);
             target_pitch_angle_205 = map(real_angle_pitch, 1222, 2217, 6210, 7600);
             target_yaw_angle_206 = map(real_angle_yaw, -1571, 1571, 6880, 2767);
-            sign_pitch_position_205 = 1;
-            sign_pitch_velocity_205 = 1;
-            sign_yaw_position_206 = 1;
+            sign_pitch_position_205 = 0;
+            sign_pitch_velocity_205 = 0; // 1
+            sign_yaw_position_206 = 0;
             sign_yaw_velocity_206 = 1;
             break;
         case BASE_ROBOT_6:
