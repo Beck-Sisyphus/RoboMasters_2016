@@ -4,8 +4,6 @@
 // #include "usart1.h" // ONLY for the RC_Ctl_t, remove this when we use diff. type
 #include "led.h"
 
-#define MAKE_INT16(a, b) (((int16_t) a << 8)) | (b & 255)
-
 volatile unsigned char arduino_rx_buffer_usart_3[32];
 volatile uint16_t arduino_tx_buffer_usart_3[32];
 DMA_InitTypeDef dma_usart_3;
