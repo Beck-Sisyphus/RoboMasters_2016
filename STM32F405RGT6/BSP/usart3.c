@@ -5,8 +5,12 @@
 #include "led.h"
 
 volatile unsigned char arduino_rx_buffer_usart_3[32];
+volatile uint16_t arduino_tx_buffer_usart_3[32];
 DMA_InitTypeDef dma_usart_3;
 volatile arduino_data data_usart_3;
+
+volatile extern int16_t friction_motor_state;
+volatile extern int16_t feeder_motor_state;
 
 /*-----USART3_TX-----PB10---*/
 /*-----USART3_RX-----PB11---*/
@@ -34,7 +38,8 @@ void USART3_Configuration(void)
     usart3.USART_BaudRate = 115200;
     usart3.USART_WordLength = USART_WordLength_8b;
     usart3.USART_StopBits = USART_StopBits_1;
-    usart3.USART_Parity = USART_Parity_Even;
+    //usart3.USART_Parity = USART_Parity_Even;
+    usart3.USART_Parity = USART_Parity_No;
     usart3.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
     usart3.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
     USART_Init(USART3,&usart3);
@@ -113,7 +118,7 @@ void USART3_IRQHandler(void)
 */
 void DMA1_Stream1_IRQHandler(void)
 {
-    LED1_TOGGLE();
+
     if(DMA_GetITStatus(DMA1_Stream1, DMA_IT_TCIF1)) // DMA_IT_TCI_F1 because we are clearing stream 1
     {
         DMA_ClearFlag(DMA1_Stream1, DMA_FLAG_TCIF1);
@@ -123,30 +128,42 @@ void DMA1_Stream1_IRQHandler(void)
         if (arduino_rx_buffer_usart_3[0] ^ 0xFA) {
             // restart the dma
             DMA_ClearFlag(DMA1_Stream1, DMA_FLAG_FEIF1|DMA_FLAG_DMEIF1|DMA_FLAG_TEIF1|DMA_FLAG_HTIF1|DMA_FLAG_TCIF1);
-            USART3_Configuration();
+            DMA_Cmd(DMA1_Stream1, DISABLE);
+            while (DMA1_Stream1->CR & DMA_SxCR_EN);
+            DMA_Cmd(DMA1_Stream1, ENABLE);
         } else {
-            data_usart_3.packet.header = (((int16_t) arduino_rx_buffer_usart_3[0] << 8)) | (arduino_rx_buffer_usart_3[1] & 255);
+            LED1_TOGGLE();
+            // store received data into
+            data_usart_3.packet.header = MAKE_INT16(arduino_rx_buffer_usart_3[0], arduino_rx_buffer_usart_3[1]);
             data_usart_3.packet.feeder_motor_state = arduino_rx_buffer_usart_3[2] & 255;
             data_usart_3.packet.friction_motor_state = arduino_rx_buffer_usart_3[3] & 255;
-            data_usart_3.packet.pitch_req = (((int16_t) arduino_rx_buffer_usart_3[4] << 8)) | (arduino_rx_buffer_usart_3[5] & 255);
-            data_usart_3.packet.yaw_req = (((int16_t) arduino_rx_buffer_usart_3[6] << 8)) | (arduino_rx_buffer_usart_3[7] & 255);
-            data_usart_3.packet.feeder_motor_pwm = (((int16_t) arduino_rx_buffer_usart_3[8] << 8)) | (arduino_rx_buffer_usart_3[9] & 255);
-            data_usart_3.packet.friction_motor_pwm = (((int16_t) arduino_rx_buffer_usart_3[10] << 8)) | (arduino_rx_buffer_usart_3[11] & 255);
+            data_usart_3.packet.pitch_req = MAKE_INT16(arduino_rx_buffer_usart_3[4], arduino_rx_buffer_usart_3[5]);
+            data_usart_3.packet.yaw_req = MAKE_INT16(arduino_rx_buffer_usart_3[6], arduino_rx_buffer_usart_3[7]);
+            data_usart_3.packet.feeder_motor_pwm = MAKE_INT16(arduino_rx_buffer_usart_3[8], arduino_rx_buffer_usart_3[9]);
+            data_usart_3.packet.friction_motor_pwm = MAKE_INT16(arduino_rx_buffer_usart_3[10], arduino_rx_buffer_usart_3[11]);
+            data_usart_3.packet.drive_req = MAKE_INT16(arduino_rx_buffer_usart_3[12], arduino_rx_buffer_usart_3[13]);
+            data_usart_3.packet.strafe_req = MAKE_INT16(arduino_rx_buffer_usart_3[14], arduino_rx_buffer_usart_3[15]);
+            data_usart_3.packet.rotate_req = MAKE_INT16(arduino_rx_buffer_usart_3[16], arduino_rx_buffer_usart_3[17]);
+            data_usart_3.packet.mpu_x = MAKE_INT16(arduino_rx_buffer_usart_3[20], arduino_rx_buffer_usart_3[21]);
+            data_usart_3.packet.mpu_y = MAKE_INT16(arduino_rx_buffer_usart_3[22], arduino_rx_buffer_usart_3[23]);
+            data_usart_3.packet.mpu_z = MAKE_INT16(arduino_rx_buffer_usart_3[24], arduino_rx_buffer_usart_3[25]);
+            data_usart_3.packet.js_real_chassis_out_power = MAKE_INT16(arduino_rx_buffer_usart_3[26], arduino_rx_buffer_usart_3[27]);
 
-            data_usart_3.packet.drive_req = (((int16_t) arduino_rx_buffer_usart_3[12] << 8)) | (arduino_rx_buffer_usart_3[13] & 255);
-            data_usart_3.packet.strafe_req = (((int16_t) arduino_rx_buffer_usart_3[14] << 8)) | (arduino_rx_buffer_usart_3[15] & 255);
-            data_usart_3.packet.rotate_req = (((int16_t) arduino_rx_buffer_usart_3[16] << 8)) | (arduino_rx_buffer_usart_3[17] & 255);
-
-            data_usart_3.packet.mpu_x = (((int16_t) arduino_rx_buffer_usart_3[20] << 8)) | (arduino_rx_buffer_usart_3[21] & 255);
-            data_usart_3.packet.mpu_y = (((int16_t) arduino_rx_buffer_usart_3[22] << 8)) | (arduino_rx_buffer_usart_3[23] & 255);
-            data_usart_3.packet.mpu_z = (((int16_t) arduino_rx_buffer_usart_3[24] << 8)) | (arduino_rx_buffer_usart_3[25] & 255);
-
-
-            if (data_usart_3.packet.feeder_motor_state) {
-                LED2_ON();
-            } else {
-                LED2_OFF();
+#if !(DEBUG)
+            // reply with new packet, debug must be false
+            for (int i = 0; i < 32; i++) {
+                arduino_tx_buffer_usart_3[i] = 0x00;
             }
+            arduino_tx_buffer_usart_3[2] = feeder_motor_state & 255;
+            arduino_tx_buffer_usart_3[0] = 0xCE;
+
+            // send the packet
+            for (int i = 0; i < 32; i++) {
+                USART3_SendChar(arduino_tx_buffer_usart_3[i]);
+            }
+#endif
+
+            // debug actions
         }
     }
 }

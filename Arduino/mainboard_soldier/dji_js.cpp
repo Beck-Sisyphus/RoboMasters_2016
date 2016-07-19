@@ -1,78 +1,4 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-
-#define SHARED_SIZE 8
-#define PTR_SIZE 1
-#define PTR_TYPE 4
-
-/* 
-	holds the information about the robot's position
-*/
-
-typedef struct __attribute__((packed)) {
-	uint8_t flag;
-	uint32_t x;
-	uint32_t y;
-	uint32_t z;
-	uint32_t compass;
-} GPS_DATA;
-
-
-/*
-	holds the general information of the robot's status including
-	remaining time, remaining life, chassis voltage & current, rune status,
-	conveyorBelts & airport status and robot's location information.	
-*/
-
-typedef struct __attribute__((packed)) {
-	uint32_t remainTime;
-	uint16_t remainLifeValue;
-	float realChassisOutV;
-	float realChassisOutA;
-	uint8_t runeStatus[4];
-	uint8_t bigRune0Status;
-	uint8_t bigRune1status;
-	uint8_t conveyorBelts0:2;
-	uint8_t conveyorBelts1:2;
-	uint8_t parkingApron0:1;
-	uint8_t parkingApron1:1;
-	uint8_t parkingApron2:1;
-	uint8_t parkingApron3:1;
-	GPS_DATA *gps_data;
-} GENERAL_INFO;
-
-
-/*
-	holds the information about health change, it could tell which armor
-	is hitten, the cause of the health decrease and the value of health decrease.
-*/
-
-typedef struct __attribute__((packed)) {
-	uint8_t weakId:4;
-	uint8_t way:4;
-	uint16_t value;
-} HEALTH_DATA;
-
-
-/*
-	holds the information about the weapon, includes the projectile's speed and
-	frequency for both 17mm bullet and golf.
-*/
-
-typedef struct __attribute__((packed)) {
-	float realBulletShootSpeed;
-	float realBulletShootFreq;
-	float realGolfShootSpeed;
-	float realGolfShootFreq;
-} WEAPON_DATA;
-
-
-/* 
-	CRC8 check code, provided by DJI.
-	crc8 generator polynomial:G(x)=x8+x5+x4+1
-*/
+#include "dji_js.h"
 
 const unsigned char CRC8_INIT = 0xff;
 const unsigned char CRC8_TAB[256] = {
@@ -213,111 +139,15 @@ uint32_t Verify_CRC16_Check_Sum(uint8_t *pchMessage, uint32_t dwLength) {
 	CRC16 check code ends.
 */
 
-
-// data structurs which store the information obtained from judgement system
-GENERAL_INFO *general_info;
-HEALTH_DATA *health_data;
-WEAPON_DATA *weapon_data;
-
-
-// The byte read from judgement system
-
-unsigned char rx_byte;
-
-
-// read one byte from judgement system
-
-void read_one();
-
-
-/* 
-	**description: reciving the data from the judgement system and put them into
-	different data structure according to the different data type.
-	
-	**input: SOF, in this case the byte A5 received from judgement system
-
-	**output: none, data will be store in the globally declared & initiallized
-	data structure  
-*/
-
-void receive(unsigned char SOF) {
-
-	unsigned char buffer_1[4];
-	uint16_t data_size;  
-	uint16_t data_type; 
-
-	buffer_1[0] = SOF;
-	int itr = 1;
-
-    while (itr < 4) {
-    	read_one();
-    	buffer_1[itr] = rx_byte;
-    	itr++;
-    }
-    if (Verify_CRC8_Check_Sum(buffer_1, 4)) {
-    	data_size = buffer_1[1];
-    	unsigned char buffer_2[SHARED_SIZE + data_size];
-    	memcpy(buffer_2, buffer_1, 4);
-    	while (itr < SHARED_SIZE + data_size) {
-        	read_one();
-        	buffer_2[itr] = rx_byte;
-        	itr++;
-      	}
-	
-		// sometimes it does not pass the CRC test because the data is corrupted
-      	if (Verify_CRC16_Check_Sum(buffer_2, SHARED_SIZE + data_size)) {        	
-			// data type is packed as 0100 not 0001
-			data_type = buffer_2[4];
-		
-			// at this point we have got all the data from the js into the buffer_2 
-        	if (data_type == 1) {
-          		memcpy(general_info, buffer_2 + 6, 20);
-          		general_info->conveyorBelts0 = buffer_2[26] & 3;
-          		general_info->conveyorBelts1 = (buffer_2[26] >> 2) & 3;
-          		general_info->parkingApron0 = (buffer_2[26] >> 4) & 1;
-          		general_info->parkingApron0 = (buffer_2[26] >> 5) & 1;
-          		general_info->parkingApron0 = (buffer_2[26] >> 6) & 1;
-          		general_info->parkingApron0 = (buffer_2[26] >> 7) & 1;
-          		
-          		// works on my board
-          		memcpy(general_info->gps_data, buffer_2 + 27, 17);
-        	} else if (data_type == 2) {
-          		health_data->weakId = buffer_2[6];  
-          		health_data->way = (buffer_2[6] >> 4) & 15;
-          		memcpy(&(health_data->value), buffer_2 + 7, 2);
-        	} else if (data_type == 3) {
-          		memcpy(weapon_data, buffer_2 + 6, data_size);
-        	}
-        	
-        	// send the whatever kind of data package it received through Serial3/(can't use parallel)
-        	int i = 6;
-        	while (i < 6 + data_size) {
-        		Serial3.write(buffer_2[i]);
-        		i++;
-        	}
-      	}
-    }
-}
-
-void read_one() {
-  while (!Serial3.available()){}
-  rx_byte = Serial3.read();
-}
-
+#if 0
 void setup() {
 
   Serial.begin(115200);
   //while (!Serial.available()){}
-  Serial3.begin(115200);
 
-  general_info = (GENERAL_INFO *) malloc(sizeof(general_info));
 
-  general_info->gps_data = (GPS_DATA *) malloc(sizeof(GPS_DATA));
 
-  health_data = (HEALTH_DATA *) malloc(sizeof(health_data));
-
-  weapon_data = (WEAPON_DATA *) malloc(sizeof(weapon_data));
-
+  Serial.println("hajimaruyoooo");
 }
 
 /*
@@ -329,6 +159,8 @@ void loop() {
     read_one();
     if (rx_byte == 165) {
       receive(rx_byte);
+      Serial.println(general_info->realChassisOutV);
     }
   }
 }
+#endif

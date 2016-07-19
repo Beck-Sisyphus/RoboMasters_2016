@@ -3,8 +3,16 @@
 #define MOUSE_SENSITIVITY (10)
 
 volatile extern RC_Ctl_t RC_Ctl;
-//uint8_t Remote_On = 0;
-// volatile int manual_Control_Turret = 0;
+uint8_t Remote_On = 0;
+// global control information req
+volatile int16_t drive;
+volatile int16_t strafe;
+volatile int16_t rotate;
+volatile extern int16_t pitch_Position;
+volatile extern int16_t yaw_Position;
+volatile int16_t friction_motor_state;
+volatile int16_t feeder_motor_state;
+volatile int manual_Control_Turret = 0;
 
 
 // volatile extern int16_t pitch_Velocity;
@@ -81,18 +89,11 @@ void Remote_Control() {
 #define ROBOT_STATE_SEMI_AUTO (1)
 #define ROBOT_STATE_FULL_AUTO (2)
 
-// global control information req
-volatile int16_t drive;
-volatile int16_t strafe;
-volatile int16_t rotate;
-volatile extern int16_t pitch_Position;
-volatile extern int16_t yaw_Position;
-volatile int16_t friction_motor_state;
-volatile int16_t feeder_motor_state;
+
 
 uint8_t remote_on = 0;
 uint8_t robot_state = ROBOT_STATE_MANUAL;
-
+#if 1
 // this is run by tim2
 void Remote_Control() {
 
@@ -115,7 +116,7 @@ void Remote_Control() {
             case RC_SW_DOWN:
                 robot_state = ROBOT_STATE_FULL_AUTO;
                 break;
-        } 
+        }
 
         // (2) set global control info requests
         switch (robot_state) {
@@ -163,7 +164,13 @@ void Remote_Control() {
                 break;
         }
     }
+    if (data_usart_3.packet.js_real_chassis_out_power > 10) {
+        LED2_ON();
+    } else {
+        LED2_OFF();
+    }
 }
+#endif
 
 int min(int a, int b) {
     if(a<b) {
