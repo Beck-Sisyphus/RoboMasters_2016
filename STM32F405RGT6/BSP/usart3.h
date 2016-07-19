@@ -4,6 +4,8 @@
 #include <stm32f4xx.h>
 #include <stdio.h>
 
+#define MAKE_INT16(a, b) (((int16_t) a << 8)) | (b & 255)
+
 typedef struct {
     struct { 
         int16_t header;
@@ -19,6 +21,7 @@ typedef struct {
         int16_t mpu_x;
         int16_t mpu_y;
         int16_t mpu_z;
+        int16_t js_real_chassis_out_power;
     } packet;
 } arduino_data;
 

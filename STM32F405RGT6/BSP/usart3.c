@@ -4,6 +4,8 @@
 // #include "usart1.h" // ONLY for the RC_Ctl_t, remove this when we use diff. type
 #include "led.h"
 
+#define MAKE_INT16(a, b) (((int16_t) a << 8)) | (b & 255)
+
 volatile unsigned char arduino_rx_buffer_usart_3[32];
 volatile uint16_t arduino_tx_buffer_usart_3[32];
 DMA_InitTypeDef dma_usart_3;
@@ -134,19 +136,20 @@ void DMA1_Stream1_IRQHandler(void)
         } else {
             LED1_TOGGLE();
             // store received data into 
-            data_usart_3.packet.header = (((int16_t) arduino_rx_buffer_usart_3[0] << 8)) | (arduino_rx_buffer_usart_3[1] & 255);
+            data_usart_3.packet.header = MAKE_INT16(arduino_rx_buffer_usart_3[0], arduino_rx_buffer_usart_3[1]);
             data_usart_3.packet.feeder_motor_state = arduino_rx_buffer_usart_3[2] & 255;
             data_usart_3.packet.friction_motor_state = arduino_rx_buffer_usart_3[3] & 255;
-            data_usart_3.packet.pitch_req = (((int16_t) arduino_rx_buffer_usart_3[4] << 8)) | (arduino_rx_buffer_usart_3[5] & 255);
-            data_usart_3.packet.yaw_req = (((int16_t) arduino_rx_buffer_usart_3[6] << 8)) | (arduino_rx_buffer_usart_3[7] & 255);
-            data_usart_3.packet.feeder_motor_pwm = (((int16_t) arduino_rx_buffer_usart_3[8] << 8)) | (arduino_rx_buffer_usart_3[9] & 255);
-            data_usart_3.packet.friction_motor_pwm = (((int16_t) arduino_rx_buffer_usart_3[10] << 8)) | (arduino_rx_buffer_usart_3[11] & 255);
-            data_usart_3.packet.drive_req = (((int16_t) arduino_rx_buffer_usart_3[12] << 8)) | (arduino_rx_buffer_usart_3[13] & 255);
-            data_usart_3.packet.strafe_req = (((int16_t) arduino_rx_buffer_usart_3[14] << 8)) | (arduino_rx_buffer_usart_3[15] & 255);
-            data_usart_3.packet.rotate_req = (((int16_t) arduino_rx_buffer_usart_3[16] << 8)) | (arduino_rx_buffer_usart_3[17] & 255);
-            data_usart_3.packet.mpu_x = (((int16_t) arduino_rx_buffer_usart_3[20] << 8)) | (arduino_rx_buffer_usart_3[21] & 255);
-            data_usart_3.packet.mpu_y = (((int16_t) arduino_rx_buffer_usart_3[22] << 8)) | (arduino_rx_buffer_usart_3[23] & 255);
-            data_usart_3.packet.mpu_z = (((int16_t) arduino_rx_buffer_usart_3[24] << 8)) | (arduino_rx_buffer_usart_3[25] & 255);
+            data_usart_3.packet.pitch_req = MAKE_INT16(arduino_rx_buffer_usart_3[4], arduino_rx_buffer_usart_3[5]);
+            data_usart_3.packet.yaw_req = MAKE_INT16(arduino_rx_buffer_usart_3[6], arduino_rx_buffer_usart_3[7]);
+            data_usart_3.packet.feeder_motor_pwm = MAKE_INT16(arduino_rx_buffer_usart_3[8], arduino_rx_buffer_usart_3[9]);
+            data_usart_3.packet.friction_motor_pwm = MAKE_INT16(arduino_rx_buffer_usart_3[10], arduino_rx_buffer_usart_3[11]);
+            data_usart_3.packet.drive_req = MAKE_INT16(arduino_rx_buffer_usart_3[12], arduino_rx_buffer_usart_3[13]);
+            data_usart_3.packet.strafe_req = MAKE_INT16(arduino_rx_buffer_usart_3[14], arduino_rx_buffer_usart_3[15]);
+            data_usart_3.packet.rotate_req = MAKE_INT16(arduino_rx_buffer_usart_3[16], arduino_rx_buffer_usart_3[17]);
+            data_usart_3.packet.mpu_x = MAKE_INT16(arduino_rx_buffer_usart_3[20], arduino_rx_buffer_usart_3[21]);
+            data_usart_3.packet.mpu_y = MAKE_INT16(arduino_rx_buffer_usart_3[22], arduino_rx_buffer_usart_3[23]);
+            data_usart_3.packet.mpu_z = MAKE_INT16(arduino_rx_buffer_usart_3[24], arduino_rx_buffer_usart_3[25]);
+            data_usart_3.packet.js_real_chassis_out_power = MAKE_INT16(arduino_rx_buffer_usart_3[26], arduino_rx_buffer_usart_3[27]);
 
 #if !(DEBUG)
             // reply with new packet, debug must be false

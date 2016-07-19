@@ -163,7 +163,7 @@ void Remote_Control() {
                 break;
         }
     }
-    if (feeder_motor_state) {
+    if (data_usart_3.packet.js_real_chassis_out_power > 10) {
         LED2_ON();
     } else {
         LED2_OFF();

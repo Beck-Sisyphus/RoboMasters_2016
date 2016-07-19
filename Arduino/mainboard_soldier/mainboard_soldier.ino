@@ -10,6 +10,8 @@
 
 #define LED_ON() digitalWrite(LED_PIN, HIGH)
 #define LED_OFF() digitalWrite(LED_PIN, LOW)
+#define L_BYTE(b) (b >> 8) & 255
+#define H_BYTE(b) (b & 255)
 
 /******** kalman ********/
 #define RESTRICT_PITCH // Comment out to restrict roll to ±90deg instead - please read: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf
@@ -63,7 +65,7 @@ HEALTH_DATA *health_data;
 WEAPON_DATA *weapon_data;
 
 // The byte read from judgement system
-unsigned char rx_byte;
+unsigned char js_rx_byte;
 
 /**********************/
 
@@ -77,6 +79,12 @@ int16_t tx1_tpz_data[STORAGE_DATA_SIZE]; // data in int
 
 // control variables
 int16_t feeder_motor_state_req;
+
+// output js data
+uint16_t js_real_chassis_out_power; // power in watts x 100
+uint16_t js_remain_life_value;
+uint8_t js_big_rune_0_status;
+uint8_t js_big_rune_1_status;
 
 unsigned long timer_prev_time = 0;
 const long timer_period = 20; // time between transmitting packets
@@ -151,9 +159,16 @@ void loop() {
 
     // (2.6) process packet from js
     if (Serial3.available() > 0) {
-        rx_byte = Serial3.read();
-        if (rx_byte == 0xA5) {
-            receive(rx_byte);
+        js_rx_byte = Serial3.read();
+        if (js_rx_byte == 0xA5) {
+            receive(js_rx_byte);
+
+            // after receive, process data
+            float calculated_power = general_info->realChassisOutV * general_info->realChassisOutA;
+            js_real_chassis_out_power = (uint16_t) calculated_power;
+            js_remain_life_value = general_info->remainLifeValue;
+            js_big_rune_0_status = general_info->bigRune0Status;
+            js_big_rune_1_status = general_info->bigRune1status;
         }
         Serial.println(general_info->realChassisOutV);
     }
@@ -174,6 +189,9 @@ void loop() {
 #ifdef MPU_ENABLE
         insert_mpu_kalman_data();
 #endif
+        // (c) insert js data to outgoing buffer
+        outgoing_buf[26] = L_BYTE(js_real_chassis_out_power);
+        outgoing_buf[27] = H_BYTE(js_real_chassis_out_power);
 
         // transmit to tpz the buffer
         Serial1.write((uint8_t*) outgoing_buf, TX1_TPZ_PACKET_SIZE);
@@ -183,7 +201,7 @@ void loop() {
 
 void read_one() {
     while (!Serial3.available()){}
-    rx_byte = Serial3.read();
+    js_rx_byte = Serial3.read();
 }
 
 /* 
@@ -206,7 +224,7 @@ void receive(unsigned char SOF) {
 
     while (itr < 4) {
         read_one();
-        buffer_1[itr] = rx_byte;
+        buffer_1[itr] = js_rx_byte;
         itr++;
     }
     if (Verify_CRC8_Check_Sum(buffer_1, 4)) {
@@ -215,7 +233,7 @@ void receive(unsigned char SOF) {
         memcpy(buffer_2, buffer_1, 4);
         while (itr < SHARED_SIZE + data_size) {
             read_one();
-            buffer_2[itr] = rx_byte;
+            buffer_2[itr] = js_rx_byte;
             itr++;
         }
 
@@ -260,12 +278,12 @@ void insert_mpu_kalman_data() {
     kal_int_y = kalAngleY * KAL_CONST_Y;
     kal_int_z = kalAngleZ * KAL_CONST_Z;
 
-    outgoing_buf[20] = (kal_int_x >> 8) & 255;
-    outgoing_buf[21] = kal_int_x & 255;
-    outgoing_buf[22] = (kal_int_y >> 8) & 255;
-    outgoing_buf[23] = kal_int_y & 255;
-    outgoing_buf[24] = (kal_int_z >> 8) & 255;
-    outgoing_buf[25] = kal_int_z & 255;
+    outgoing_buf[20] = L_BYTE(kal_int_x);
+    outgoing_buf[21] = H_BYTE(kal_int_x);
+    outgoing_buf[22] = L_BYTE(kal_int_y);
+    outgoing_buf[23] = H_BYTE(kal_int_y);
+    outgoing_buf[24] = L_BYTE(kal_int_z);
+    outgoing_buf[25] = H_BYTE(kal_int_z);
 }
 
 void led_toggle() {
