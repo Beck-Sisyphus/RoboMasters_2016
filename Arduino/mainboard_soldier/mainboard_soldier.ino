@@ -5,8 +5,7 @@
 #define TX1_TPZ_PACKET_SIZE (32)
 #define STORAGE_DATA_SIZE (TX1_TPZ_PACKET_SIZE / 2)
 #define LED_PIN (13)
-#define TPZ_OUT_HEADER (0xFA)
-#define TX1_OUT_HEADER (0xAA)
+#define OUTGOING_HEADER (0xFA)
 //#define MPU_ENABLE
 
 #define LED_ON() digitalWrite(LED_PIN, HIGH)
@@ -71,10 +70,9 @@ unsigned char js_rx_byte;
 /**********************/
 
 // com buffers
-char tx1_in_buf[TX1_TPZ_PACKET_SIZE]; // incoming serial buffer
-char tpz_out_buf[TX1_TPZ_PACKET_SIZE]; // outgoing serial buffer
+char incoming_buf[TX1_TPZ_PACKET_SIZE]; // incoming serial buffer
+char outgoing_buf[TX1_TPZ_PACKET_SIZE]; // outgoing serial buffer
 char tpz_in_buf[32];
-char tx1_out_buf[32];
 
 // data buffers
 int16_t tx1_tpz_data[STORAGE_DATA_SIZE]; // data in int
@@ -83,7 +81,7 @@ int16_t tx1_tpz_data[STORAGE_DATA_SIZE]; // data in int
 int16_t feeder_motor_state_req;
 
 // output js data
-uint16_t js_real_chassis_out_power; // power in watts
+uint16_t js_real_chassis_out_power; // power in watts x 100
 uint16_t js_remain_life_value;
 uint8_t js_big_rune_0_status;
 uint8_t js_big_rune_1_status;
@@ -118,19 +116,19 @@ void loop() {
     // (2) process packet from tx1
     if (Serial.available() > TX1_TPZ_PACKET_SIZE - 1) {
         // receive from tx1 into buffer
-        Serial.readBytes((char*) tx1_in_buf, TX1_TPZ_PACKET_SIZE);
+        Serial.readBytes((char*) incoming_buf, TX1_TPZ_PACKET_SIZE);
 
         // cleanup buffer
         for (int i = 0; i < TX1_TPZ_PACKET_SIZE; i++) {
-            tx1_in_buf[i] = (tx1_in_buf[i] & 255);
+            incoming_buf[i] = (incoming_buf[i] & 255);
         }
 
         // set into int16 buffer according to protocol spec
         for (int i = 0; i < STORAGE_DATA_SIZE; i++) {
-            tx1_tpz_data[i * 2] = ((int16_t) tx1_in_buf[i * 2] << 8) | (tx1_in_buf[i * 2 + 1] & 255);
+            tx1_tpz_data[i * 2] = ((int16_t) incoming_buf[i * 2] << 8) | (incoming_buf[i * 2 + 1] & 255);
         }
 
-        // if (tx1_in_buf[2]) {
+        // if (incoming_buf[2]) {
         //     led_toggle();
         // }
     }
@@ -172,53 +170,31 @@ void loop() {
             js_big_rune_0_status = general_info->bigRune0Status;
             js_big_rune_1_status = general_info->bigRune1status;
         }
-#ifdef DEBUG
         Serial.println(general_info->realChassisOutV);
-#endif
     }
 
-    // (3) transmit sequence
+    // (3) transmit to tpz
     unsigned long timer_current_time = millis();
     if (timer_current_time - timer_prev_time >= timer_period) {
         timer_prev_time = timer_current_time;
 
-        /********(3.1) transmit to tpz********/
         // assemble outgoing packet
-        // copy incoming buffer to outgoing buffer
+        // (a) copy incoming buffer to outgoing buffer
         for (int i = 0; i < TX1_TPZ_PACKET_SIZE; i++) {
-            tpz_out_buf[i] = tx1_in_buf[i];
+            outgoing_buf[i] = incoming_buf[i];
         }
-        tpz_out_buf[0] = TPZ_OUT_HEADER; // set the header
+        outgoing_buf[0] = OUTGOING_HEADER; // set the header
 
-        // insert kalman data to outgoing buffer
+        // (b) insert kalman data to outgoing buffer
 #ifdef MPU_ENABLE
         insert_mpu_kalman_data();
 #endif
-        // insert js data to outgoing buffer
-        tpz_out_buf[26] = L_BYTE(js_real_chassis_out_power);
-        tpz_out_buf[27] = H_BYTE(js_real_chassis_out_power);
+        // (c) insert js data to outgoing buffer
+        outgoing_buf[26] = L_BYTE(js_real_chassis_out_power);
+        outgoing_buf[27] = H_BYTE(js_real_chassis_out_power);
 
         // transmit to tpz the buffer
-        Serial1.write((uint8_t*) tpz_out_buf, TX1_TPZ_PACKET_SIZE);
-
-        /********(3.1) transmit to tx1********/
-        // assemble outgoing packet
-        // clear the buffer
-        for (int i = 0; i < 32; i++) {
-            tx1_out_buf[i] = 0x00;
-        }
-
-        // set the header
-        tx1_out_buf[0] = TX1_OUT_HEADER;
-
-        // insert data
-        tx1_out_buf[2] = js_big_rune_0_status;
-        tx1_out_buf[3] = js_big_rune_1_status;
-
-        // transmit to tx1 the buffer
-#ifndef DEBUG
-        Serial.write((uint8_t*) tx1_out_buf, 32);
-#endif
+        Serial1.write((uint8_t*) outgoing_buf, TX1_TPZ_PACKET_SIZE);
     }
     delay(1);
 }
@@ -302,12 +278,12 @@ void insert_mpu_kalman_data() {
     kal_int_y = kalAngleY * KAL_CONST_Y;
     kal_int_z = kalAngleZ * KAL_CONST_Z;
 
-    tpz_out_buf[20] = L_BYTE(kal_int_x);
-    tpz_out_buf[21] = H_BYTE(kal_int_x);
-    tpz_out_buf[22] = L_BYTE(kal_int_y);
-    tpz_out_buf[23] = H_BYTE(kal_int_y);
-    tpz_out_buf[24] = L_BYTE(kal_int_z);
-    tpz_out_buf[25] = H_BYTE(kal_int_z);
+    outgoing_buf[20] = L_BYTE(kal_int_x);
+    outgoing_buf[21] = H_BYTE(kal_int_x);
+    outgoing_buf[22] = L_BYTE(kal_int_y);
+    outgoing_buf[23] = H_BYTE(kal_int_y);
+    outgoing_buf[24] = L_BYTE(kal_int_z);
+    outgoing_buf[25] = H_BYTE(kal_int_z);
 }
 
 void led_toggle() {

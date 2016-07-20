@@ -111,14 +111,14 @@ void USART3_IRQHandler(void)
 12 13 drive_req
 14 15 strafe_req
 16 17 rotate_req
-18 19 
+18 19
 20 21 mpu_roll
 22 23 mpu_pitch
 24 25 mpu_yaw
 */
 void DMA1_Stream1_IRQHandler(void)
 {
-    
+
     if(DMA_GetITStatus(DMA1_Stream1, DMA_IT_TCIF1)) // DMA_IT_TCI_F1 because we are clearing stream 1
     {
         DMA_ClearFlag(DMA1_Stream1, DMA_FLAG_TCIF1);
@@ -133,7 +133,7 @@ void DMA1_Stream1_IRQHandler(void)
             DMA_Cmd(DMA1_Stream1, ENABLE);
         } else {
             LED1_TOGGLE();
-            // store received data into 
+            // store received data into
             data_usart_3.packet.header = MAKE_INT16(arduino_rx_buffer_usart_3[0], arduino_rx_buffer_usart_3[1]);
             data_usart_3.packet.feeder_motor_state = arduino_rx_buffer_usart_3[2] & 255;
             data_usart_3.packet.friction_motor_state = arduino_rx_buffer_usart_3[3] & 255;

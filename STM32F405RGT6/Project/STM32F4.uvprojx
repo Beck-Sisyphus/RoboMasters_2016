@@ -422,16 +422,6 @@
               <FilePath>..\User\stm32f4xx_it.c</FilePath>
             </File>
             <File>
-              <FileName>app.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\app.c</FilePath>
-            </File>
-            <File>
-              <FileName>app.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\app.h</FilePath>
-            </File>
-            <File>
               <FileName>global_define.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\User\global_define.h</FilePath>
@@ -460,6 +450,26 @@
               <FileName>remote_control.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\User\remote_control.h</FilePath>
+            </File>
+            <File>
+              <FileName>app_new.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\app_new.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_new.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\app_new.h</FilePath>
+            </File>
+            <File>
+              <FileName>CanBusTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\CanBusTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>CanBusTask.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\CanBusTask.h</FilePath>
             </File>
           </Files>
         </Group>

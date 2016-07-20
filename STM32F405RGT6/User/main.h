@@ -16,6 +16,7 @@
 #include "HAL_HMC5883L.h"
 #include "HMC5883L.h"
 #include "remote_control.h"
+#include "CanBusTask.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -27,7 +28,7 @@
     2~5 Soldiers we manufacture in 2016
     6 Base robot
     7 Hero robot */
-#define ROBOT_SERIAL_NUMBER 7
+#define ROBOT_SERIAL_NUMBER 5
 
 // For Blue motor and all 2016 soldier robots
 #define BLUE_SAMPLE_ROBOT_0   0

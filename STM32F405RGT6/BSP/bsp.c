@@ -9,7 +9,7 @@ void BSP_Init(void){
     LED_Configuration();
     RELAY_Configuration();
     LASER_Configuration();
-    CAN1_Configuration();
+    // CAN1_Configuration();
     CAN2_Configuration();
     USART1_Configuration();
     USART3_Configuration();
