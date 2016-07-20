@@ -48,7 +48,7 @@ byte
 20 21  mpu_roll
 22 23  mpu_pitch
 24 25  mpu_yaw
-26 27  
+26 27  js_real_chassis_out_power
 28 29  
 30 31  
 
