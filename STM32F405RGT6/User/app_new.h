@@ -95,7 +95,6 @@ int16_t set_chassis_motor_velocity(int can_address, int remote_receiver_velocity
 void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw);
 void CMControlLoop(void);
 
-static int16_t PID_Control_test(float measured, float target, PID_Regulator_t * pid);
-static int16_t PID_Control(float measured, float target, int sign, const float p, const float i, const float d);
+static int16_t PID_Control(float measured, float target, PID_Regulator_t * pid);
 static int map(int x, int in_min, int in_max, int out_min, int out_max);
 #endif

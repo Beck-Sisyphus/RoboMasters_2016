@@ -34,8 +34,6 @@ extern volatile Encoder CM4Encoder;
 extern volatile Encoder GMYawEncoder;
 extern volatile Encoder GMPitchEncoder;
 
-extern float pitch_velocity_change_206;
-extern float yaw_velocity_change_205;
 int main(void)
 {
     int i = 0;
@@ -73,7 +71,7 @@ int main(void)
         //Remote_Control();
         #if DEBUG
             printf("%i\t\t%i\t\t%f\t\t%f\t\t\n", measured_yaw_angle, measured_pitch_angle, GMYawEncoder.ecd_angle, GMPitchEncoder.ecd_angle);
-            printf("%i\t\t%i\t\t\n", (int16_t) yaw_velocity_change_205, (int16_t) pitch_velocity_change_206);
+            // printf("%i\t\t%i\t\t\n", (int16_t) yaw_velocity_change_205, (int16_t) pitch_velocity_change_206);
 						// printf("%i\t\t%i\t\t%f\t\t%f\t\t\n", CM1Encoder.velocity_raw, CM2Encoder.velocity_raw, (float)CM3Encoder.velocity_raw, (float)CM4Encoder.velocity_raw);
             // printf("%i, %i, %i, %i", motor_front_right_cur, motor_front_left_cur, motor_back_left_cur, motor_back_right_cur);
             //  printf("%i, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f", count, MPU6050_Real_Data.Gyro_X,

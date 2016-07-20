@@ -15,7 +15,7 @@ void TIM2_Configuration(void)
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE);
 
     nvic.NVIC_IRQChannel = TIM2_IRQn;
-    nvic.NVIC_IRQChannelPreemptionPriority = 0;
+    nvic.NVIC_IRQChannelPreemptionPriority = 1;
     nvic.NVIC_IRQChannelSubPriority = 0;
     nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);
@@ -35,6 +35,7 @@ void TIM2_Configuration(void)
 
 void TIM2_IRQHandler(void)
 {
+
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     {
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);

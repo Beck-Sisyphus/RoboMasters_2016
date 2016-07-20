@@ -34,9 +34,6 @@ PID_Regulator_t CM2SpeedPID = CHASSIS_MOTOR_SPEED_PID_DEFAULT;
 PID_Regulator_t CM3SpeedPID = CHASSIS_MOTOR_SPEED_PID_DEFAULT;
 PID_Regulator_t CM4SpeedPID = CHASSIS_MOTOR_SPEED_PID_DEFAULT;
 
-float pitch_velocity_change_206 = 0;
-float yaw_velocity_change_205 = 0;
-
 int16_t set_chassis_motor_velocity(int can_address, int remote_receiver_velocity)
 {
     int target_velocity = map(remote_receiver_velocity, -660, 660, -8171, 8171);
@@ -44,16 +41,16 @@ int16_t set_chassis_motor_velocity(int can_address, int remote_receiver_velocity
     // result_velocity = target_velocity;
     switch (can_address) {
         case 201:
-            result_velocity = PID_Control_test((float)CM1Encoder.velocity_raw, (float)target_velocity, &CM1SpeedPID);
+            result_velocity = PID_Control((float)CM1Encoder.velocity_raw, (float)target_velocity, &CM1SpeedPID);
             break;
         case 202:
-            result_velocity = PID_Control_test((float)CM2Encoder.velocity_raw, (float)target_velocity, &CM2SpeedPID);
+            result_velocity = PID_Control((float)CM2Encoder.velocity_raw, (float)target_velocity, &CM2SpeedPID);
             break;
         case 203:
-            result_velocity = PID_Control_test((float)CM3Encoder.velocity_raw, (float)target_velocity, &CM3SpeedPID);
+            result_velocity = PID_Control((float)CM3Encoder.velocity_raw, (float)target_velocity, &CM3SpeedPID);
             break;
         case 204:
-            result_velocity = PID_Control_test((float)CM4Encoder.velocity_raw, (float)target_velocity, &CM4SpeedPID);
+            result_velocity = PID_Control((float)CM4Encoder.velocity_raw, (float)target_velocity, &CM4SpeedPID);
             break;
         default:break;
     }
@@ -62,7 +59,7 @@ int16_t set_chassis_motor_velocity(int can_address, int remote_receiver_velocity
 
 void CMControlLoop(void)
 {
-    rotate_feedback = 0.01 * PID_Control_test(GMYawEncoder.ecd_angle, 0, &CMRotatePID);
+    rotate_feedback = 0.01 * PID_Control(GMYawEncoder.ecd_angle, 0, &CMRotatePID);
     int16_t target_velocity_201 = (-1*drive + strafe + rotate); //  + rotate_feedback
     int16_t target_velocity_202 = (drive + strafe + rotate); //  + rotate_feedback
     int16_t target_velocity_203 = (drive - strafe + rotate); //  + rotate_feedback
@@ -152,19 +149,19 @@ void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
     }
 
     // PID for pitch
-    float pitch_position_change_206 = PID_Control_test(GMPitchEncoder.ecd_angle, (float)real_angle_pitch, &PitchPositionPID);
-    pitch_velocity_change_206 = PID_Control_test((float)MPU6050_Real_Data.Gyro_Y, pitch_position_change_206, &PitchSpeedPID);
-    // float pitch_velocity_change_206 = PID_Control_test((float)MPU6050_Real_Data.Gyro_Y, 0, &PitchSpeedPID);
+    float pitch_position_change_206 = PID_Control(GMPitchEncoder.ecd_angle, (float)real_angle_pitch, &PitchPositionPID);
+    float pitch_velocity_change_206 = PID_Control((float)MPU6050_Real_Data.Gyro_Y, pitch_position_change_206, &PitchSpeedPID);
+    // float pitch_velocity_change_206 = PID_Control((float)MPU6050_Real_Data.Gyro_Y, 0, &PitchSpeedPID);
 
     // PID for yaw
-    float yaw_position_change_205 = PID_Control_test(GMYawEncoder.ecd_angle, (float)real_angle_yaw, &YawPositionPID);
-    yaw_velocity_change_205 = PID_Control_test((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change_205, &YawSpeedPID);
+    float yaw_position_change_205 = PID_Control(GMYawEncoder.ecd_angle, (float)real_angle_yaw, &YawPositionPID);
+    float yaw_velocity_change_205 = PID_Control((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change_205, &YawSpeedPID);
 
     pitchyaw_control((int16_t) yaw_velocity_change_205, (int16_t)pitch_velocity_change_206);
     // pitchyaw_control((int16_t) yaw_velocity_change_205, 1000);
 }
 
-static int16_t PID_Control_test(float measured, float target, PID_Regulator_t * pid)
+static int16_t PID_Control(float measured, float target, PID_Regulator_t * pid)
 {
     static float error_v[2] = {0.0,0.0};
     static float output = 0;
@@ -185,30 +182,6 @@ static int16_t PID_Control_test(float measured, float target, PID_Regulator_t * 
     if(output < -ESC_MAX){ output = -ESC_MAX;}
     return (int16_t)output;
 }
-
-static int16_t PID_Control(float measured, float target, int sign, const float p, const float i, const float d)
-{
-    static float error_v[2] = {0.0,0.0};
-    static float output = 0;
-    static float inte = 0;
-
-    if(abs(measured) < GAP) { measured = 0.0;}
-
-    error_v[0] = error_v[1];
-    error_v[1] = target - measured;
-    inte += error_v[1];
-
-    output = error_v[1] * p
-            + inte * i
-             + (error_v[1] - error_v[0]) * d;
-    output = output * sign;
-
-    if(output > ESC_MAX) { output = ESC_MAX; }
-    if(output < -ESC_MAX){ output = -ESC_MAX;}
-
-    return (int16_t)output; // For Blue rover, position reading is in inverse direction
-}
-
 
 static int map(int x, int in_min, int in_max, int out_min, int out_max)
 {
