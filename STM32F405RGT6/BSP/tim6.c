@@ -13,16 +13,13 @@ extern RC_Ctl_t RC_Ctl;
 
 void TIM6_Configuration(void)
 {
-    pitch_Position = 1571; // 90 degree
-    yaw_Position = 0;
-
     TIM_TimeBaseInitTypeDef  tim;
     NVIC_InitTypeDef         nvic;
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6,ENABLE);
 
     nvic.NVIC_IRQChannel = TIM6_DAC_IRQn;
-    nvic.NVIC_IRQChannelPreemptionPriority = 1;
+    nvic.NVIC_IRQChannelPreemptionPriority = 2;
     nvic.NVIC_IRQChannelSubPriority = 0;
     nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);

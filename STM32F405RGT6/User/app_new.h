@@ -47,30 +47,30 @@ typedef struct PID_Regulator_t
     // float output;
 }PID_Regulator_t;
 
+#define PITCH_POSITION_PID_DEFAULT {\
+  1,\
+  1,\
+  0,\
+  0.001,\
+}\
+
 #define PITCH_SPEED_PID_DEFAULT {\
   -1,\
   15.0,\
-  0.0,\
-  0.01,\
-}\
-
-#define PITCH_POSITION_PID_DEFAULT {\
-  -1,\
-  0.75,\
-  0,\
-  0,\
-}\
-
-#define YAW_SPEED_PID_DEFAULT {\
-  -1,\
-  10.0,\
   0.0,\
   0.0,\
 }\
 
 #define YAW_POSITION_PID_DEFAULT {\
-  -1,\
+  1,\
   1.0,\
+  0.0,\
+  0.0,\
+}\
+
+#define YAW_SPEED_PID_DEFAULT {\
+  1,\
+  10.0,\
   0.0,\
   0.0,\
 }\
@@ -89,97 +89,7 @@ typedef struct PID_Regulator_t
   0.0,\
 }\
 
-typedef struct motor_mapping_t
-{
-  int real_low;
-  int real_high;
-  int ecd_low;
-  int ecd_high;
-} motor_mapping_t;
 
-typedef struct gimbal_mapping_t
-{
-  motor_mapping_t pitch;
-  motor_mapping_t yaw;
-}gimbal_mapping_t;
-
-// measured by protractor, in radian * 1000, in aircraft coordinate
-// CAN bus feedback for both RM6025 and RM6623
-#define GIMBAL_BLUE_SAMPLE_ROBOT_0 {\
-	{\
-    750,\
-    1990,\
-    7530,\
-    6244,\
-  },\
-  {\
-    -1798,\
-    1798,\
-    5157,\
-    489,\
-  },\
-}\
-
-#define GIMBAL_RED_SAMPLE_ROBOT_1 {\
-  {\
-    750,\
-    1990,\
-    5238,\
-    4039,\
-  },\
-  {\
-    -1798,\
-    1798,\
-    4640,\
-    0,\
-  },\
-}\
-// 72 degree，135 degree
-#define GIMBAL_SOLDIER_5 {\
-  {\
-    1257,\
-    2356,\
-    6246,\
-    7615,\
-  },\
-  {\
-    -1571,\
-    1571,\
-    7064,\
-    3055,\
-  },\
-}\
-
-// 52 degree，130 degree
-#define GIMBAL_HERO_ROBOT_CANNON_7 {\
-  {\
-    907 ,\
-    2269,\
-    7480,\
-    1175,\
-  },\
-  {\
-    -1798,\
-    1798,\
-    5171,\
-    470,\
-  },\
-}\
-
-#define GIMBAL_DEFAULT {\
-  {\
-    0,\
-    0,\
-    0,\
-    0,\
-  },\
-  {\
-    0,\
-    0,\
-    0,\
-    0,\
-  },\
-}\
 
 int16_t set_chassis_motor_velocity(int can_address, int remote_receiver_velocity);
 void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw);
@@ -187,6 +97,5 @@ void CMControlLoop(void);
 
 static int16_t PID_Control_test(float measured, float target, PID_Regulator_t * pid);
 static int16_t PID_Control(float measured, float target, int sign, const float p, const float i, const float d);
-static int map_motor(int x, const motor_mapping_t * map);
 static int map(int x, int in_min, int in_max, int out_min, int out_max);
 #endif
