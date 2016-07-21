@@ -6,20 +6,18 @@
  * 
  */
 
-// upper and lower limits
-const int LOWER_LIMIT = 400;
-const int UPPER_LIMIT = 860;
-
-// voltage measurement
-int aPin0 = 0; // read voltage from A pin0
-int aPin1 = 1; // read voltage from A pin1
-int v0 = 0;
-int v1 = 0;
-
 // L293D
 #define MOTOR_A (5)
 #define MOTOR_B (7)
 #define TRIGGER (10)
+
+// upper and lower limits
+#define LOWER_LIMIT (400)
+#define UPPER_LIMIT (860)
+
+// voltage measurement
+#define ANALOG_0 (0) // read voltage from A pin0
+#define ANALOG_1 (1) // read voltage from A pin1
 
 
 void setup() {
@@ -29,11 +27,17 @@ void setup() {
   pinMode(TRIGGER, INPUT);
 }
 
+// direction
 int dir = 1;
+// state machine
 int ps = 0;
 int ns = 0;
+// timer
 unsigned long pastMillis = 0;
 unsigned long currentMillis = 0;
+// voltage measurement
+int v0 = 0;
+int v1 = 0;
 
 void loop() {
   int isOn = digitalRead(TRIGGER);
@@ -42,8 +46,8 @@ void loop() {
       // start counting time
       currentMillis = millis();
       // read voltage. Voltage drops when stalling
-      v0 = analogRead(aPin0);
-      v1 = analogRead(aPin1);
+      v0 = analogRead(ANALOG_0);
+      v1 = analogRead(ANALOG_1);
       Serial.print(v0);
       Serial.print(" ");
       Serial.println(v1);
