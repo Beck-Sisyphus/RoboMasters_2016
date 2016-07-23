@@ -92,7 +92,8 @@ void Remote_Control() {
 
 
 uint8_t remote_on = 0;
-uint8_t robot_state = ROBOT_STATE_MANUAL;
+// uint8_t robot_state = ROBOT_STATE_MANUAL;
+uint8_t robot_state = ROBOT_STATE_FULL_AUTO;
 #if 1
 // this is run by tim2
 void Remote_Control() {
@@ -124,7 +125,8 @@ void Remote_Control() {
                 // driving
                 drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
                 strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
-                rotate = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
+                // rotate = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
+                rotate = RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
 
                 // shooting
                 friction_motor_state = (RC_Ctl.rc.s2 == RC_SW_MID || RC_Ctl.rc.s2 == RC_SW_DOWN);

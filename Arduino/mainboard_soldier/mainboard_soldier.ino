@@ -5,11 +5,14 @@
 #define TX1_TPZ_PACKET_SIZE (32)
 #define STORAGE_DATA_SIZE (TX1_TPZ_PACKET_SIZE / 2)
 #define LED_PIN (13)
+#define FEEDER_MOTOR_PIN (37)
 #define OUTGOING_HEADER (0xFA)
 //#define MPU_ENABLE
 
 #define LED_ON() digitalWrite(LED_PIN, HIGH)
 #define LED_OFF() digitalWrite(LED_PIN, LOW)
+#define FEEDER_MOTOR_ON() digitalWrite(FEEDER_MOTOR_PIN, HIGH)
+#define FEEDER_MOTOR_OFF() digitalWrite(FEEDER_MOTOR_PIN, LOW)
 #define L_BYTE(b) (b >> 8) & 255
 #define H_BYTE(b) (b & 255)
 
@@ -91,6 +94,7 @@ const long timer_period = 20; // time between transmitting packets
 
 void setup() {
     pinMode(LED_PIN, OUTPUT);
+    pinMode(FEEDER_MOTOR_PIN, OUTPUT);
     Serial.begin(115200); // tx1
     Serial1.begin(115200); // tpz
 
@@ -151,8 +155,10 @@ void loop() {
             // debug actions
             if (tpz_in_buf[2]) { // turn on led if feeder motor on
                 LED_ON();
+                FEEDER_MOTOR_ON();
             } else {
                 LED_OFF();
+                FEEDER_MOTOR_OFF();
             }
         }
     }
@@ -162,7 +168,7 @@ void loop() {
         js_rx_byte = Serial3.read();
         if (js_rx_byte == 0xA5) {
             receive(js_rx_byte);
-
+            
             // after receive, process data
             float calculated_power = general_info->realChassisOutV * general_info->realChassisOutA;
             js_real_chassis_out_power = (uint16_t) calculated_power;
@@ -204,20 +210,20 @@ void read_one() {
     js_rx_byte = Serial3.read();
 }
 
-/* 
+/*
     **description: reciving the data from the judgement system and put them into
     different data structure according to the different data type.
-    
+
     **input: SOF, in this case the byte A5 received from judgement system
 
     **output: none, data will be store in the globally declared & initiallized
-    data structure  
+    data structure
 */
 void receive(unsigned char SOF) {
 
     unsigned char buffer_1[4];
-    uint16_t data_size;  
-    uint16_t data_type; 
+    uint16_t data_size;
+    uint16_t data_type;
 
     buffer_1[0] = SOF;
     int itr = 1;
@@ -244,12 +250,12 @@ void receive(unsigned char SOF) {
         //     i++;
         // }
         // Serial.println();
-    
+
         // sometimes it does not pass the CRC test because the data is corrupted
-        if (Verify_CRC16_Check_Sum(buffer_2, SHARED_SIZE + data_size)) {            
+        if (Verify_CRC16_Check_Sum(buffer_2, SHARED_SIZE + data_size)) {
             data_type = buffer_2[4];
-        
-            // at this point we have got all the data from the js into the buffer_2 
+
+            // at this point we have got all the data from the js into the buffer_2
             if (data_type == 1) {
                 //Serial.println("data is 1");
                 memcpy(general_info, buffer_2 + 6, 20);
@@ -261,7 +267,7 @@ void receive(unsigned char SOF) {
                 general_info->parkingApron0 = (buffer_2[26] >> 7) & 1;
                 //memcpy(general_info->gps_data, buffer_2 + 27, 17);
             } else if (data_type == 2) {
-                health_data->weakId = buffer_2[6];  
+                health_data->weakId = buffer_2[6];
                 health_data->way = (buffer_2[6] >> 4) & 15;
                 memcpy(&(health_data->value), buffer_2 + 7, 2);
             } else if (data_type == 3) {

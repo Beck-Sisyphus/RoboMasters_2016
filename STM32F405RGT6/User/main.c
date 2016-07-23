@@ -50,12 +50,16 @@ int main(void)
 
     // MPU6050_Interrupt_Configuration();
 
-
     PWM_Configuration();
     delay_ms(1000);
     // Set the duty cycle to 1000 to initialize the motor controller for friction wheels
     PWM1 = 1500;
+    delay_ms(500);
     PWM2 = 1500;
+    delay_ms(500);
+    PWM1 = 1900;
+    delay_ms(500);
+    PWM2 = 1900;
 
 		#if DEBUG
 				printf("measured_yaw_angle; measured_pitch_angle; Encoder yaw; Encoder pitch\n");
