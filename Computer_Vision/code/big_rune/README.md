@@ -1,6 +1,6 @@
 #Playing with C++ OpenCV
 
-**Aim:** Find squares in an image
+**Aim:** Find different rune out of other 8
 
 ##To compile and run
 
