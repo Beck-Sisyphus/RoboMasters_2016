@@ -117,33 +117,41 @@ void loop() {
 
     // (2) process packet from tx1
     if (Serial.available() > TX1_TPZ_PACKET_SIZE - 1) {
-        // receive from tx1 into buffer
-        Serial.readBytes((char*) tx1_in_buf, TX1_TPZ_PACKET_SIZE);
+        if (Serial.peek() != 0xF9) {
+            while (Serial.peek() != 0xF9) {
+                Serial.read();
+            }
+        } else {
+            // receive from tx1 into buffer
+            Serial.readBytes((char*) tx1_in_buf, TX1_TPZ_PACKET_SIZE);
 
-        // cleanup buffer
-        for (int i = 0; i < TX1_TPZ_PACKET_SIZE; i++) {
-            tx1_in_buf[i] = (tx1_in_buf[i] & 255);
+            // cleanup buffer
+            for (int i = 0; i < TX1_TPZ_PACKET_SIZE; i++) {
+                tx1_in_buf[i] = (tx1_in_buf[i] & 255);
+            }
+
+            // set into int16 buffer according to protocol spec
+            for (int i = 0; i < STORAGE_DATA_SIZE; i++) {
+                tx1_tpz_data[i * 2] = ((int16_t) tx1_in_buf[i * 2] << 8) | (tx1_in_buf[i * 2 + 1] & 255);
+            }
+
+            // if (tx1_in_buf[2]) {
+            //     led_toggle();
+            // }
         }
-
-        // set into int16 buffer according to protocol spec
-        for (int i = 0; i < STORAGE_DATA_SIZE; i++) {
-            tx1_tpz_data[i * 2] = ((int16_t) tx1_in_buf[i * 2] << 8) | (tx1_in_buf[i * 2 + 1] & 255);
-        }
-
-        // if (tx1_in_buf[2]) {
-        //     led_toggle();
-        // }
     }
 
     // (2.5) process packet from tpz
-    if (Serial1.available() > 31) {
+    if (Serial1.available() > 0) {
         if (Serial1.peek() != 0xCE) {
-            while (Serial1.peek() != 0xCE) {
-                Serial1.read();
-            }
+            Serial1.read();
         } else {
             // receive from tpz into buffer
             Serial1.readBytes((char*) tpz_in_buf, 32);
+            // for (int i = 0; i < 32; i++) {
+            //     while (!Serial1.available());
+            //     tpz_in_buf[i] = Serial1.read();
+            // }
 
             // cleanup buffer
             for (int i = 0; i < 32; i++) {
