@@ -16,7 +16,7 @@ Serial3: Hero Trapezoid (htpz) (Hero only)
 
 ----A----
 byte
-0  1   header (0x00)
+0  1   header (0xF9)
 2  3   feeder_motor_state | friction_motor_state
 4  5   pitch_req
 6  7   yaw_req
@@ -73,8 +73,8 @@ byte
 
 ----D----
 byte
-0  1   
-2  3   
+0  1   header (0xAA)
+2  3   js_big_rune_0_status | js_big_rune_1_status
 4  5   
 6  7   
 8  9   

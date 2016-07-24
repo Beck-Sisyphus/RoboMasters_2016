@@ -168,7 +168,7 @@ void loop() {
         js_rx_byte = Serial3.read();
         if (js_rx_byte == 0xA5) {
             receive(js_rx_byte);
-            
+
             // after receive, process data
             float calculated_power = general_info->realChassisOutV * general_info->realChassisOutA;
             js_real_chassis_out_power = (uint16_t) calculated_power;
