@@ -3015,7 +3015,7 @@ static swig_module_info swig_module = {swig_types, 1, 0, 0, 0, 0};
 
 
 /* Put header files here or function declarations like below */
-extern int fact(int n);
+extern char* fact(int n);
 
 
 #include <limits.h>
@@ -3169,10 +3169,52 @@ SWIG_AsVal_int (PyObject * obj, int *val)
 }
 
 
-SWIGINTERNINLINE PyObject*
-  SWIG_From_int  (int value)
+SWIGINTERN swig_type_info*
+SWIG_pchar_descriptor(void)
 {
-  return PyInt_FromLong((long) value);
+  static int init = 0;
+  static swig_type_info* info = 0;
+  if (!init) {
+    info = SWIG_TypeQuery("_p_char");
+    init = 1;
+  }
+  return info;
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_FromCharPtrAndSize(const char* carray, size_t size)
+{
+  if (carray) {
+    if (size > INT_MAX) {
+      swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
+      return pchar_descriptor ? 
+	SWIG_InternalNewPointerObj((char *)(carray), pchar_descriptor, 0) : SWIG_Py_Void();
+    } else {
+#if PY_VERSION_HEX >= 0x03000000
+#if defined(SWIG_PYTHON_STRICT_BYTE_CHAR)
+      return PyBytes_FromStringAndSize(carray, (Py_ssize_t)(size));
+#else
+#if PY_VERSION_HEX >= 0x03010000
+      return PyUnicode_DecodeUTF8(carray, (Py_ssize_t)(size), "surrogateescape");
+#else
+      return PyUnicode_FromStringAndSize(carray, (Py_ssize_t)(size));
+#endif
+#endif
+#else
+      return PyString_FromStringAndSize(carray, (Py_ssize_t)(size));
+#endif
+    }
+  } else {
+    return SWIG_Py_Void();
+  }
+}
+
+
+SWIGINTERNINLINE PyObject * 
+SWIG_FromCharPtr(const char *cptr)
+{ 
+  return SWIG_FromCharPtrAndSize(cptr, (cptr ? strlen(cptr) : 0));
 }
 
 #ifdef __cplusplus
@@ -3184,7 +3226,7 @@ SWIGINTERN PyObject *_wrap_fact(PyObject *SWIGUNUSEDPARM(self), PyObject *args) 
   int val1 ;
   int ecode1 = 0 ;
   PyObject * obj0 = 0 ;
-  int result;
+  char *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)"O:fact",&obj0)) SWIG_fail;
   ecode1 = SWIG_AsVal_int(obj0, &val1);
@@ -3192,8 +3234,8 @@ SWIGINTERN PyObject *_wrap_fact(PyObject *SWIGUNUSEDPARM(self), PyObject *args) 
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "fact" "', argument " "1"" of type '" "int""'");
   } 
   arg1 = (int)(val1);
-  result = (int)fact(arg1);
-  resultobj = SWIG_From_int((int)(result));
+  result = (char *)fact(arg1);
+  resultobj = SWIG_FromCharPtr((const char *)result);
   return resultobj;
 fail:
   return NULL;
