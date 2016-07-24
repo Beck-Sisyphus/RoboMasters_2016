@@ -94,6 +94,7 @@ const long timer_period = 20; // time between transmitting packets
 
 void setup() {
     pinMode(LED_PIN, OUTPUT);
+    pinMode(FEEDER_MOTOR_PIN, OUTPUT);
     Serial.begin(115200); // tx1
     Serial1.begin(115200); // tpz
 
