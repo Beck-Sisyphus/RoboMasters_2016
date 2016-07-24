@@ -5,6 +5,7 @@
 #define TX1_TPZ_PACKET_SIZE (32)
 #define STORAGE_DATA_SIZE (TX1_TPZ_PACKET_SIZE / 2)
 #define LED_PIN (13)
+#define FEEDER_MOTOR_PIN (37)
 #define TPZ_OUT_HEADER (0xFA)
 #define TX1_OUT_HEADER (0xAA)
 //#define MPU_ENABLE
@@ -161,8 +162,10 @@ void loop() {
             // debug actions
             if (tpz_in_buf[2]) { // turn on led if feeder motor on
                 LED_ON();
+                digitalWrite(FEEDER_MOTOR_PIN, HIGH);
             } else {
                 LED_OFF();
+                digitalWrite(FEEDER_MOTOR_PIN, LOW);
             }
         }
     }
