@@ -118,11 +118,13 @@ void loop() {
 #endif
 
     // (2) process packet from tx1
-    if (Serial.available() > TX1_TPZ_PACKET_SIZE - 1) {
+    if (Serial.available() > 0) {//TX1_TPZ_PACKET_SIZE - 1) {
         if (Serial.peek() != 0xF9) {
-            while (Serial.peek() != 0xF9) {
-                Serial.read();
-            }
+            // while (Serial.peek() != 0xF9) {
+            //     while (!Serial.available());
+            //     Serial.read();
+            // }
+            Serial.read();
         } else {
             // receive from tx1 into buffer
             Serial.readBytes((char*) tx1_in_buf, TX1_TPZ_PACKET_SIZE);
@@ -160,14 +162,8 @@ void loop() {
                 tpz_in_buf[i] = (tpz_in_buf[i] & 255);
             }
 
-            // debug actions
-            if (tpz_in_buf[2]) { // turn on led if feeder motor on
-                LED_ON();
-                digitalWrite(FEEDER_MOTOR_PIN, HIGH);
-            } else {
-                LED_OFF();
-                digitalWrite(FEEDER_MOTOR_PIN, LOW);
-            }
+            // set control variables
+            feeder_motor_state_req = tpz_in_buf[2];
         }
     }
 
@@ -232,7 +228,22 @@ void loop() {
         Serial.write((uint8_t*) tx1_out_buf, 32);
 #endif
     }
+
+    // (4) misc process
+    misc_process();
+
     delay(1);
+}
+
+void misc_process() {
+    // set the feeder motor state
+    if (feeder_motor_state_req) { // turn on led if feeder motor on
+        LED_ON();
+        digitalWrite(FEEDER_MOTOR_PIN, HIGH);
+    } else {
+        LED_OFF();
+        digitalWrite(FEEDER_MOTOR_PIN, LOW);
+    }
 }
 
 void read_one() {
