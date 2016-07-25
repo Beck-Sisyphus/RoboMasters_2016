@@ -89,8 +89,10 @@ uint16_t js_remain_life_value;
 uint8_t js_big_rune_0_status;
 uint8_t js_big_rune_1_status;
 
-unsigned long timer_prev_time = 0;
-const long timer_period = 20; // time between transmitting packets
+unsigned long tpz_timer_prev_time = 0;
+const long tpz_timer_period = 20; // time between transmitting packets
+unsigned long tx1_timer_prev_time = 0;
+const long tx1_timer_period = 100; // 10hz
 
 void setup() {
     pinMode(LED_PIN, OUTPUT);
@@ -185,10 +187,10 @@ void loop() {
 #endif
     }
 
-    // (3) transmit sequence
-    unsigned long timer_current_time = millis();
-    if (timer_current_time - timer_prev_time >= timer_period) {
-        timer_prev_time = timer_current_time;
+    // (3) transmit to tpz
+    unsigned long tpz_timer_current_time = millis();
+    if (tpz_timer_current_time - tpz_timer_prev_time >= tpz_timer_period) {
+        tpz_timer_prev_time = tpz_timer_current_time;
 
         /********(3.1) transmit to tpz********/
         // assemble outgoing packet
@@ -208,8 +210,14 @@ void loop() {
 
         // transmit to tpz the buffer
         Serial1.write((uint8_t*) tpz_out_buf, TX1_TPZ_PACKET_SIZE);
+    }
 
-        /********(3.1) transmit to tx1********/
+    // (4) transmit to tx1
+    unsigned long tx1_timer_current_time = millis();
+    if (tx1_timer_current_time - tx1_timer_prev_time >= tx1_timer_period) {
+        tx1_timer_prev_time = tx1_timer_current_time;
+
+        /********(4.1) transmit to tx1********/
         // assemble outgoing packet
         // clear the buffer
         for (int i = 0; i < 32; i++) {
@@ -229,7 +237,7 @@ void loop() {
 #endif
     }
 
-    // (4) misc process
+    // (5) misc process
     misc_process();
 
     delay(1);
