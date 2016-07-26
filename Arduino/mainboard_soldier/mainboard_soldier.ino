@@ -8,7 +8,11 @@
 #define FEEDER_MOTOR_PIN (37)
 #define TPZ_OUT_HEADER (0xFA)
 #define TX1_OUT_HEADER (0xAA)
-//#define MPU_ENABLE
+#define HTPZ_OUT_HEADER (0xFE)
+
+#define MPU_ENABLE false // set to true to enable mpu
+#define DEBUG false // set to true to enable debug prints, will disable arduino->tx1 comms
+#define HERO_ARDUINO false // set to true if this arduino goes on hero robot
 
 #define LED_ON() digitalWrite(LED_PIN, HIGH)
 #define LED_OFF() digitalWrite(LED_PIN, LOW)
@@ -74,6 +78,7 @@ unsigned char js_rx_byte;
 // com buffers
 char tx1_in_buf[TX1_TPZ_PACKET_SIZE]; // incoming serial buffer
 char tpz_out_buf[TX1_TPZ_PACKET_SIZE]; // outgoing serial buffer
+char htpz_out_buf[32]; // outgoing serial buffer for hero trapezoid
 char tpz_in_buf[32];
 char tx1_out_buf[32];
 
@@ -98,9 +103,12 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);
     pinMode(FEEDER_MOTOR_PIN, OUTPUT);
     Serial.begin(115200); // tx1
-    Serial1.begin(115200); // tpz
+    Serial1.begin(115200); // tpz (trapezoid)
+#if HERO_ARDUINO
+    Serial2.begin(115200); // htpz (hero trapezoid)
+#endif
 
-#ifdef MPU_ENABLE
+#if MPU_ENABLE
     // INIT mpu
     mpu_kalman_init();
 #endif
@@ -115,17 +123,13 @@ void setup() {
 
 void loop() {
     // (1) process mpu kalman
-#ifdef MPU_ENABLE
+#if MPU_ENABLE
     mpu_kalman_process();
 #endif
 
     // (2) process packet from tx1
     if (Serial.available() > 0) {//TX1_TPZ_PACKET_SIZE - 1) {
         if (Serial.peek() != 0xF9) {
-            // while (Serial.peek() != 0xF9) {
-            //     while (!Serial.available());
-            //     Serial.read();
-            // }
             Serial.read();
         } else {
             // receive from tx1 into buffer
@@ -140,10 +144,6 @@ void loop() {
             for (int i = 0; i < STORAGE_DATA_SIZE; i++) {
                 tx1_tpz_data[i * 2] = ((int16_t) tx1_in_buf[i * 2] << 8) | (tx1_in_buf[i * 2 + 1] & 255);
             }
-
-            // if (tx1_in_buf[2]) {
-            //     led_toggle();
-            // }
         }
     }
 
@@ -154,10 +154,6 @@ void loop() {
         } else {
             // receive from tpz into buffer
             Serial1.readBytes((char*) tpz_in_buf, 32);
-            // for (int i = 0; i < 32; i++) {
-            //     while (!Serial1.available());
-            //     tpz_in_buf[i] = Serial1.read();
-            // }
 
             // cleanup buffer
             for (int i = 0; i < 32; i++) {
@@ -166,6 +162,24 @@ void loop() {
 
             // set control variables
             feeder_motor_state_req = tpz_in_buf[2];
+
+#if HERO_ARDUINO
+            /********(2.5.1) transmit to tx1********/
+            // assemble outgoing packet
+            // clear the buffer
+            for (int i = 0; i < 32; i++) {
+                htpz_out_buf[i] = 0x00;
+            }
+            htpz_out_buf[0] = HTPZ_OUT_HEADER; // set the header
+
+            // set the rc_ctl fields
+            for (int i = 10; i < 30; i++) {
+                htpz_out_buf[i] = tpz_in_buf[i];
+            }
+
+            // transmit to htpz the buffer
+            Serial2.write((uint8_t*) htpz_out_buf, 32);
+#endif
         }
     }
 
@@ -182,7 +196,7 @@ void loop() {
             js_big_rune_0_status = general_info->bigRune0Status;
             js_big_rune_1_status = general_info->bigRune1status;
         }
-#ifdef DEBUG
+#if DEBUG
         Serial.println(general_info->realChassisOutV);
 #endif
     }
@@ -201,7 +215,7 @@ void loop() {
         tpz_out_buf[0] = TPZ_OUT_HEADER; // set the header
 
         // insert kalman data to outgoing buffer
-#ifdef MPU_ENABLE
+#if MPU_ENABLE
         insert_mpu_kalman_data();
 #endif
         // insert js data to outgoing buffer
@@ -223,16 +237,14 @@ void loop() {
         for (int i = 0; i < 32; i++) {
             tx1_out_buf[i] = 0x00;
         }
-
-        // set the header
-        tx1_out_buf[0] = TX1_OUT_HEADER;
+        tx1_out_buf[0] = TX1_OUT_HEADER; // set the header
 
         // insert data
         tx1_out_buf[2] = js_big_rune_0_status;
         tx1_out_buf[3] = js_big_rune_1_status;
 
         // transmit to tx1 the buffer
-#ifndef DEBUG
+#if !DEBUG
         Serial.write((uint8_t*) tx1_out_buf, 32);
 #endif
     }
