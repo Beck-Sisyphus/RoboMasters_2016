@@ -4,20 +4,42 @@
 
 #define TX1_TPZ_PACKET_SIZE (32)
 #define STORAGE_DATA_SIZE (TX1_TPZ_PACKET_SIZE / 2)
-#define LED_PIN (13)
-#define FEEDER_MOTOR_PIN (37)
 #define TPZ_OUT_HEADER (0xFA)
 #define TX1_OUT_HEADER (0xAA)
 #define HTPZ_OUT_HEADER (0xFE)
 
+// pin definitions
+#define ARM_UP_PIN (2) // hero only
+#define ARM_DN_PIN (3) // hero only
+#define FAN_PIN (4) // hero only
+#define STEPPER_MOTOR_PIN (5) // hero only
+#define LED_PIN (13)
+#define FEEDER_MOTOR_PIN (37)
+
 #define MPU_ENABLE false // set to true to enable mpu
 #define DEBUG false // set to true to enable debug prints, will disable arduino->tx1 comms
-#define HERO_ARDUINO false // set to true if this arduino goes on hero robot
+#define HERO_ARDUINO true // set to true if this arduino goes on hero robot
 
 #define LED_ON() digitalWrite(LED_PIN, HIGH)
 #define LED_OFF() digitalWrite(LED_PIN, LOW)
 #define L_BYTE(b) (b >> 8) & 255
 #define H_BYTE(b) (b & 255)
+#define MAKE_INT16(a, b) (((int16_t) a << 8)) | (b & 255)
+
+/**** rc switch definition ****/
+#define RC_SW_UP                        ((uint16_t)1)
+#define RC_SW_MID                       ((uint16_t)3)
+#define RC_SW_DOWN                      ((uint16_t)2)
+
+/**** pc key definition ****/
+#define KEY_PRESSED_OFFSET_W            ((uint16_t)0x01<<0)
+#define KEY_PRESSED_OFFSET_S            ((uint16_t)0x01<<1)
+#define KEY_PRESSED_OFFSET_A            ((uint16_t)0x01<<2)
+#define KEY_PRESSED_OFFSET_D            ((uint16_t)0x01<<3)
+#define KEY_PRESSED_OFFSET_Q            ((uint16_t)0x01<<4)
+#define KEY_PRESSED_OFFSET_E            ((uint16_t)0x01<<5)
+#define KEY_PRESSED_OFFSET_SHIFT        ((uint16_t)0x01<<6)
+#define KEY_PRESSED_OFFSET_CTRL         ((uint16_t)0x01<<7)
 
 /******** kalman ********/
 #define RESTRICT_PITCH // Comment out to restrict roll to ±90deg instead - please read: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf
@@ -105,7 +127,12 @@ void setup() {
     Serial.begin(115200); // tx1
     Serial1.begin(115200); // tpz (trapezoid)
 #if HERO_ARDUINO
+    // init hero interface
     Serial2.begin(115200); // htpz (hero trapezoid)
+    pinMode(ARM_UP_PIN, OUTPUT);
+    pinMode(ARM_DN_PIN, OUTPUT);
+    pinMode(FAN_PIN, OUTPUT);
+    pinMode(STEPPER_MOTOR_PIN, OUTPUT);
 #endif
 
 #if MPU_ENABLE
@@ -164,7 +191,38 @@ void loop() {
             feeder_motor_state_req = tpz_in_buf[2];
 
 #if HERO_ARDUINO
-            /********(2.5.1) transmit to tx1********/
+            /********(2.5.1) process received data********/
+            int16_t key_req = MAKE_INT16(tpz_in_buf[28], tpz_in_buf[29]);
+
+            // arm control
+            if (key_req & KEY_PRESSED_OFFSET_W) { // arm up movement
+                digitalWrite(ARM_UP_PIN, HIGH);
+                digitalWrite(ARM_DN_PIN, LOW);
+            } else if (key_req & KEY_PRESSED_OFFSET_S) { // arm dn movement
+                digitalWrite(ARM_UP_PIN, LOW);
+                digitalWrite(ARM_DN_PIN, HIGH);
+            } else { // no movement
+                digitalWrite(ARM_UP_PIN, LOW);
+                digitalWrite(ARM_DN_PIN, LOW);
+            }
+
+            // fan control
+            if (key_req & KEY_PRESSED_OFFSET_D) { // fan on
+                digitalWrite(FAN_PIN, HIGH);
+            } else { // fan off
+                digitalWrite(FAN_PIN, LOW);
+            }
+
+            // stepper motor control
+            if (tpz_in_buf[18] == RC_SW_DOWN) { // special function on hero controls cannon
+                if (tpz_in_buf[19] == RC_SW_DOWN || tpz_in_buf[26]) {
+                    digitalWrite(STEPPER_MOTOR_PIN, HIGH);
+                } else {
+                    digitalWrite(STEPPER_MOTOR_PIN, LOW);
+                }
+            }
+
+            /********(2.5.2) transmit to tx1********/
             // assemble outgoing packet
             // clear the buffer
             for (int i = 0; i < 32; i++) {

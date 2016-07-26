@@ -87,7 +87,7 @@ void Remote_Control() {
 
 #define ROBOT_STATE_MANUAL (0)
 #define ROBOT_STATE_SEMI_AUTO (1)
-#define ROBOT_STATE_FULL_AUTO (2)
+#define ROBOT_STATE_SPECIAL (2)
 
 
 
@@ -114,7 +114,7 @@ void Remote_Control() {
                 robot_state = ROBOT_STATE_SEMI_AUTO;
                 break;
             case RC_SW_DOWN:
-                robot_state = ROBOT_STATE_FULL_AUTO;
+                robot_state = ROBOT_STATE_SPECIAL;
                 break;
         }
 
@@ -128,7 +128,7 @@ void Remote_Control() {
 
                 // shooting
                 friction_motor_state = (RC_Ctl.rc.s2 == RC_SW_MID || RC_Ctl.rc.s2 == RC_SW_DOWN);
-                feeder_motor_state = (RC_Ctl.rc.s2 == RC_SW_DOWN);
+                feeder_motor_state = (RC_Ctl.rc.s2 == RC_SW_DOWN || RC_Ctl.mouse.press_l);
 
                 // aiming (untested) todo: limit these two
                 pitch_Position += (RC_Ctl.rc.ch1 - RC_CH_VALUE_OFFSET) / 100;
@@ -148,7 +148,7 @@ void Remote_Control() {
                 pitch_Position = data_usart_3.packet.pitch_req;
                 yaw_Position = data_usart_3.packet.yaw_req;
                 break;
-            case ROBOT_STATE_FULL_AUTO:
+            case ROBOT_STATE_SPECIAL:
                 // driving
                 drive = data_usart_3.packet.drive_req;
                 strafe = data_usart_3.packet.strafe_req;
