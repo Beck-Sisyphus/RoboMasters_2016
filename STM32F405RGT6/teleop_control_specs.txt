@@ -1,0 +1,69 @@
+TELEOPERATED CONTROL SPECIFICATIONS
+Author: Pico Premvuti (natatp@uw.edu)
+Date:   26 July 2016
+This is the documentation for teleoperated remote control for all robot types.
+
+1 Overview
+    1.1 Stick and Switch Functions
+    Left stick for chassis control
+    Right stick for aiming control
+    Right switch for shooting control
+
+    1.2 Mouse Mapping
+    Mouse is always linked to the right stick and switch
+    mouse up/dn        -> right stick up/dn
+    mouse l/r          -> right stick l/r
+    mouse left button  -> right switch down
+    mouse right button -> right switch mid
+    mouse no button    -> right switch up
+
+    In computer guided aiming mode, right switch (and mouse buttons) are disabled
+
+2 Robots
+    2.1 Solider
+        This is the standard soldier with a single turret.
+        sticks
+            left stick up/dn  : chassis drive forward/drive backward
+            left stick l/r    : chassis strafe left/strafe right
+            right stick up/dn : turret up/dn
+            right stick l/r   : chassis and turret rotate left/right
+        switches
+            left switch up    : (MODE 1) chassis manual, turret manual
+            left switch mid   : (MODE 2) chassis manual, turret computer guided
+            left switch down  : (MODE 3) chassis manual, turret fixed position
+            right switch up   : all shooting disabled
+            right switch mid  : all shooting disabled
+            right switch dn   : turret shoot
+
+    2.2 Auto Soldier
+        This is the soldier fitted with a LIDAR for auto chassis function.
+        sticks
+            left stick up/dn  : chassis drive forward/drive backward
+            left stick l/r    : chassis strafe left/strafe right
+            right stick up/dn : turret up/dn
+            right stick l/r   : chassis and turret rotate left/right
+        switches
+            left switch up    : (MODE 1) chassis manual, turret manual
+            left switch mid   : (MODE 2) chassis manual, turret computer guided
+            left switch down  : (MODE 3) chassis auto, turret computer guided
+            right switch up   : all shooting disabled
+            right switch mid  : all shooting disabled
+            right switch dn   : turret shoot
+    2.3 Hero
+        This is the hero with turret and cannon.
+        sticks
+            left stick up/dn  : chassis drive forward/drive backward
+            left stick l/r    : chassis rotate left/rotate right
+            right stick up/dn : turret up/dn (cannon up/dn in MODE 3)
+            right stick l/r   : turret left/right (cannon left/right in MODE 3)
+        switches
+            left switch up    : (MODE 1) chassis manual, turret manual
+            left switch mid   : (MODE 2) chassis manual, turret computer guided
+            left swith down   : (MODE 3) chassis manual, cannon manual
+            right switch up   : all shooting disabled
+            right switch mid  : all shooting disabled
+            right switch dn   : turret shoot (cannon shoot in MODE 3)
+        keys (hold to activate)
+            W                 : arm move up
+            S                 : arm move dn
+            D                 : fan on
