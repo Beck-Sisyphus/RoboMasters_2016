@@ -123,9 +123,15 @@ void Remote_Control() {
             case ROBOT_STATE_MANUAL:
                 if (ROBOT_SERIAL_NUMBER != HERO_ROBOT_CANNON_7) {
                     // driving
-                    drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
-                    strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
-                    rotate = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
+                    if (ROBOT_SERIAL_NUMBER == HERO_ROBOT_TURRET_8) {
+                        drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
+                        strafe = 0;
+                        rotate = (RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET);
+                    } else {
+                        drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
+                        strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
+                        rotate = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
+                    }
 
                     // shooting
                     friction_motor_state = (RC_Ctl.rc.s2 == RC_SW_MID || RC_Ctl.rc.s2 == RC_SW_DOWN);
@@ -133,7 +139,7 @@ void Remote_Control() {
 
                     // aiming (untested) todo: limit these two
                     pitch_Position += (RC_Ctl.rc.ch1 - RC_CH_VALUE_OFFSET) / 100;
-                    yaw_Position += (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) / 100;
+                    yaw_Position += (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) / 100 + RC_Ctl.mouse.y * MOUSE_SENSITIVITY;
                 }
                 break;
             case ROBOT_STATE_SEMI_AUTO:
