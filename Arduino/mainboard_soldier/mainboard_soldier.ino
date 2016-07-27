@@ -6,7 +6,7 @@
 #define STORAGE_DATA_SIZE (TX1_TPZ_PACKET_SIZE / 2)
 #define TPZ_OUT_HEADER (0xFA)
 #define TX1_OUT_HEADER (0xAA)
-#define HTPZ_OUT_HEADER (0xFE)
+#define HTPZ_OUT_HEADER (0xFA)
 
 // pin definitions
 #define ARM_UP_PIN (2) // hero only
