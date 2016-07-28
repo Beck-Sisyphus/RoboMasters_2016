@@ -87,7 +87,7 @@ void Remote_Control() {
 
 #define ROBOT_STATE_MANUAL (0)
 #define ROBOT_STATE_SEMI_AUTO (1)
-#define ROBOT_STATE_FULL_AUTO (2)
+#define ROBOT_STATE_SPECIAL (2)
 
 
 
@@ -115,54 +115,71 @@ void Remote_Control() {
                 robot_state = ROBOT_STATE_SEMI_AUTO;
                 break;
             case RC_SW_DOWN:
-                robot_state = ROBOT_STATE_FULL_AUTO;
+                robot_state = ROBOT_STATE_SPECIAL;
                 break;
         }
 
         // (2) set global control info requests
         switch (robot_state) {
             case ROBOT_STATE_MANUAL:
-                // driving
-                drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
-                strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
-                // rotate = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
-                rotate = RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
+                if (ROBOT_SERIAL_NUMBER != HERO_ROBOT_CANNON_7) {
+                    // driving
+                    if (ROBOT_SERIAL_NUMBER == HERO_ROBOT_TURRET_8) {
+                        drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
+                        strafe = 0;
+                        rotate = (RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET);
+                    } else {
+                        drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
+                        strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
+                        rotate = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
+                    }
 
-                // shooting
-                friction_motor_state = (RC_Ctl.rc.s2 == RC_SW_MID || RC_Ctl.rc.s2 == RC_SW_DOWN);
-                feeder_motor_state = (RC_Ctl.rc.s2 == RC_SW_DOWN);
+                    // shooting
+                    friction_motor_state = (RC_Ctl.rc.s2 == RC_SW_MID || RC_Ctl.rc.s2 == RC_SW_DOWN);
+                    feeder_motor_state = (RC_Ctl.rc.s2 == RC_SW_DOWN || RC_Ctl.mouse.press_l);
 
-                // aiming (untested) todo: limit these two
-                pitch_Position += (RC_Ctl.rc.ch1 - RC_CH_VALUE_OFFSET) / 100;
-                yaw_Position += (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) / 100;
+                    // aiming (untested) todo: limit these two
+                    pitch_Position += (RC_Ctl.rc.ch1 - RC_CH_VALUE_OFFSET) / 100;
+                    yaw_Position += (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) / 100 + RC_Ctl.mouse.y * MOUSE_SENSITIVITY;
+                }
                 break;
             case ROBOT_STATE_SEMI_AUTO:
-                // driving
-                drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
-                strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
-                rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
+                if (ROBOT_SERIAL_NUMBER != HERO_ROBOT_CANNON_7) {
+                    // driving
+                    drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
+                    strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
+                    rotate = RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET;
 
-                // shooting
-                friction_motor_state = data_usart_3.packet.friction_motor_state;
-                feeder_motor_state = data_usart_3.packet.feeder_motor_state;
+                    // shooting
+                    friction_motor_state = data_usart_3.packet.friction_motor_state;
+                    feeder_motor_state = data_usart_3.packet.feeder_motor_state;
 
-                // aiming
-                pitch_Position = data_usart_3.packet.pitch_req;
-                yaw_Position = data_usart_3.packet.yaw_req;
+                    // aiming
+                    pitch_Position = data_usart_3.packet.pitch_req;
+                    yaw_Position = data_usart_3.packet.yaw_req;
+                }
                 break;
-            case ROBOT_STATE_FULL_AUTO:
-                // driving
-                drive = data_usart_3.packet.drive_req;
-                strafe = data_usart_3.packet.strafe_req;
-                rotate = data_usart_3.packet.rotate_req;
+            case ROBOT_STATE_SPECIAL:
+                if (ROBOT_SERIAL_NUMBER != HERO_ROBOT_CANNON_7) {
+                    // driving
+                    drive = data_usart_3.packet.drive_req;
+                    strafe = data_usart_3.packet.strafe_req;
+                    rotate = data_usart_3.packet.rotate_req;
 
-                // shooting
-                friction_motor_state = data_usart_3.packet.friction_motor_state;
-                feeder_motor_state = data_usart_3.packet.feeder_motor_state;
+                    // shooting
+                    friction_motor_state = data_usart_3.packet.friction_motor_state;
+                    feeder_motor_state = data_usart_3.packet.feeder_motor_state;
 
-                // aiming
-                pitch_Position = data_usart_3.packet.pitch_req;
-                yaw_Position = data_usart_3.packet.yaw_req;
+                    // aiming
+                    pitch_Position = data_usart_3.packet.pitch_req;
+                    yaw_Position = data_usart_3.packet.yaw_req;
+                } else {
+                    // shooting is controlled by the arduino
+
+                    // aiming with received data from arduino
+                    pitch_Position += (RC_Ctl.rc.ch1 - RC_CH_VALUE_OFFSET) / 100;
+                    yaw_Position += (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) / 100;
+                }
                 break;
         }
     }

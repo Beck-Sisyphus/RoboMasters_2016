@@ -5,6 +5,8 @@
 #include <stdio.h>
 
 #define MAKE_INT16(a, b) (((int16_t) a << 8)) | (b & 255)
+#define TX_MSB(a) (a >> 8) & 255
+#define TX_LSB(a) a & 255
 
 typedef struct {
     struct { 

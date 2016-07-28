@@ -1,7 +1,7 @@
 #include "usart3.h"
 #include "laser.h"
-//#include "main.h"
-// #include "usart1.h" // ONLY for the RC_Ctl_t, remove this when we use diff. type
+#include "main.h"
+#include "usart1.h" // ONLY for the RC_Ctl_t, remove this when we use diff. type
 #include "led.h"
 
 volatile unsigned char arduino_rx_buffer_usart_3[32];
@@ -11,6 +11,7 @@ volatile arduino_data data_usart_3;
 
 volatile extern int16_t friction_motor_state;
 volatile extern int16_t feeder_motor_state;
+volatile extern RC_Ctl_t RC_Ctl;
 
 /*-----USART3_TX-----PB10---*/
 /*-----USART3_RX-----PB11---*/
@@ -109,31 +110,66 @@ void USART3_IRQHandler(void)
                 }
 
                 // store received data into
-                data_usart_3.packet.header = MAKE_INT16(arduino_rx_buffer_usart_3[0], arduino_rx_buffer_usart_3[1]);
-                data_usart_3.packet.feeder_motor_state = arduino_rx_buffer_usart_3[2] & 255;
-                data_usart_3.packet.friction_motor_state = arduino_rx_buffer_usart_3[3] & 255;
-                data_usart_3.packet.pitch_req = MAKE_INT16(arduino_rx_buffer_usart_3[4], arduino_rx_buffer_usart_3[5]);
-                data_usart_3.packet.yaw_req = MAKE_INT16(arduino_rx_buffer_usart_3[6], arduino_rx_buffer_usart_3[7]);
-                data_usart_3.packet.feeder_motor_pwm = MAKE_INT16(arduino_rx_buffer_usart_3[8], arduino_rx_buffer_usart_3[9]);
-                data_usart_3.packet.friction_motor_pwm = MAKE_INT16(arduino_rx_buffer_usart_3[10], arduino_rx_buffer_usart_3[11]);
-                data_usart_3.packet.drive_req = MAKE_INT16(arduino_rx_buffer_usart_3[12], arduino_rx_buffer_usart_3[13]);
-                data_usart_3.packet.strafe_req = MAKE_INT16(arduino_rx_buffer_usart_3[14], arduino_rx_buffer_usart_3[15]);
-                data_usart_3.packet.rotate_req = MAKE_INT16(arduino_rx_buffer_usart_3[16], arduino_rx_buffer_usart_3[17]);
-                data_usart_3.packet.mpu_x = MAKE_INT16(arduino_rx_buffer_usart_3[20], arduino_rx_buffer_usart_3[21]);
-                data_usart_3.packet.mpu_y = MAKE_INT16(arduino_rx_buffer_usart_3[22], arduino_rx_buffer_usart_3[23]);
-                data_usart_3.packet.mpu_z = MAKE_INT16(arduino_rx_buffer_usart_3[24], arduino_rx_buffer_usart_3[25]);
-                data_usart_3.packet.js_real_chassis_out_power = MAKE_INT16(arduino_rx_buffer_usart_3[26], arduino_rx_buffer_usart_3[27]);
+                if (ROBOT_SERIAL_NUMBER != HERO_ROBOT_CANNON_7) {
+                    data_usart_3.packet.header = MAKE_INT16(arduino_rx_buffer_usart_3[0], arduino_rx_buffer_usart_3[1]);
+                    data_usart_3.packet.feeder_motor_state = arduino_rx_buffer_usart_3[2] & 255;
+                    data_usart_3.packet.friction_motor_state = arduino_rx_buffer_usart_3[3] & 255;
+                    data_usart_3.packet.pitch_req = MAKE_INT16(arduino_rx_buffer_usart_3[4], arduino_rx_buffer_usart_3[5]);
+                    data_usart_3.packet.yaw_req = MAKE_INT16(arduino_rx_buffer_usart_3[6], arduino_rx_buffer_usart_3[7]);
+                    data_usart_3.packet.feeder_motor_pwm = MAKE_INT16(arduino_rx_buffer_usart_3[8], arduino_rx_buffer_usart_3[9]);
+                    data_usart_3.packet.friction_motor_pwm = MAKE_INT16(arduino_rx_buffer_usart_3[10], arduino_rx_buffer_usart_3[11]);
+                    data_usart_3.packet.drive_req = MAKE_INT16(arduino_rx_buffer_usart_3[12], arduino_rx_buffer_usart_3[13]);
+                    data_usart_3.packet.strafe_req = MAKE_INT16(arduino_rx_buffer_usart_3[14], arduino_rx_buffer_usart_3[15]);
+                    data_usart_3.packet.rotate_req = MAKE_INT16(arduino_rx_buffer_usart_3[16], arduino_rx_buffer_usart_3[17]);
+                    data_usart_3.packet.mpu_x = MAKE_INT16(arduino_rx_buffer_usart_3[20], arduino_rx_buffer_usart_3[21]);
+                    data_usart_3.packet.mpu_y = MAKE_INT16(arduino_rx_buffer_usart_3[22], arduino_rx_buffer_usart_3[23]);
+                    data_usart_3.packet.mpu_z = MAKE_INT16(arduino_rx_buffer_usart_3[24], arduino_rx_buffer_usart_3[25]);
+                    data_usart_3.packet.js_real_chassis_out_power = MAKE_INT16(arduino_rx_buffer_usart_3[26], arduino_rx_buffer_usart_3[27]);
 
-                // (2) reply with new packet, debug must be false
-                for (int i = 0; i < 32; i++) {
-                    arduino_tx_buffer_usart_3[i] = 0x00;
-                }
-                arduino_tx_buffer_usart_3[2] = feeder_motor_state & 255;
-                arduino_tx_buffer_usart_3[0] = 0xCE;
+                    // (2) reply with new packet, debug must be false
+                    for (int i = 0; i < 32; i++) {
+                        arduino_tx_buffer_usart_3[i] = 0x00;
+                    }
+                    arduino_tx_buffer_usart_3[0] = 0xCE;
+                    arduino_tx_buffer_usart_3[2] = feeder_motor_state & 255;
+                    arduino_tx_buffer_usart_3[10] = TX_MSB(RC_Ctl.rc.ch0);
+                    arduino_tx_buffer_usart_3[11] = TX_LSB(RC_Ctl.rc.ch0);
+                    arduino_tx_buffer_usart_3[12] = TX_MSB(RC_Ctl.rc.ch1);
+                    arduino_tx_buffer_usart_3[13] = TX_LSB(RC_Ctl.rc.ch1);
+                    arduino_tx_buffer_usart_3[14] = TX_MSB(RC_Ctl.rc.ch2);
+                    arduino_tx_buffer_usart_3[15] = TX_LSB(RC_Ctl.rc.ch2);
+                    arduino_tx_buffer_usart_3[16] = TX_MSB(RC_Ctl.rc.ch3);
+                    arduino_tx_buffer_usart_3[17] = TX_LSB(RC_Ctl.rc.ch3);
+                    arduino_tx_buffer_usart_3[18] = RC_Ctl.rc.s1;
+                    arduino_tx_buffer_usart_3[19] = RC_Ctl.rc.s2;
+                    arduino_tx_buffer_usart_3[20] = TX_MSB(RC_Ctl.mouse.x);
+                    arduino_tx_buffer_usart_3[21] = TX_LSB(RC_Ctl.mouse.x);
+                    arduino_tx_buffer_usart_3[22] = TX_MSB(RC_Ctl.mouse.y);
+                    arduino_tx_buffer_usart_3[23] = TX_LSB(RC_Ctl.mouse.y);
+                    arduino_tx_buffer_usart_3[24] = TX_MSB(RC_Ctl.mouse.z);
+                    arduino_tx_buffer_usart_3[25] = TX_LSB(RC_Ctl.mouse.z);
+                    arduino_tx_buffer_usart_3[26] = RC_Ctl.mouse.press_l;
+                    arduino_tx_buffer_usart_3[27] = RC_Ctl.mouse.press_r;
+                    arduino_tx_buffer_usart_3[28] = TX_MSB(RC_Ctl.key.v);
+                    arduino_tx_buffer_usart_3[29] = TX_LSB(RC_Ctl.key.v);
 
-                // send the packet
-                for (int i = 0; i < 32; i++) {
-                    USART3_SendChar(arduino_tx_buffer_usart_3[i]);
+                    // send the packet
+                    for (int i = 0; i < 32; i++) {
+                        USART3_SendChar(arduino_tx_buffer_usart_3[i]);
+                    }
+                } else {
+                    RC_Ctl.rc.ch0 = MAKE_INT16(arduino_rx_buffer_usart_3[10], arduino_rx_buffer_usart_3[11]);
+                    RC_Ctl.rc.ch1 = MAKE_INT16(arduino_rx_buffer_usart_3[12], arduino_rx_buffer_usart_3[13]);
+                    RC_Ctl.rc.ch2 = MAKE_INT16(arduino_rx_buffer_usart_3[14], arduino_rx_buffer_usart_3[15]);
+                    RC_Ctl.rc.ch3 = MAKE_INT16(arduino_rx_buffer_usart_3[16], arduino_rx_buffer_usart_3[17]);
+                    RC_Ctl.rc.s1 = arduino_rx_buffer_usart_3[18];
+                    RC_Ctl.rc.s2 = arduino_rx_buffer_usart_3[19];
+                    RC_Ctl.mouse.x = MAKE_INT16(arduino_rx_buffer_usart_3[20], arduino_rx_buffer_usart_3[21]);
+                    RC_Ctl.mouse.y = MAKE_INT16(arduino_rx_buffer_usart_3[22], arduino_rx_buffer_usart_3[23]);
+                    RC_Ctl.mouse.z = MAKE_INT16(arduino_rx_buffer_usart_3[24], arduino_rx_buffer_usart_3[25]);
+                    RC_Ctl.mouse.press_l = arduino_rx_buffer_usart_3[26];
+                    RC_Ctl.mouse.press_r = arduino_rx_buffer_usart_3[27];
+                    RC_Ctl.key.v = MAKE_INT16(arduino_rx_buffer_usart_3[28], arduino_rx_buffer_usart_3[29]);
                 }
             }
         }

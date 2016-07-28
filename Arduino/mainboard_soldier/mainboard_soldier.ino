@@ -4,17 +4,42 @@
 
 #define TX1_TPZ_PACKET_SIZE (32)
 #define STORAGE_DATA_SIZE (TX1_TPZ_PACKET_SIZE / 2)
+#define TPZ_OUT_HEADER (0xFA)
+#define TX1_OUT_HEADER (0xAA)
+#define HTPZ_OUT_HEADER (0xFA)
+
+// pin definitions
+#define ARM_UP_PIN (2) // hero only
+#define ARM_DN_PIN (3) // hero only
+#define FAN_PIN (4) // hero only
+#define STEPPER_MOTOR_PIN (5) // hero only
 #define LED_PIN (13)
 #define FEEDER_MOTOR_PIN (37)
-#define OUTGOING_HEADER (0xFA)
-//#define MPU_ENABLE
+
+#define MPU_ENABLE false // set to true to enable mpu
+#define DEBUG false // set to true to enable debug prints, will disable arduino->tx1 comms
+#define HERO_ARDUINO true // set to true if this arduino goes on hero robot
 
 #define LED_ON() digitalWrite(LED_PIN, HIGH)
 #define LED_OFF() digitalWrite(LED_PIN, LOW)
-#define FEEDER_MOTOR_ON() digitalWrite(FEEDER_MOTOR_PIN, HIGH)
-#define FEEDER_MOTOR_OFF() digitalWrite(FEEDER_MOTOR_PIN, LOW)
 #define L_BYTE(b) (b >> 8) & 255
 #define H_BYTE(b) (b & 255)
+#define MAKE_INT16(a, b) (((int16_t) a << 8)) | (b & 255)
+
+/**** rc switch definition ****/
+#define RC_SW_UP                        ((uint16_t)1)
+#define RC_SW_MID                       ((uint16_t)3)
+#define RC_SW_DOWN                      ((uint16_t)2)
+
+/**** pc key definition ****/
+#define KEY_PRESSED_OFFSET_W            ((uint16_t)0x01<<0)
+#define KEY_PRESSED_OFFSET_S            ((uint16_t)0x01<<1)
+#define KEY_PRESSED_OFFSET_A            ((uint16_t)0x01<<2)
+#define KEY_PRESSED_OFFSET_D            ((uint16_t)0x01<<3)
+#define KEY_PRESSED_OFFSET_Q            ((uint16_t)0x01<<4)
+#define KEY_PRESSED_OFFSET_E            ((uint16_t)0x01<<5)
+#define KEY_PRESSED_OFFSET_SHIFT        ((uint16_t)0x01<<6)
+#define KEY_PRESSED_OFFSET_CTRL         ((uint16_t)0x01<<7)
 
 /******** kalman ********/
 #define RESTRICT_PITCH // Comment out to restrict roll to ±90deg instead - please read: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf
@@ -73,9 +98,11 @@ unsigned char js_rx_byte;
 /**********************/
 
 // com buffers
-char incoming_buf[TX1_TPZ_PACKET_SIZE]; // incoming serial buffer
-char outgoing_buf[TX1_TPZ_PACKET_SIZE]; // outgoing serial buffer
+char tx1_in_buf[TX1_TPZ_PACKET_SIZE]; // incoming serial buffer
+char tpz_out_buf[TX1_TPZ_PACKET_SIZE]; // outgoing serial buffer
+char htpz_out_buf[32]; // outgoing serial buffer for hero trapezoid
 char tpz_in_buf[32];
+char tx1_out_buf[32];
 
 // data buffers
 int16_t tx1_tpz_data[STORAGE_DATA_SIZE]; // data in int
@@ -84,21 +111,31 @@ int16_t tx1_tpz_data[STORAGE_DATA_SIZE]; // data in int
 int16_t feeder_motor_state_req;
 
 // output js data
-uint16_t js_real_chassis_out_power; // power in watts x 100
+uint16_t js_real_chassis_out_power; // power in watts
 uint16_t js_remain_life_value;
 uint8_t js_big_rune_0_status;
 uint8_t js_big_rune_1_status;
 
-unsigned long timer_prev_time = 0;
-const long timer_period = 20; // time between transmitting packets
+unsigned long tpz_timer_prev_time = 0;
+const long tpz_timer_period = 20; // time between transmitting packets
+unsigned long tx1_timer_prev_time = 0;
+const long tx1_timer_period = 100; // 10hz
 
 void setup() {
     pinMode(LED_PIN, OUTPUT);
     pinMode(FEEDER_MOTOR_PIN, OUTPUT);
     Serial.begin(115200); // tx1
-    Serial1.begin(115200); // tpz
+    Serial1.begin(115200); // tpz (trapezoid)
+#if HERO_ARDUINO
+    // init hero interface
+    Serial2.begin(115200); // htpz (hero trapezoid)
+    pinMode(ARM_UP_PIN, OUTPUT);
+    pinMode(ARM_DN_PIN, OUTPUT);
+    pinMode(FAN_PIN, OUTPUT);
+    pinMode(STEPPER_MOTOR_PIN, OUTPUT);
+#endif
 
-#ifdef MPU_ENABLE
+#if MPU_ENABLE
     // INIT mpu
     mpu_kalman_init();
 #endif
@@ -113,36 +150,34 @@ void setup() {
 
 void loop() {
     // (1) process mpu kalman
-#ifdef MPU_ENABLE
+#if MPU_ENABLE
     mpu_kalman_process();
 #endif
 
     // (2) process packet from tx1
-    if (Serial.available() > TX1_TPZ_PACKET_SIZE - 1) {
-        // receive from tx1 into buffer
-        Serial.readBytes((char*) incoming_buf, TX1_TPZ_PACKET_SIZE);
+    if (Serial.available() > 0) {//TX1_TPZ_PACKET_SIZE - 1) {
+        if (Serial.peek() != 0xF9) {
+            Serial.read();
+        } else {
+            // receive from tx1 into buffer
+            Serial.readBytes((char*) tx1_in_buf, TX1_TPZ_PACKET_SIZE);
 
-        // cleanup buffer
-        for (int i = 0; i < TX1_TPZ_PACKET_SIZE; i++) {
-            incoming_buf[i] = (incoming_buf[i] & 255);
+            // cleanup buffer
+            for (int i = 0; i < TX1_TPZ_PACKET_SIZE; i++) {
+                tx1_in_buf[i] = (tx1_in_buf[i] & 255);
+            }
+
+            // set into int16 buffer according to protocol spec
+            for (int i = 0; i < STORAGE_DATA_SIZE; i++) {
+                tx1_tpz_data[i * 2] = ((int16_t) tx1_in_buf[i * 2] << 8) | (tx1_in_buf[i * 2 + 1] & 255);
+            }
         }
-
-        // set into int16 buffer according to protocol spec
-        for (int i = 0; i < STORAGE_DATA_SIZE; i++) {
-            tx1_tpz_data[i * 2] = ((int16_t) incoming_buf[i * 2] << 8) | (incoming_buf[i * 2 + 1] & 255);
-        }
-
-        // if (incoming_buf[2]) {
-        //     led_toggle();
-        // }
     }
 
     // (2.5) process packet from tpz
-    if (Serial1.available() > 31) {
+    if (Serial1.available() > 0) {
         if (Serial1.peek() != 0xCE) {
-            while (Serial1.peek() != 0xCE) {
-                Serial1.read();
-            }
+            Serial1.read();
         } else {
             // receive from tpz into buffer
             Serial1.readBytes((char*) tpz_in_buf, 32);
@@ -152,14 +187,57 @@ void loop() {
                 tpz_in_buf[i] = (tpz_in_buf[i] & 255);
             }
 
-            // debug actions
-            if (tpz_in_buf[2]) { // turn on led if feeder motor on
-                LED_ON();
-                FEEDER_MOTOR_ON();
-            } else {
-                LED_OFF();
-                FEEDER_MOTOR_OFF();
+            // set control variables
+            feeder_motor_state_req = tpz_in_buf[2];
+
+#if HERO_ARDUINO
+            /********(2.5.1) process received data********/
+            int16_t key_req = MAKE_INT16(tpz_in_buf[28], tpz_in_buf[29]);
+
+            // arm control
+            if (key_req & KEY_PRESSED_OFFSET_W) { // arm up movement
+                digitalWrite(ARM_UP_PIN, HIGH);
+                digitalWrite(ARM_DN_PIN, LOW);
+            } else if (key_req & KEY_PRESSED_OFFSET_S) { // arm dn movement
+                digitalWrite(ARM_UP_PIN, LOW);
+                digitalWrite(ARM_DN_PIN, HIGH);
+            } else { // no movement
+                digitalWrite(ARM_UP_PIN, LOW);
+                digitalWrite(ARM_DN_PIN, LOW);
             }
+
+            // fan control
+            if (key_req & KEY_PRESSED_OFFSET_D) { // fan on
+                digitalWrite(FAN_PIN, HIGH);
+            } else { // fan off
+                digitalWrite(FAN_PIN, LOW);
+            }
+
+            // stepper motor control
+            if (tpz_in_buf[18] == RC_SW_DOWN) { // special function on hero controls cannon
+                if (tpz_in_buf[19] == RC_SW_DOWN || tpz_in_buf[26]) {
+                    digitalWrite(STEPPER_MOTOR_PIN, HIGH);
+                } else {
+                    digitalWrite(STEPPER_MOTOR_PIN, LOW);
+                }
+            }
+
+            /********(2.5.2) transmit to tx1********/
+            // assemble outgoing packet
+            // clear the buffer
+            for (int i = 0; i < 32; i++) {
+                htpz_out_buf[i] = 0x00;
+            }
+            htpz_out_buf[0] = HTPZ_OUT_HEADER; // set the header
+
+            // set the rc_ctl fields
+            for (int i = 10; i < 30; i++) {
+                htpz_out_buf[i] = tpz_in_buf[i];
+            }
+
+            // transmit to htpz the buffer
+            Serial2.write((uint8_t*) htpz_out_buf, 32);
+#endif
         }
     }
 
@@ -176,33 +254,74 @@ void loop() {
             js_big_rune_0_status = general_info->bigRune0Status;
             js_big_rune_1_status = general_info->bigRune1status;
         }
+#if DEBUG
         Serial.println(general_info->realChassisOutV);
+#endif
     }
 
     // (3) transmit to tpz
-    unsigned long timer_current_time = millis();
-    if (timer_current_time - timer_prev_time >= timer_period) {
-        timer_prev_time = timer_current_time;
+    unsigned long tpz_timer_current_time = millis();
+    if (tpz_timer_current_time - tpz_timer_prev_time >= tpz_timer_period) {
+        tpz_timer_prev_time = tpz_timer_current_time;
 
+        /********(3.1) transmit to tpz********/
         // assemble outgoing packet
-        // (a) copy incoming buffer to outgoing buffer
+        // copy incoming buffer to outgoing buffer
         for (int i = 0; i < TX1_TPZ_PACKET_SIZE; i++) {
-            outgoing_buf[i] = incoming_buf[i];
+            tpz_out_buf[i] = tx1_in_buf[i];
         }
-        outgoing_buf[0] = OUTGOING_HEADER; // set the header
+        tpz_out_buf[0] = TPZ_OUT_HEADER; // set the header
 
-        // (b) insert kalman data to outgoing buffer
-#ifdef MPU_ENABLE
+        // insert kalman data to outgoing buffer
+#if MPU_ENABLE
         insert_mpu_kalman_data();
 #endif
-        // (c) insert js data to outgoing buffer
-        outgoing_buf[26] = L_BYTE(js_real_chassis_out_power);
-        outgoing_buf[27] = H_BYTE(js_real_chassis_out_power);
+        // insert js data to outgoing buffer
+        tpz_out_buf[26] = L_BYTE(js_real_chassis_out_power);
+        tpz_out_buf[27] = H_BYTE(js_real_chassis_out_power);
 
         // transmit to tpz the buffer
-        Serial1.write((uint8_t*) outgoing_buf, TX1_TPZ_PACKET_SIZE);
+        Serial1.write((uint8_t*) tpz_out_buf, TX1_TPZ_PACKET_SIZE);
     }
+
+    // (4) transmit to tx1
+    unsigned long tx1_timer_current_time = millis();
+    if (tx1_timer_current_time - tx1_timer_prev_time >= tx1_timer_period) {
+        tx1_timer_prev_time = tx1_timer_current_time;
+
+        /********(4.1) transmit to tx1********/
+        // assemble outgoing packet
+        // clear the buffer
+        for (int i = 0; i < 32; i++) {
+            tx1_out_buf[i] = 0x00;
+        }
+        tx1_out_buf[0] = TX1_OUT_HEADER; // set the header
+
+        // insert data
+        tx1_out_buf[2] = js_big_rune_0_status;
+        tx1_out_buf[3] = js_big_rune_1_status;
+
+        // transmit to tx1 the buffer
+#if !DEBUG
+        Serial.write((uint8_t*) tx1_out_buf, 32);
+#endif
+    }
+
+    // (5) misc process
+    misc_process();
+
     delay(1);
+}
+
+void misc_process() {
+    // set the feeder motor state
+    if (feeder_motor_state_req) { // turn on led if feeder motor on
+        LED_ON();
+        digitalWrite(FEEDER_MOTOR_PIN, HIGH);
+    } else {
+        LED_OFF();
+        digitalWrite(FEEDER_MOTOR_PIN, LOW);
+    }
 }
 
 void read_one() {
@@ -284,12 +403,12 @@ void insert_mpu_kalman_data() {
     kal_int_y = kalAngleY * KAL_CONST_Y;
     kal_int_z = kalAngleZ * KAL_CONST_Z;
 
-    outgoing_buf[20] = L_BYTE(kal_int_x);
-    outgoing_buf[21] = H_BYTE(kal_int_x);
-    outgoing_buf[22] = L_BYTE(kal_int_y);
-    outgoing_buf[23] = H_BYTE(kal_int_y);
-    outgoing_buf[24] = L_BYTE(kal_int_z);
-    outgoing_buf[25] = H_BYTE(kal_int_z);
+    tpz_out_buf[20] = L_BYTE(kal_int_x);
+    tpz_out_buf[21] = H_BYTE(kal_int_x);
+    tpz_out_buf[22] = L_BYTE(kal_int_y);
+    tpz_out_buf[23] = H_BYTE(kal_int_y);
+    tpz_out_buf[24] = L_BYTE(kal_int_z);
+    tpz_out_buf[25] = H_BYTE(kal_int_z);
 }
 
 void led_toggle() {

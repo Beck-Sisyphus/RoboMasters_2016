@@ -8,6 +8,9 @@ B: Arduino -> Trapezoid
 C: Trapezoid -> Arduino
 D: Arduino -> TX1
 
+----For Hero Robot Only----
+E: Arduino -> CannonTrapezoid
+
 Arduino Serial Interfaces
 Serial: TX1 (tx1)
 Serial1: Trapezoid (tpz)
@@ -59,16 +62,16 @@ byte
 4  5   
 6  7   
 8  9   
-10 11  
-12 13  
-14 15  
-16 17  
-18 19  
-20 21  
-22 23  
-24 25  
-26 27  
-28 29  
+10 11  rc_ch0
+12 13  rc_ch1
+14 15  rc_ch2
+16 17  rc_ch3
+18 19  rc_s1 | rc_s2
+20 21  mouse_x
+22 23  mouse_y
+24 25  mouse_z
+26 27  mouse_press_l | mouse_press_r
+28 29  key_v
 30 31  
 
 ----D----
@@ -88,4 +91,23 @@ byte
 24 25  
 26 27  
 28 29  
+30 31  
+
+----E----
+byte
+0  1   header (0xFA)
+2  3   
+4  5   
+6  7   
+8  9   
+10 11  rc_ch0
+12 13  rc_ch1
+14 15  rc_ch2
+16 17  rc_ch3
+18 19  rc_s1 | rc_s2
+20 21  mouse_x
+22 23  mouse_y
+24 25  mouse_z
+26 27  mouse_press_l | mouse_press_r
+28 29  key_v
 30 31  
