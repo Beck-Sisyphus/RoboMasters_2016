@@ -72,7 +72,8 @@ void printDisAndAngle(struct Output output){
 		printf("%f\n", 1.35*distance);
 		float valueY =  XDistanceFromCenter * 1.35*distance;                
 		printf("%f\n", atan(valueY));
-		printf("0\n");
+                float valueZ =  YDistanceFromCenter * 1.35*distance;   
+		printf("%f\n", atan(valueZ));
 	}
 }
 void *fetch_in_thread(void *ptr)
