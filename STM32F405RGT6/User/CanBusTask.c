@@ -2,32 +2,22 @@
 
 static uint32_t can_count = 0;
 
-volatile Encoder CM1Encoder = {0,0,0,0,0,0,0};
-volatile Encoder CM2Encoder = {0,0,0,0,0,0,0};
-volatile Encoder CM3Encoder = {0,0,0,0,0,0,0};
-volatile Encoder CM4Encoder = {0,0,0,0,0,0,0};
-volatile Encoder GMYawEncoder = {0,0,0,0,0,0,0};
-volatile Encoder GMPitchEncoder = {0,0,0,0,0,0,0};
-
 gimbal_mapping_t gimbal_0 = GIMBAL_BLUE_SAMPLE_ROBOT_0;
 gimbal_mapping_t gimbal_1 = GIMBAL_RED_SAMPLE_ROBOT_1;
-gimbal_mapping_t gimbal_2 = GIMBAL_DEFAULT;
-gimbal_mapping_t gimbal_3 = GIMBAL_DEFAULT;
+gimbal_mapping_t gimbal_2 = GIMBAL_SOLDIER_2;
+gimbal_mapping_t gimbal_3 = GIMBAL_SOLDIER_3;
 gimbal_mapping_t gimbal_4 = GIMBAL_DEFAULT;
 gimbal_mapping_t gimbal_5 = GIMBAL_SOLDIER_5;
 gimbal_mapping_t gimbal_6 = GIMBAL_DEFAULT;
 gimbal_mapping_t gimbal_7 = GIMBAL_HERO_ROBOT_CANNON_7;
 gimbal_mapping_t gimbal_8 = GIMBAL_DEFAULT;
 
-// extern gimbal_mapping_t gimbal_0;
-// extern gimbal_mapping_t gimbal_1;
-// extern gimbal_mapping_t gimbal_2;
-// extern gimbal_mapping_t gimbal_3;
-// extern gimbal_mapping_t gimbal_4;
-// extern gimbal_mapping_t gimbal_5;
-// extern gimbal_mapping_t gimbal_6;
-// extern gimbal_mapping_t gimbal_7;
-// extern gimbal_mapping_t gimbal_8;
+volatile Encoder CM1Encoder = {0,0,0,0,0,0,0,0,0,0};
+volatile Encoder CM2Encoder = {0,0,0,0,0,0,0,0,0,0};
+volatile Encoder CM3Encoder = {0,0,0,0,0,0,0,0,0,0};
+volatile Encoder CM4Encoder = {0,0,0,0,0,0,0,0,0,0};
+volatile Encoder GMYawEncoder = {0,0,0,0,0,0,0,0,0,0};
+volatile Encoder GMPitchEncoder = {0,0,0,0,0,0,0,0,0,0};
 
 // yaw and pitch angle rx messages from CAN
 int16_t measured_yaw_angle;   // range from 0~8191, 0x1FFF
@@ -47,35 +37,26 @@ All rx messages mapped the same way:
 data 0 and 1 measure angle
 data 4 and 5 relates to what current you are tx to motors
 data 4 and 5 NOT same as current tx value
+
+For sample robot 2015, with EC60 motor drives:
+data 0 and 1 measure position of wheel, from 0 to 8191
+clockwise wheel rotation decreases wheel's position
+wheel position value repeats (decrease from 0 means go back to 8200 again)
+
+data 4 and 5 relates to what current you are tx to motors
+data 4 and 5 NOT same as current tx value
+
+data 2, 3, 6, 7 not useful
+
+For robot we build in 2016, with 820R motor drives:
+You calibrate the CAN address in the first time
+data 0 and 1 measure position of wheel, from 0 to 8191
+data 2 and 3 measure rotational speed, in unit of RPM
+data 4,5, 6, and 7 are null.
 *******/
 void CanReceiveMsgProcess(CanRxMsg * rx_message)
 {
     can_count++;
-    /***************
-    Wheel RX Address
-    0x201: Front right wheel
-    0x202: Front left wheel
-    0x203: Back left wheel
-    0x204: Back right wheel
-    0x205: yaw
-    0x206: pitch
-
-    For sample robot 2015, with EC60 motor drives:
-    data 0 and 1 measure position of wheel, from 0 to 8191
-    clockwise wheel rotation decreases wheel's position
-    wheel position value repeats (decrease from 0 means go back to 8200 again)
-
-    data 4 and 5 relates to what current you are tx to motors
-    data 4 and 5 NOT same as current tx value
-
-    data 2, 3, 6, 7 not useful
-
-    For robot we build in 2016, with 820R motor drives:
-    You calibrate the CAN address in the first time
-    data 0 and 1 measure position of wheel, from 0 to 8191
-    data 2 and 3 measure rotational speed, in unit of RPM
-    data 4,5, 6, and 7 are null.
-    ***************/
     switch(rx_message->StdId)
     {
         case 0x201:
@@ -215,14 +196,7 @@ void Wheels_Address_Setup() {
 }
 
 // prepares whole 0x1FF pitch/yaw CAN message for tx
-/*  From Beck's observation, the sending data is the opposite way, big-endian
-    first data is top, and that is tested
-*/
 void Set_PitchYaw_Current() {
-    // tx_pitchyaw_message.Data[0] = motor_yaw_cur & 0xFF; // sample out the top 8 bits
-    // tx_pitchyaw_message.Data[1] = motor_yaw_cur >> 8;
-    // tx_pitchyaw_message.Data[2] = motor_pitch_cur & 0xFF;
-    // tx_pitchyaw_message.Data[3] = motor_pitch_cur >> 8;
     tx_pitchyaw_message.Data[0] = motor_yaw_cur >> 8;
     tx_pitchyaw_message.Data[1] = motor_yaw_cur & 0xFF;
     tx_pitchyaw_message.Data[2] = motor_pitch_cur >> 8;
@@ -233,24 +207,6 @@ void Set_PitchYaw_Current() {
     tx_pitchyaw_message.Data[7] = 0x00;
 }
 
-/************ For Red C Motor
-// prepares whole 0x200 wheel CAN message for tx
-// */
-// void Set_Wheels_Current() {
-//     tx_wheels_message.Data[0] = motor_front_left_cur >> 8;
-//     tx_wheels_message.Data[1] = motor_front_left_cur & 0xFF;
-//     tx_wheels_message.Data[2] = motor_back_left_cur >> 8;
-//     tx_wheels_message.Data[3] = motor_back_left_cur & 0xFF;
-//     tx_wheels_message.Data[4] = motor_front_right_cur >> 8;
-//     tx_wheels_message.Data[5] = motor_front_right_cur & 0xFF;
-//     tx_wheels_message.Data[6] = motor_back_right_cur >> 8;
-//     tx_wheels_message.Data[7] = motor_back_right_cur & 0xFF;
-// }
-//*********** For Blue Motor
-// prepares whole 0x200 wheel CAN message for tx
-/*
-Change, same as what Beck observed for pitch/yaw
-*/
 void Set_Wheels_Current() {
 
     tx_wheels_message.Data[0] = motor_front_right_cur >> 8;
@@ -290,8 +246,6 @@ void wheel_control(int16_t motor_201_vel, int16_t motor_202_vel, int16_t motor_2
 // tx_message1 for wheels
 // tx_message2 for pitch and yaw
 void Motor_Reset_Can_2(void) {
-
-
     CanTxMsg tx_message1;
     CanTxMsg tx_message2;
     motor_yaw_cur = 0;
@@ -300,8 +254,6 @@ void Motor_Reset_Can_2(void) {
     motor_front_left_cur = 0;
     motor_back_left_cur = 0;
     motor_back_right_cur = 0;
-
-
 
     tx_message1.StdId = 0x200;
     tx_message1.DLC = 0x08;

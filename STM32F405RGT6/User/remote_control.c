@@ -92,8 +92,8 @@ void Remote_Control() {
 
 
 uint8_t remote_on = 0;
-// uint8_t robot_state = ROBOT_STATE_MANUAL;
-uint8_t robot_state = ROBOT_STATE_FULL_AUTO;
+uint8_t robot_state = ROBOT_STATE_MANUAL;
+
 #if 1
 // this is run by tim2
 void Remote_Control() {
@@ -190,24 +190,6 @@ void Remote_Control() {
     }
 }
 #endif
-
-int min(int a, int b) {
-    if(a<b) {
-        return a;
-    } else {
-        return b;
-    }
-}
-
-int max(int a, int b) {
-    if(a>b) {
-        return a;
-    } else {
-        return b;
-    }
-}
-
-
 
 // division rounding
 // for smoothening remote control of pitch and yaw

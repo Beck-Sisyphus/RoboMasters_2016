@@ -56,11 +56,11 @@ void PWM_Configuration(void)
     TIM_ARRPreloadConfig(TIM5,ENABLE);
     TIM_Cmd(TIM5,ENABLE);
 
-    // // initialize friction motors
-    // PWM1 = 1000;
-    // PWM2 = 1000;
-    // // initialize feeder motor no spin
-    // PWM3 = 0;
+    // initialize friction motors
+    PWM1 = 1000;
+    PWM2 = 1000;
+    // initialize feeder motor no spin
+    PWM3 = 0;
 
 }
 
