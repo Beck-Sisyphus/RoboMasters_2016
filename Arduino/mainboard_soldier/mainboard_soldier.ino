@@ -329,20 +329,20 @@ void read_one() {
     js_rx_byte = Serial3.read();
 }
 
-/* 
+/*
     **description: reciving the data from the judgement system and put them into
     different data structure according to the different data type.
-    
+
     **input: SOF, in this case the byte A5 received from judgement system
 
     **output: none, data will be store in the globally declared & initiallized
-    data structure  
+    data structure
 */
 void receive(unsigned char SOF) {
 
     unsigned char buffer_1[4];
-    uint16_t data_size;  
-    uint16_t data_type; 
+    uint16_t data_size;
+    uint16_t data_type;
 
     buffer_1[0] = SOF;
     int itr = 1;
@@ -369,12 +369,12 @@ void receive(unsigned char SOF) {
         //     i++;
         // }
         // Serial.println();
-    
+
         // sometimes it does not pass the CRC test because the data is corrupted
-        if (Verify_CRC16_Check_Sum(buffer_2, SHARED_SIZE + data_size)) {            
+        if (Verify_CRC16_Check_Sum(buffer_2, SHARED_SIZE + data_size)) {
             data_type = buffer_2[4];
-        
-            // at this point we have got all the data from the js into the buffer_2 
+
+            // at this point we have got all the data from the js into the buffer_2
             if (data_type == 1) {
                 //Serial.println("data is 1");
                 memcpy(general_info, buffer_2 + 6, 20);
@@ -386,7 +386,7 @@ void receive(unsigned char SOF) {
                 general_info->parkingApron0 = (buffer_2[26] >> 7) & 1;
                 //memcpy(general_info->gps_data, buffer_2 + 27, 17);
             } else if (data_type == 2) {
-                health_data->weakId = buffer_2[6];  
+                health_data->weakId = buffer_2[6];
                 health_data->way = (buffer_2[6] >> 4) & 15;
                 memcpy(&(health_data->value), buffer_2 + 7, 2);
             } else if (data_type == 3) {

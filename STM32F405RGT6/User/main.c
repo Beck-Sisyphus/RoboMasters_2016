@@ -1,7 +1,7 @@
 #include "main.h"
 
 /// Turns on to print the reading
-#define DEBUG true
+#define DEBUG false
 
 unsigned char USART_BUF[24] = {0};
 extern arduino_data data_usart_3;
@@ -16,17 +16,16 @@ extern int16_t motor_front_left_cur;
 extern int16_t motor_back_left_cur;
 extern int16_t motor_back_right_cur;
 
-extern int32_t measured_yaw_angle_401;
-
 extern MPU6050_RAW_DATA MPU6050_Raw_Data;
 extern MPU6050_REAL_DATA MPU6050_Real_Data;
 extern int16_t pitch_Position;
+
 extern int16_t yaw_Position;
+extern float measured_yaw_angle_401;
 
 extern int16_t drive;
 extern int16_t strafe;
 extern int16_t rotate;
-
 extern volatile Encoder CM1Encoder;
 extern volatile Encoder CM2Encoder;
 extern volatile Encoder CM3Encoder;
@@ -49,13 +48,17 @@ int main(void)
     MPU6050_Gyro_calibration();
 
     // MPU6050_Interrupt_Configuration();
-
-
+		// delay_ms(1000);
     PWM_Configuration();
     delay_ms(1000);
     // Set the duty cycle to 1000 to initialize the motor controller for friction wheels
     PWM1 = 1500;
+    // delay_ms(1000);
     PWM2 = 1500;
+    delay_ms(1000);
+    PWM1 = 1346;
+    // delay_ms(1000);
+    PWM2 = 1346;
 
 		#if DEBUG
 				printf("measured_yaw_angle; measured_pitch_angle; Encoder yaw; Encoder pitch\n");
@@ -77,7 +80,7 @@ int main(void)
             //  printf("%i, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f", count, MPU6050_Real_Data.Gyro_X,
             //  MPU6050_Real_Data.Gyro_Y, MPU6050_Real_Data.Gyro_Z,
             //  MPU6050_Real_Data.Accel_X, MPU6050_Real_Data.Accel_Y, MPU6050_Real_Data.Accel_Z);
-            //printf("%i", measured_yaw_angle_401);
+            printf("%f", measured_yaw_angle_401);
             //  printf("%i\t\t%i\t\t%i\t\t\n", drive, strafe, rotate);
             delay_ms(1000);
         #endif

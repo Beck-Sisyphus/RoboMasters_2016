@@ -42,7 +42,7 @@ void USART1_Configuration(void)
     /* -------------- Configure NVIC ---------------------------------------*/
     nvic.NVIC_IRQChannel = DMA2_Stream2_IRQn;
 
-    nvic.NVIC_IRQChannelPreemptionPriority = 0;
+    nvic.NVIC_IRQChannelPreemptionPriority = 1;
     nvic.NVIC_IRQChannelSubPriority = 1;
     nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);

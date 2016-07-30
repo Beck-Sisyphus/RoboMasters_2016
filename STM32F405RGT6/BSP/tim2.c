@@ -40,7 +40,7 @@ void TIM2_IRQHandler(void)
     {
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
         Remote_Control();
-        set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
+				set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
         CMControlLoop();
     }
 }

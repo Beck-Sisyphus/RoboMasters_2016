@@ -7,8 +7,21 @@
 // #define pitch_max 15.0
 // #define yaw_max 720.0
 #define YAW_DEFAULT_RADIAN 0
-#define PITCH_DEFAULT_RADIAN 1571 // 90 degree in radians
+#define PITCH_DEFAULT_RADIAN 0 // 90 degree in radians
 #define RADIAN_CIRCLE 6283 // 2 * pi * 1000 as we defined in the system for angle
+typedef struct motor_mapping_t
+{
+  int real_low;
+  int real_high;
+  int ecd_low;
+  int ecd_high;
+}motor_mapping_t;
+
+typedef struct gimbal_mapping_t
+{
+  motor_mapping_t pitch;
+  motor_mapping_t yaw;
+}gimbal_mapping_t;
 
 typedef struct Encoder
 {
@@ -24,26 +37,12 @@ typedef struct Encoder
     float ecd_angle;					// final angle in radian * 1000
 }Encoder;
 
-typedef struct motor_mapping_t
-{
-  int real_low;
-  int real_high;
-  int ecd_low;
-  int ecd_high;
-} motor_mapping_t;
-
-typedef struct gimbal_mapping_t
-{
-  motor_mapping_t pitch;
-  motor_mapping_t yaw;
-}gimbal_mapping_t;
-
 // measured by protractor, in radian * 1000, in aircraft coordinate
 // CAN bus feedback for both RM6025 and RM6623
 #define GIMBAL_BLUE_SAMPLE_ROBOT_0 {\
 	{\
-    750,\
-    1990,\
+    -821,\
+    419,\
     7530,\
     6244,\
   },\
@@ -57,8 +56,8 @@ typedef struct gimbal_mapping_t
 
 #define GIMBAL_RED_SAMPLE_ROBOT_1 {\
   {\
-    750,\
-    1990,\
+    -821,\
+    419,\
     5238,\
     4039,\
   },\
@@ -69,18 +68,51 @@ typedef struct gimbal_mapping_t
     0,\
   },\
 }\
-// 72 degree，135 degree
-#define GIMBAL_SOLDIER_5 {\
+
+// 83 degree, 135 degree, autonomous mode
+#define GIMBAL_SOLDIER_2 {\
   {\
-    1257,\
-    2356,\
-    6188,\
-    7615,\
+    -122,\
+    785,\
+    5378,\
+    6601,\
   },\
   {\
     -1571,\
     1571,\
-    4760,\
+    8585,\
+    4499,\
+  },\
+}\
+
+// -28 degree，135 degree
+#define GIMBAL_SOLDIER_3 {\
+  {\
+    -489,\
+    785,\
+    1661,\
+    3284,\
+  },\
+  {\
+    -1571,\
+    1571,\
+    5803,\
+    1744,\
+  },\
+}\
+
+// 72 degree，135 degree
+#define GIMBAL_SOLDIER_5 {\
+  {\
+    -314,\
+    785,\
+    6464,\
+    7585,\
+  },\
+  {\
+    -1571,\
+    1571,\
+    4801,\
     715,\
   },\
 }\
@@ -88,8 +120,8 @@ typedef struct gimbal_mapping_t
 // 52 degree，130 degree
 #define GIMBAL_HERO_ROBOT_CANNON_7 {\
   {\
-    907 ,\
-    2269,\
+    -664,\
+    698,\
     7480,\
     9347,\
   },\

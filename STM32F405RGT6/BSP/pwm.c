@@ -10,10 +10,10 @@ TIM_OCInitTypeDef         oc;
 void PWM_Configuration(void)
 {
     GPIO_InitTypeDef          gpio;
-	 
+
     TIM_TimeBaseInitTypeDef   tim;
     TIM_OCInitTypeDef         oc;
-    
+
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA ,ENABLE);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
 
@@ -23,8 +23,8 @@ void PWM_Configuration(void)
     GPIO_Init(GPIOA,&gpio);
 
     GPIO_PinAFConfig(GPIOA,GPIO_PinSource1, GPIO_AF_TIM5);
-    GPIO_PinAFConfig(GPIOA,GPIO_PinSource0,GPIO_AF_TIM5);   
-    GPIO_PinAFConfig(GPIOA,GPIO_PinSource2,GPIO_AF_TIM5);       
+    GPIO_PinAFConfig(GPIOA,GPIO_PinSource0,GPIO_AF_TIM5);
+    GPIO_PinAFConfig(GPIOA,GPIO_PinSource2,GPIO_AF_TIM5);
 
     tim.TIM_Prescaler = 84-1;
     tim.TIM_CounterMode = TIM_CounterMode_Up;
@@ -32,7 +32,7 @@ void PWM_Configuration(void)
     tim.TIM_ClockDivision = TIM_CKD_DIV1;
     TIM_TimeBaseInit(TIM5,&tim);
     // TIM_TimeBaseInit(TIM9,&tim);
-    
+
     oc.TIM_OCMode = TIM_OCMode_PWM1;
     oc.TIM_OutputState = TIM_OutputState_Enable;
     oc.TIM_OutputNState = TIM_OutputState_Disable;
@@ -49,10 +49,10 @@ void PWM_Configuration(void)
 
 
     TIM_OC1PreloadConfig(TIM5,TIM_OCPreload_Enable);
-    TIM_OC2PreloadConfig(TIM5,TIM_OCPreload_Enable);  
-    TIM_OC3PreloadConfig(TIM5,TIM_OCPreload_Enable);   
-           
-    
+    TIM_OC2PreloadConfig(TIM5,TIM_OCPreload_Enable);
+    TIM_OC3PreloadConfig(TIM5,TIM_OCPreload_Enable);
+
+
     TIM_ARRPreloadConfig(TIM5,ENABLE);
     TIM_Cmd(TIM5,ENABLE);
 
@@ -107,12 +107,9 @@ void set(int pulse){
 
 // DIfferent GPIO modes
 // typedef enum
-// { 
+// {
 //   GPIO_Mode_IN   = 0x00, /*!< GPIO Input Mode */
 //   GPIO_Mode_OUT  = 0x01, /*!< GPIO Output Mode */
 //   GPIO_Mode_AF   = 0x02, /*!< GPIO Alternate function Mode */
 //   GPIO_Mode_AN   = 0x03  /*!< GPIO Analog Mode */
 // }GPIOMode_TypeDef;
-
-
-
