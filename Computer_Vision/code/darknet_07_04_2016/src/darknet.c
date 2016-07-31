@@ -241,10 +241,10 @@ int main(int argc, char **argv)
     //test_resize("data/bad.jpg");
     //test_box();
     //test_convolutional_layer();
-    if(argc < 2){
+    /*if(argc < 2){
         fprintf(stderr, "usage: %s <function>\n", argv[0]);
         return 0;
-    }
+    }*/
     gpu_index = find_int_arg(argc, argv, "-i", 0);
     if(find_arg(argc, argv, "-nogpu")) {
         gpu_index = -1;
@@ -258,8 +258,8 @@ int main(int argc, char **argv)
         check_error(status);
     }
 #endif
-
-    if(0==strcmp(argv[1], "imagenet")){
+    run_yolo(argc, argv);
+    /*if(0==strcmp(argv[1], "imagenet")){
         run_imagenet(argc, argv);
     } else if (0 == strcmp(argv[1], "average")){
         average(argc, argv);
@@ -319,7 +319,7 @@ int main(int argc, char **argv)
         test_resize(argv[2]);
     } else {
         fprintf(stderr, "Not an option: %s\n", argv[1]);
-    }
+    }*/
     return 0;
 }
 
