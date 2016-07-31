@@ -110,8 +110,8 @@ void EncoderProcess(volatile Encoder *v, CanRxMsg * rx_message)
     v->velocity_raw = ( rx_message->Data[2] << 8 ) | rx_message->Data[3];
     v->angle_diff = v->angle_raw - v->angle_raw_last;
     // If the feeback from the encoder changes too much, the rotation is incremented
-    if(v->angle_diff < -7500) { v->round_count++; }
-    else if(v->angle_diff > 7500) { v->round_count--; }
+    if(v->angle_diff < -7500) { v->round_count--; }
+    else if(v->angle_diff > 7500) { v->round_count++; }
     // Calculate the encoder output in a continous value domain
     v->angle_continous = v->angle_raw + v->round_count * ENCODER_MAX;
     // Calculate the angle, range from negative infinite to positive infinite
