@@ -26,8 +26,8 @@ setup tx1
         $ sudo apt-get install ros-indigo-desktop
         $ sudo rosdep init
         $ rosdep update
-        $ echo "source /opt/ros/jade/setup.bash" >> /.bashrc
-        $ source /.bashrc
+        $ echo "source /opt/ros/jade/setup.bash" >> ~/.bashrc
+        $ source ~/.bashrc
         $ sudo apt-get install python-rosinstall
     (3) setup catkin workspace
         $ mkdir -p ~/catkin_ws/src
@@ -36,6 +36,8 @@ setup tx1
         $ git clone https://github.com/pico737/robomasters_ros
         $ cd ~/catkin_ws
         $ catkin_make
+        $ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
+        $ source ~/.bashrc
     (4) setup darknet
         $ cd ~
         $ git clone https://github.com/Beck-Sisyphus/RoboMasters_2016.git
