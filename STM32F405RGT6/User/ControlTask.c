@@ -51,21 +51,25 @@ int16_t set_chassis_motor_velocity(int can_address, int remote_receiver_velocity
 {
     int target_velocity = map(remote_receiver_velocity, -660, 660, -8171, 8171);
     int result_velocity;
-    // result_velocity = target_velocity;
-    switch (can_address) {
-        case 201:
-            result_velocity = PID_Control((float)CM1Encoder.velocity_raw, (float)target_velocity, &CM1SpeedPID);
-            break;
-        case 202:
-            result_velocity = PID_Control((float)CM2Encoder.velocity_raw, (float)target_velocity, &CM2SpeedPID);
-            break;
-        case 203:
-            result_velocity = PID_Control((float)CM3Encoder.velocity_raw, (float)target_velocity, &CM3SpeedPID);
-            break;
-        case 204:
-            result_velocity = PID_Control((float)CM4Encoder.velocity_raw, (float)target_velocity, &CM4SpeedPID);
-            break;
-        default:break;
+    if (ROBOT_SERIAL_NUMBER == HERO_ROBOT_TURRET_8) {
+        result_velocity = target_velocity;
+    }
+    else {
+        switch (can_address) {
+            case 201:
+                result_velocity = PID_Control((float)CM1Encoder.velocity_raw, (float)target_velocity, &CM1SpeedPID);
+                break;
+            case 202:
+                result_velocity = PID_Control((float)CM2Encoder.velocity_raw, (float)target_velocity, &CM2SpeedPID);
+                break;
+            case 203:
+                result_velocity = PID_Control((float)CM3Encoder.velocity_raw, (float)target_velocity, &CM3SpeedPID);
+                break;
+            case 204:
+                result_velocity = PID_Control((float)CM4Encoder.velocity_raw, (float)target_velocity, &CM4SpeedPID);
+                break;
+            default:break;
+        }
     }
     return result_velocity;
 }
@@ -151,16 +155,13 @@ void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
         default:break;
     }
 
-    int16_t filtered_real_angle_yaw = max_min_angle(real_angle_yaw, GMYawEncoder.motor);
-    int16_t filtered_real_angle_pitch = max_min_angle(real_angle_pitch, GMPitchEncoder.motor);
-
     // PID for yaw
-    float yaw_position_change_205 = PID_Control(GMYawEncoder.ecd_angle, (float)filtered_real_angle_yaw, &YawPositionPID);
+    float yaw_position_change_205 = PID_Control(GMYawEncoder.ecd_angle, (float)real_angle_yaw, &YawPositionPID);
     float yaw_velocity_change_205 = PID_Control((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change_205, &YawSpeedPID);
     // float yaw_velocity_change_205 = PID_Control((float)MPU6050_Real_Data.Gyro_Z, 0, &YawSpeedPID);
 
     // PID for pitch
-    float pitch_position_change_206 = PID_Control(GMPitchEncoder.ecd_angle, (float)filtered_real_angle_pitch, &PitchPositionPID);
+    float pitch_position_change_206 = PID_Control(GMPitchEncoder.ecd_angle, (float)real_angle_pitch, &PitchPositionPID);
     float pitch_velocity_change_206 = PID_Control((float)MPU6050_Real_Data.Gyro_Y, pitch_position_change_206, &PitchSpeedPID);
     // float pitch_velocity_change_206 = PID_Control((float)MPU6050_Real_Data.Gyro_Y, 0, &PitchSpeedPID);
 
@@ -173,8 +174,8 @@ static uint32_t time_tick_1ms = 0;
 void Control_Task(void)
 {
     time_tick_1ms++;
-    WorkStateFSM();
-    WorkStateSwitchProcess();
+    // WorkStateFSM();
+    // WorkStateSwitchProcess();
     // //启动后根据磁力计的数据初始化四元数
     // // Initialize quaternion coordinate from magnetometer
   	// if(time_tick_1ms <100) { Init_Quaternion(); }
@@ -182,9 +183,11 @@ void Control_Task(void)
     // // Reset the gyroscope after the gimbal is stablized
   	// if(time_tick_1ms == PREPARE_TIME_TICK_MS/2) { GYRO_RST(); }
 
-  // Gimbal control
-  // Mode switch method, to get the target and measured value of position loop
-	// GimbalYawControlModeSwitch();
+    // Gimbal control
+    // Mode switch method, to get the target and measured value of position loop
+  	// GimbalYawControlModeSwitch();
+    yaw_Position = max_min_angle(yaw_Position, GMYawEncoder.motor);
+    pitch_Position = max_min_angle(pitch_Position, GMPitchEncoder.motor);
     set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
     //chassis motor control every 4mss
   	if(time_tick_1ms%4 == 0)
@@ -254,9 +257,9 @@ static void WorkStateSwitchProcess(void)
 
 static int16_t max_min_angle(int16_t user_input, volatile motor_mapping_t * motor)
 {
-    int16_t prevent_too_high = min(user_input, motor->real_high);
-    int16_t prevent_too_low_and_high = max(prevent_too_high, motor->real_low);
-    return prevent_too_low_and_high;
+    user_input = min(user_input, motor->real_high);
+    user_input = max(user_input, motor->real_low);
+    return user_input;
 }
 
 static int16_t min(int16_t a, int16_t b) {
