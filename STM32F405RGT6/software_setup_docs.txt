@@ -1,0 +1,64 @@
+SOFTWARE SETUP DOCUMENTATION
+Author: Pico Premvuti (natatp@uw.edu)
+Date:   31 July 2016
+This is the documentation for software setup on all embedded boards. Assumes you have the latest working code from github.
+
+setup trapezoid board
+    (1) in main.c, set DEBUG to false
+    (2) in main.h, set ROBOT_SERIAL_NUMBER to the target robot
+    (3) upload to the trapezoid board
+
+setup communication arduino
+    (1) in mainboard_soldier.ino, set
+        MPU_ENABLE to false
+        DEBUG to false
+        HERO_ARDUINO to true if this is the communiation arduino for the hero
+    (2) upload to the arduino
+
+setup tx1
+    (1) fresh install jetpack 2.2.1 (32-bit)
+    (2) install ros
+        First go to Ubuntu>System Settings>Software Updates> in "downloadable from the internet" check all and specify "main server". This will "setup your repositories"
+        $ sudo update-locale LANG=C LANGUAGE=C LC_ALL=C LC_MESSAGES=POSIX
+        $ sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu trusty main" > /etc/apt/sources.list.d/ros-latest.list'
+        $ sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key 0xB01FA116
+        $ sudo apt-get update
+        $ sudo apt-get install ros-indigo-desktop
+        $ sudo rosdep init
+        $ rosdep update
+        $ echo "source /opt/ros/jade/setup.bash" >> /.bashrc
+        $ source /.bashrc
+        $ sudo apt-get install python-rosinstall
+    (3) setup catkin workspace
+        $ mkdir -p ~/catkin_ws/src
+        $ cd ~/catkin_ws/src
+        $ catkin_init_workspace
+        $ git clone https://github.com/pico737/robomasters_ros
+        $ cd ~/catkin_ws
+        $ catkin_make
+    (4) setup darknet
+        $ cd ~
+        $ git clone https://github.com/Beck-Sisyphus/RoboMasters_2016.git
+        $ cd RoboMasters_2016
+        $ git checkout compvis
+        $ cd Computer_Vision/code/darknet_07_04_2016
+        $ make
+    (5) download training data
+        go to robomasters google drive, "Computer Vision/YOLO/yolo-tiny_final.weights" and download to the darknet_07_04_2016 folder
+    (6) setup hardware
+        connect the camera
+        connect the arduino
+
+setup robot
+    (1) follow the setup instructions for trapezoid board, arduino, and tx1
+    (2) disconnect all power
+    (3) turn on rc transmitter
+    (4) turn on robot
+    (5) if tx1 is powered seperately, turn on the tx1
+    (6) run all the ros nodes, where <color> is the color of the enemy robot
+        using a single command:
+            $ roslaunch rm_cv rm_cv.launch <color>
+        seperately, in different terminal windows:
+            $ rosrun trapezoid trapezoid_node.py
+            $ rosrun aimbot aimbot_node.py
+            $ rosrun rm_cv rm_cv_node.py <color>
