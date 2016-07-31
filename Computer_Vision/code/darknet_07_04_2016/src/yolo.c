@@ -374,16 +374,20 @@ void run_yolo(int argc, char **argv)
         sprintf(buff, "data/labels/%s.png", voc_names[i]);
         voc_labels[i] = load_image_color(buff, 0, 0);
     }
-
-    float thresh = find_float_arg(argc, argv, "-thresh", .2);
+    int debug = 0;
+    if(argv[1] == "-v"){
+        debug = 1;
+    }
+    /*float thresh = find_float_arg(argc, argv, "-thresh", .2);
     int cam_index = find_int_arg(argc, argv, "-c", 0);
     int frame_skip = find_int_arg(argc, argv, "-s", 0);
     char *cfg = (argc > 3) ? argv[3] : 0;
-    char *weights = (argc > 4) ? argv[4] : 0;
+    char *weights = (argc > 4) ? argv[4] : 0;*/
     char *filename = (argc > 5) ? argv[5]: 0;
-    if(0==strcmp(argv[2], "test")) test_yolo(cfg, weights, filename, thresh);
+    /*if(0==strcmp(argv[2], "test")) test_yolo(cfg, weights, filename, thresh);
     else if(0==strcmp(argv[2], "train")) train_yolo(cfg, weights);
     else if(0==strcmp(argv[2], "valid")) validate_yolo(cfg, weights);
     else if(0==strcmp(argv[2], "recall")) validate_yolo_recall(cfg, weights);
-    else if(0==strcmp(argv[2], "demo")) demo(cfg, weights, 0.2, -1, filename, voc_names, voc_labels, 20, frame_skip);
+    else if(0==strcmp(argv[2], "demo")) demo(cfg, weights, 0.2, -1, filename, voc_names, voc_labels, 20, frame_skip);*/
+    demo("cfg/yolo-tiny.cfg", "yolo-tiny_final.weights", 0.25, 1, filename, voc_names, voc_labels, 20, frame_skip, debug);
 }
