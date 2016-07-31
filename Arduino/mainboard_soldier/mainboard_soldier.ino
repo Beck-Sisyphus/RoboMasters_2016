@@ -18,7 +18,7 @@
 
 #define MPU_ENABLE false // set to true to enable mpu
 #define DEBUG false // set to true to enable debug prints, will disable arduino->tx1 comms
-#define HERO_ARDUINO true // set to true if this arduino goes on hero robot
+#define HERO_ARDUINO false // set to true if this arduino goes on hero robot
 
 #define LED_ON() digitalWrite(LED_PIN, HIGH)
 #define LED_OFF() digitalWrite(LED_PIN, LOW)
@@ -124,7 +124,7 @@ const long tx1_timer_period = 100; // 10hz
 void setup() {
     pinMode(LED_PIN, OUTPUT);
     pinMode(FEEDER_MOTOR_PIN, OUTPUT);
-    Serial.begin(115200); // tx1
+    Serial.begin(9600); // tx1
     Serial1.begin(115200); // tpz (trapezoid)
 #if HERO_ARDUINO
     // init hero interface
