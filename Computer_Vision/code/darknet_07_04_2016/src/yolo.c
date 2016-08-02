@@ -385,5 +385,5 @@ void run_yolo(int argc, char **argv)
     else if(0==strcmp(argv[2], "train")) train_yolo(cfg, weights);
     else if(0==strcmp(argv[2], "valid")) validate_yolo(cfg, weights);
     else if(0==strcmp(argv[2], "recall")) validate_yolo_recall(cfg, weights);
-    else if(0==strcmp(argv[2], "demo")) demo(cfg, weights, 0.2, -1, filename, voc_names, voc_labels, 20, frame_skip);
+    else if(0==strcmp(argv[2], "demo")) demo(cfg, weights, 0.2, 1, filename, voc_names, voc_labels, 20, frame_skip);
 }

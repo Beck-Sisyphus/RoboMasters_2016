@@ -189,7 +189,7 @@ static void drawSquares( Mat& image, const vector<vector<Point> >& squares )
 int main(int /*argc*/, char** /*argv*/)
 {
 
-    VideoCapture stream1(-1);
+    VideoCapture stream1(1);
     stream1.set(CV_CAP_PROP_FRAME_WIDTH,540);
     stream1.set(CV_CAP_PROP_FRAME_HEIGHT,360);
     clock_t t;
