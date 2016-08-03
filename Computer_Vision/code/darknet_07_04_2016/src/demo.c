@@ -31,6 +31,7 @@ static image disp = {0};
 static CvCapture * cap;
 static float fps = 0;
 static float demo_thresh = 0;
+static int showVideo;
 
 static float *predictions[FRAMES];
 static int demo_index = 0;
@@ -160,7 +161,9 @@ void *detect_in_thread(void *ptr)
     images[demo_index] = det;
     det = images[(demo_index + FRAMES/2 + 1)%FRAMES];
     demo_index = (demo_index + 1)%FRAMES;
-    draw_detections(det, l.side*l.side*l.n, demo_thresh, boxes, probs, demo_names, demo_labels, demo_classes);
+    if(showVideo == 1){
+    	draw_detections(det, l.side*l.side*l.n, demo_thresh, boxes, probs, demo_names, demo_labels, demo_classes);
+    }
     draw_detections2(det, l.side*l.side*l.n, 0.25, boxes, probs, demo_names, demo_labels, demo_classes);
 
     return 0;
@@ -176,9 +179,10 @@ double get_wall_time()
     return (double)time.tv_sec + (double)time.tv_usec * .000001;
 }
 
-void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const char *filename, char **names, image *labels, int classes, int frame_skip)
+void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const char *filename, char **names, image *labels, int classes, int frame_skip, int debug)
 {
     //skip = frame_skip;
+    showVideo = debug;
     int delay = frame_skip;
     demo_names = names;
     demo_labels = labels;
@@ -192,11 +196,9 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
 
     srand(2222222);
 
-    if(filename){
-        cap = cvCaptureFromFile(filename);
-    }else{
-        cap = cvCaptureFromCAM(cam_index);
-    }
+
+    cap = cvCaptureFromCAM(cam_index);
+
 
     if(!cap) error("Couldn't connect to webcam.\n");
 
@@ -233,9 +235,11 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
     }
 
     int count = 0;
-    cvNamedWindow("Demo", CV_WINDOW_NORMAL); 
-    cvMoveWindow("Demo", 0, 0);
-    cvResizeWindow("Demo", 1352, 1013);
+    if(showVideo == 1){
+	    cvNamedWindow("Demo", CV_WINDOW_NORMAL); 
+	    cvMoveWindow("Demo", 0, 0);
+	    cvResizeWindow("Demo", 1352, 1013);
+    }
 
     double before = get_wall_time();
 
@@ -244,8 +248,9 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
         if(1){
             if(pthread_create(&fetch_thread, 0, fetch_in_thread, 0)) error("Thread creation failed");
             if(pthread_create(&detect_thread, 0, detect_in_thread, 0)) error("Thread creation failed");
-
-            show_image(disp, "Demo");
+            if(showVideo == 1){
+            	show_image(disp, "Demo");
+            }
             int c = cvWaitKey(1);
             if (c == 10){
                 if(frame_skip == 0) frame_skip = 60;
@@ -272,7 +277,9 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
                 free_image(disp);
                 disp = det;
             }
-            show_image(disp, "Demo");
+            if(showVideo == 1){
+            	show_image(disp, "Demo");
+            }
             cvWaitKey(1);
         }
         --delay;
