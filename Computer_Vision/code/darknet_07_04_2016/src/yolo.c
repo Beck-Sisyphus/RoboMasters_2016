@@ -384,7 +384,7 @@ void run_yolo(int argc, char **argv)
     char *cfg = (argc > 3) ? argv[3] : 0;
     char *weights = (argc > 4) ? argv[4] : 0;
     char *filename = (argc > 5) ? argv[5]: 0;
-    demo(cfg, weights, 0.5, 1, filename, voc_names, voc_labels, 20, frame_skip, debug);
+    demo(cfg, weights, 0.2, 1, filename, voc_names, voc_labels, 20, frame_skip, debug);
 /*
     if(0==strcmp(argv[2], "test")) test_yolo(cfg, weights, filename, thresh);
     else if(0==strcmp(argv[2], "train")) train_yolo(cfg, weights);

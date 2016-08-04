@@ -105,7 +105,7 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
 {
     int i;
 
-    for(i = 0; i < 5; ++i){
+    for(i = 0; i < num; ++i){
         int class = max_index(probs[i], classes);
         float prob = probs[i][class];
         if(prob > thresh){

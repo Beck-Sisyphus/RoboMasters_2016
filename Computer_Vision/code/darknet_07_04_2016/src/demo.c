@@ -59,6 +59,7 @@ int find_index(int a[], int num_elements, int value)
 }
 void printDisAndAngle(struct Output output){
 	if(output.prob > 0){
+		//printf("%d", output.class);
 		float ratioWHAt1m = 0.16;
 		float ratioDoubleDistance = 2;
 		float XDistanceFromCenter = output.x - 0.5;
@@ -69,11 +70,17 @@ void printDisAndAngle(struct Output output){
 		}else{
 			printf("blue\n");
 		}
-		double distance = pow(2, log(ratioWHAt1m/(output.width*output.height))/log(ratioDoubleDistance));
-		printf("%f\n", 1.35*distance);
-		float valueY =  XDistanceFromCenter * 1.35*distance;                
+		double distance = 0;
+		//double distance = pow(2, log(ratioWHAt1m/(output.width*output.height))/log(ratioDoubleDistance));
+		if(output.class == 0 || output.class == 1){
+			distance = 0.48/(output.height);	
+		}else{
+			distance = 0.13/(output.width);		
+		}
+		printf("%f\n", distance);
+		float valueY =  XDistanceFromCenter *distance;                
 		printf("%f\n", atan(valueY));
-                float valueZ =  YDistanceFromCenter * 1.35*distance;   
+                float valueZ =  YDistanceFromCenter * distance;   
 		printf("%f\n", atan(valueZ));
 	}
 }
@@ -89,13 +96,41 @@ void *fetch_in_thread(void *ptr)
 void draw_detections2(image im, int num, float thresh, box *boxes, float **probs, char **names, image *labels, int classes)
 {
     int i;
-    int redArmor = 0;
-    int blueArmor = 0;
+    //int redArmor = 0;
+    //int blueArmor = 0;
+    struct Output redOutput;
+    struct Output blueOutput;
+    redOutput.prob = -1;
+    blueOutput.prob = -1; 
     for(i = 0; i < num; ++i){
+	box b = boxes[i];
+    	int class = max_index(probs[i], classes);
+	float prob = probs[i][class];
+	if(class == 2 && (prob < 0.33 && b.h/b.w < 2)){
+		class = 0;
+	}else if (class == 3 && (prob <0.33 && b.h/b.w < 2)){
+		class = 1;	
+	}
+        if(prob > thresh && (class == 0 || class == 2)&& prob > redOutput.prob ){
+            	redOutput.prob = prob;
+		redOutput.x = b.x;
+		redOutput.y =b.y;
+		redOutput.width = b.w;
+		redOutput.height = b.h;
+                redOutput.class = class; 
+	} else if(prob > thresh && (class == 1 || class == 3)&& prob > blueOutput.prob ){
+            	blueOutput.prob = prob;
+		blueOutput.x = b.x;
+		blueOutput.y =b.y;
+		blueOutput.width = b.w;
+		blueOutput.height = b.h;
+                blueOutput.class = class; 
+	}
+    }
+    /*for(i = 0; i < num; ++i){
     	int class = max_index(probs[i], classes);
         float prob = probs[i][class];
         if(prob > thresh && class == 2){
-		printf("1!!");
 		redArmor = 1;	
 	}else if(prob > thresh && class == 3){
 		blueArmor = 1;
@@ -138,7 +173,9 @@ void draw_detections2(image im, int num, float thresh, box *boxes, float **probs
                         blueOutput.class = class; 
 		}
 	}
-    }
+    }*/
+    //printf("%f", redOutput.prob);
+    //printf("%f", blueOutput.prob);
     printDisAndAngle(redOutput);
     printDisAndAngle(blueOutput);	
 }
@@ -164,7 +201,7 @@ void *detect_in_thread(void *ptr)
     if(showVideo == 1){
     	draw_detections(det, l.side*l.side*l.n, demo_thresh, boxes, probs, demo_names, demo_labels, demo_classes);
     }
-    draw_detections2(det, l.side*l.side*l.n, 0.25, boxes, probs, demo_names, demo_labels, demo_classes);
+    draw_detections2(det, l.side*l.side*l.n, demo_thresh, boxes, probs, demo_names, demo_labels, demo_classes);
 
     return 0;
 }
