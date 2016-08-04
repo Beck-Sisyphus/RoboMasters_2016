@@ -59,6 +59,7 @@ int find_index(int a[], int num_elements, int value)
 }
 void printDisAndAngle(struct Output output){
 	if(output.prob > 0){
+		printf("%f", output.height/output.width);
 		//printf("%d", output.class);
 		float ratioWHAt1m = 0.16;
 		float ratioDoubleDistance = 2;
@@ -110,6 +111,9 @@ void draw_detections2(image im, int num, float thresh, box *boxes, float **probs
 		class = 0;
 	}else if (class == 3 && (prob <0.33 && b.h/b.w < 2)){
 		class = 1;	
+	}
+	if(class == 1 && b.h/b.w > 1.2){
+		continue;
 	}
         if(prob > thresh && (class == 0 || class == 2)&& prob > redOutput.prob ){
             	redOutput.prob = prob;
