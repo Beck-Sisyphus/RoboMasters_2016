@@ -131,7 +131,8 @@ void Remote_Control() {
                     } else {
                         drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
                         strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
-                        rotate = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
+                        // rotate = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
+                        rotate = RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
                     }
 
                     // shooting

@@ -667,8 +667,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\User\app_new.c</PathWithFileName>
-      <FilenameWithoutPath>app_new.c</FilenameWithoutPath>
+      <PathWithFileName>..\User\CanBusTask.c</PathWithFileName>
+      <FilenameWithoutPath>CanBusTask.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -679,8 +679,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\User\ControlTask.h</PathWithFileName>
-      <FilenameWithoutPath>ControlTask.h</FilenameWithoutPath>
+      <PathWithFileName>..\User\CanBusTask.h</PathWithFileName>
+      <FilenameWithoutPath>CanBusTask.h</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -691,8 +691,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\User\CanBusTask.c</PathWithFileName>
-      <FilenameWithoutPath>CanBusTask.c</FilenameWithoutPath>
+      <PathWithFileName>..\User\ControlTask.c</PathWithFileName>
+      <FilenameWithoutPath>ControlTask.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -703,8 +703,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\User\CanBusTask.h</PathWithFileName>
-      <FilenameWithoutPath>CanBusTask.h</FilenameWithoutPath>
+      <PathWithFileName>..\User\ControlTask.h</PathWithFileName>
+      <FilenameWithoutPath>ControlTask.h</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
