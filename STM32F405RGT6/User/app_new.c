@@ -1,4 +1,5 @@
 #include "app_new.h"
+#include <time.h>
 
 #define PID_CHASSIS true
 
@@ -34,6 +35,19 @@ PID_Regulator_t CM2SpeedPID = CHASSIS_MOTOR_SPEED_PID_DEFAULT;
 PID_Regulator_t CM3SpeedPID = CHASSIS_MOTOR_SPEED_PID_DEFAULT;
 PID_Regulator_t CM4SpeedPID = CHASSIS_MOTOR_SPEED_PID_DEFAULT;
 
+// control the motor velocity, the higher the intervals is, the slower the motor will reach target_velocity
+int16_t set_velocity(Encoder en, float target_v, PID_Regulator_t CMSpeedPID, int intervals) {
+    float inter_v = target_v / intervals;
+    float velocity = inter_v;
+    int result_v;
+    while (velocity < targe_v) {
+        result_v = PID_Control((float) en.velocity_raw, (float) velocity, &CMSpeedPID);
+        velocity += inter_v;
+        delay(100);
+    }
+    return result_v;
+}
+
 int16_t set_chassis_motor_velocity(int can_address, int remote_receiver_velocity)
 {
     int target_velocity = map(remote_receiver_velocity, -660, 660, -8171, 8171);
@@ -41,16 +55,16 @@ int16_t set_chassis_motor_velocity(int can_address, int remote_receiver_velocity
     // result_velocity = target_velocity;
     switch (can_address) {
         case 201:
-            result_velocity = PID_Control((float)CM1Encoder.velocity_raw, (float)target_velocity, &CM1SpeedPID);
+            result_velocity = set_velocity(CM1Encoder, (float) target_velocity, CM1SpeedPID, 5);
             break;
         case 202:
-            result_velocity = PID_Control((float)CM2Encoder.velocity_raw, (float)target_velocity, &CM2SpeedPID);
+            result_velocity = set_velocity(CM2Encoder, (float) target_velocity, CM2SpeedPID, 5);
             break;
         case 203:
-            result_velocity = PID_Control((float)CM3Encoder.velocity_raw, (float)target_velocity, &CM3SpeedPID);
+            result_velocity = set_velocity(CM3Encoder, (float) target_velocity, CM3SpeedPID, 5);
             break;
         case 204:
-            result_velocity = PID_Control((float)CM4Encoder.velocity_raw, (float)target_velocity, &CM4SpeedPID);
+            result_velocity = set_velocity(CM4Encoder, (float) target_velocity, CM4SpeedPID, 5);
             break;
         default:break;
     }
