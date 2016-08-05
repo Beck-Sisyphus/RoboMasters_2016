@@ -413,16 +413,6 @@
               <FilePath>..\User\remote_control.h</FilePath>
             </File>
             <File>
-              <FileName>app_new.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\app_new.c</FilePath>
-            </File>
-            <File>
-              <FileName>ControlTask.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\ControlTask.h</FilePath>
-            </File>
-            <File>
               <FileName>CanBusTask.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\CanBusTask.c</FilePath>
@@ -431,6 +421,16 @@
               <FileName>CanBusTask.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\User\CanBusTask.h</FilePath>
+            </File>
+            <File>
+              <FileName>ControlTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\ControlTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>ControlTask.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\ControlTask.h</FilePath>
             </File>
           </Files>
         </Group>
