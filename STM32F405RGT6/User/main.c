@@ -36,8 +36,6 @@ extern volatile Encoder GMPitchEncoder;
 int main(void)
 {
     int i = 0;
-    pitch_Position = 0;
-    yaw_Position = 0;
     BSP_Init();
     //delay 500ms, wait MPU6050 for stable signal
     delay_ms(500);
@@ -61,11 +59,12 @@ int main(void)
     PWM2 = 1346;
 
 		#if DEBUG
-				printf("measured_yaw_angle; measured_pitch_angle; Encoder yaw; Encoder pitch\n");
-        // printf("CM1Encoder.velocity_raw; CM2Encoder.velocity_raw; CM3Encoder.velocity_raw; CM4Encoder.velocity_raw\n");
-		#endif
-
+		
+		
+		
     Motor_Reset_Can_2();
+		pitch_Position = 0;
+    yaw_Position = 0;
 
     while(1)
     {

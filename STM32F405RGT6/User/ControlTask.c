@@ -2,8 +2,8 @@
 #include "ControlTask.h"
 
 /* variables for global control */
-volatile int16_t pitch_Position;
-volatile int16_t yaw_Position;
+volatile int16_t pitch_Position = 0;
+volatile int16_t yaw_Position = 0;
 volatile int16_t rotate_feedback;
 volatile int16_t chassis_to_turret_offset = 0;
 
@@ -190,10 +190,10 @@ void Control_Task(void)
     pitch_Position = max_min_angle(pitch_Position, GMPitchEncoder.motor);
     set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
     //chassis motor control every 4mss
-  	if(time_tick_1ms%4 == 0)
-  	{
+  	//if(time_tick_1ms%4 == 0)
+  	//{
   		  CMControlLoop();
-  	}
+  	//}
 }
 
 void WorkStateFSM(void)
@@ -259,7 +259,7 @@ static int16_t max_min_angle(int16_t user_input, volatile motor_mapping_t * moto
 {
     user_input = min(user_input, motor->real_high);
     user_input = max(user_input, motor->real_low);
-    return user_input;
+	  return user_input;
 }
 
 static int16_t min(int16_t a, int16_t b) {
