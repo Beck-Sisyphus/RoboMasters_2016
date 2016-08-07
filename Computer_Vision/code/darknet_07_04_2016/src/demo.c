@@ -59,7 +59,6 @@ int find_index(int a[], int num_elements, int value)
 }
 void printDisAndAngle(struct Output output){
 	if(output.prob > 0){
-		printf("%f", output.height/output.width);
 		//printf("%d", output.class);
 		float ratioWHAt1m = 0.16;
 		float ratioDoubleDistance = 2;
