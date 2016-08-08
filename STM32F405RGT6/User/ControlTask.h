@@ -3,7 +3,7 @@
 #include <stm32f4xx.h>
 #include "main.h"
 
-#define ESC_MAX 5000.0f
+#define ESC_MAX 4000.0f
 #define GAP 0.1f
 #define abs(x) ((x)>0? (x):(-(x)))
 
@@ -96,7 +96,7 @@ typedef enum
 
 #define CHASSIS_MOTOR_SPEED_PID_DEFAULT {\
   1,\
-  5.0,\
+  0.6,\
   0.0,\
   0.0,\
 }\
