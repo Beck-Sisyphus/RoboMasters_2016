@@ -9,6 +9,7 @@
 
 #define ENCODER_MAX 8172
 #define KAL_CONST_Z (100)
+#define STATE_SWITCH_DELAY_TICK 10000
 
 // pitch-yaw-roll coordinate system in radian for turret on sample robot
 #define REAL_PITCH_LOW 750  // real lowest angle value that the cannon can reach, measured by protractor
@@ -111,9 +112,9 @@ void CMControlLoop(void);
 void Control_Task(void);
 void WorkStateFSM(void);
 static void WorkStateSwitchProcess(void);
-void ControlLoopTaskInit();
-void calculateYawAngle(float ZGyroModuleAngle);
-static int16_t GimbalYawControlModeSwitch(PID_Regulator_t * pid);
+void ControlLoopTaskInit(void);
+float calculateYawAngle(void);
+static int16_t GimbalYawControlModeSwitch(float real_angle_yaw, PID_Regulator_t * yawPositionPID);
 
 static int16_t max_min_angle(int16_t user_input, volatile motor_mapping_t * motor);
 static int16_t min(int16_t, int16_t);

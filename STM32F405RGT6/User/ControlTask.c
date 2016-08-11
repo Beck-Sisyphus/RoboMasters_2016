@@ -163,8 +163,9 @@ void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
     }
 
     // PID for yaw
-    calculateYawAngle(ZGyroModuleAngle);
-    float yaw_position_change_205 = PID_Control(GMYawEncoder.ecd_angle, (float)real_angle_yaw, &YawPositionPID);
+    ZGyroModuleAngle = calculateYawAngle();
+    float yaw_position_change_205 = GimbalYawControlModeSwitch((float)real_angle_yaw, &YawPositionPID);
+    // float yaw_position_change_205 = PID_Control(GMYawEncoder.ecd_angle, (float)real_angle_yaw, &YawPositionPID);
     float yaw_velocity_change_205 = PID_Control((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change_205, &YawSpeedPID);
     // float yaw_velocity_change_205 = PID_Control((float)MPU6050_Real_Data.Gyro_Z, 0, &YawSpeedPID);
 
@@ -225,8 +226,8 @@ void WorkStateFSM(void)
       			// }
       			// else
             // ||(Get_Lost_Error(LOST_ERROR_RC) == LOST_ERROR_RC))
-            if((!IsRemoteBeingAction() && GetShootState() != SHOOTING)
-      			{
+            if(!IsRemoteBeingAction() && GetShootState() != SHOOTING)
+						{
       				workState = STANDBY_STATE;
       			}
 		    }break;
@@ -236,7 +237,8 @@ void WorkStateFSM(void)
       			// {
       			// 	workState = STOP_STATE;
       			// }
-      			else if(IsRemoteBeingAction() || (GetShootState()==SHOOTING))
+      			// else
+						if(IsRemoteBeingAction() || (GetShootState()==SHOOTING))
       			{
       				workState = NORMAL_STATE;
       			}
@@ -282,9 +284,10 @@ void ControlLoopTaskInit()
     Motor_Reset_Can_2();
 }
 
-void calculateYawAngle(float ZGyroModuleAngle) {
-    ZGyroModuleAngle = (data_usart_3.packet.mpu_z / KAL_CONST_Z + measured_yaw_angle_401)\
+float calculateYawAngle(void) {
+    float ZGyroModuleAngle = (data_usart_3.packet.mpu_z / KAL_CONST_Z + measured_yaw_angle_401)\
                         * 6283 / 360;
+		return ZGyroModuleAngle;
 }
 
 static int16_t GimbalYawControlModeSwitch(float real_angle_yaw, PID_Regulator_t * yawPositionPID)
@@ -315,28 +318,32 @@ static int16_t GimbalYawControlModeSwitch(float real_angle_yaw, PID_Regulator_t 
             // angleSave = yaw_angle;
             angleSave = ZGyroModuleAngle; // 2016.8.11 this need to be the on board MPU6050 to correct
     		}break;
-    		case STANDBY_STATE:   //IMU模式
-    		{
-    			modeChangeDelayCnt++;
-    			if(modeChangeDelayCnt < STATE_SWITCH_DELAY_TICK)    //delay的这段时间与NORMAL_STATE一样
-    			{
-    				GMYPositionPID.ref = GimbalRef.yaw_angle_dynamic_ref;   //设定给定值
-    				GMYPositionPID.fdb = ZGyroModuleAngle; 					//设定反馈值
-    				angleSave = yaw_angle;
-    			}
-    			else     //delay时间到，切换模式到IMU
-    			{
-    				if(normalFlag == 1)   //修改模式标志
-    				{
-    					normalFlag = 0;
-    					standbyFlag = 1;
-    					GimbalRef.yaw_angle_dynamic_ref = angleSave;    //保存的是delay时间段内保存的
-    				}
-    				GMYPositionPID.ref = GimbalRef.yaw_angle_dynamic_ref;   //设定给定值
-    				GMYPositionPID.fdb = yaw_angle; 					//设定反馈值
-    				angleSave = ZGyroModuleAngle;           //IMU模式时，保存ZGyro的值供模式切换时修改给定值使用
-    			}
+    		case STANDBY_STATE:
+        {
+            output = PID_Control(ZGyroModuleAngle, yaw_Position, yawPositionPID);
+            angleSave = ZGyroModuleAngle; // 2016.8.11 this need to be the on board MPU6050 to correct
     		}break;
+    		// {
+    		// 	modeChangeDelayCnt++;
+    		// 	if(modeChangeDelayCnt < STATE_SWITCH_DELAY_TICK)    //delay的这段时间与NORMAL_STATE一样
+    		// 	{
+    		// 		GMYPositionPID.ref = GimbalRef.yaw_angle_dynamic_ref;   //设定给定值
+    		// 		GMYPositionPID.fdb = ZGyroModuleAngle; 					//设定反馈值
+    		// 		angleSave = yaw_angle;
+    		// 	}
+    		// 	else     //delay时间到，切换模式到IMU
+    		// 	{
+    		// 		if(normalFlag == 1)   //修改模式标志
+    		// 		{
+    		// 			normalFlag = 0;
+    		// 			standbyFlag = 1;
+    		// 			GimbalRef.yaw_angle_dynamic_ref = angleSave;    //保存的是delay时间段内保存的
+    		// 		}
+    		// 		GMYPositionPID.ref = GimbalRef.yaw_angle_dynamic_ref;   //设定给定值
+    		// 		GMYPositionPID.fdb = yaw_angle; 					//设定反馈值
+    		// 		angleSave = ZGyroModuleAngle;           //IMU模式时，保存ZGyro的值供模式切换时修改给定值使用
+    		// 	}
+    		// }break;
     		default: break;
   	}
     return output;
