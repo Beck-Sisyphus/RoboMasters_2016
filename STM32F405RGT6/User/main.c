@@ -46,20 +46,10 @@ int main(void)
     MPU6050_Gyro_calibration();
 
     // MPU6050_Interrupt_Configuration();
-		// delay_ms(1000);
+
     PWM_Configuration();
     delay_ms(1000);
-    // Set the duty cycle to 1000 to initialize the motor controller for friction wheels
-    PWM1 = 1500;
-    // delay_ms(1000);
-    PWM2 = 1500;
-    delay_ms(1000);
-    PWM1 = 1550;
-    // delay_ms(1000);
-    PWM2 = 1550;
-    Motor_Reset_Can_2();
-		pitch_Position = 0;
-    yaw_Position = 0;
+    ControlLoopTaskInit();
 
     while(1)
     {

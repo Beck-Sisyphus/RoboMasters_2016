@@ -8,6 +8,7 @@
 #define abs(x) ((x)>0? (x):(-(x)))
 
 #define ENCODER_MAX 8172
+#define KAL_CONST_Z (100)
 
 // pitch-yaw-roll coordinate system in radian for turret on sample robot
 #define REAL_PITCH_LOW 750  // real lowest angle value that the cannon can reach, measured by protractor
@@ -57,7 +58,7 @@ typedef enum
     STOP_STATE,        	// stop movement
 }WorkState_e;
 
-#define PREPARE_TIME_TICK_MS 4000      //prapare time in ms
+#define PREPARE_TIME_TICK_MS 3000      //prapare time in ms
 
 #define PITCH_POSITION_PID_DEFAULT {\
   1,\
@@ -110,6 +111,9 @@ void CMControlLoop(void);
 void Control_Task(void);
 void WorkStateFSM(void);
 static void WorkStateSwitchProcess(void);
+void ControlLoopTaskInit();
+void calculateYawAngle(float ZGyroModuleAngle);
+static int16_t GimbalYawControlModeSwitch(PID_Regulator_t * pid);
 
 static int16_t max_min_angle(int16_t user_input, volatile motor_mapping_t * motor);
 static int16_t min(int16_t, int16_t);

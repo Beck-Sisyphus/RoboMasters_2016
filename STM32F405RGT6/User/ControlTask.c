@@ -22,6 +22,9 @@ extern volatile Encoder GMPitchEncoder;
 extern int16_t measured_yaw_angle;
 extern int16_t measured_pitch_angle;
 extern MPU6050_REAL_DATA MPU6050_Real_Data;
+extern float measured_yaw_angle_401;
+extern volatile arduino_data data_usart_3;
+volatile float ZGyroModuleAngle;
 
 PID_Regulator_t PitchSpeedPID = PITCH_SPEED_PID_DEFAULT;
 PID_Regulator_t PitchPositionPID = PITCH_POSITION_PID_DEFAULT;
@@ -44,7 +47,7 @@ static void SetWorkState(WorkState_e state)
 
 WorkState_e GetWorkState(void)
 {
-	return workState;
+	  return workState;
 }
 
 int16_t set_chassis_motor_velocity(int can_address, int remote_receiver_velocity)
@@ -88,10 +91,14 @@ void CMControlLoop(void)
     //     strafe = 0;
     //     rotate = 0;
   	// }
-    int16_t target_velocity_201 = (-1*drive + strafe + rotate) + rotate_feedback;
-    int16_t target_velocity_202 = (drive + strafe + rotate) + rotate_feedback;
-    int16_t target_velocity_203 = (drive - strafe + rotate) + rotate_feedback;
-    int16_t target_velocity_204 = (-1*drive - strafe + rotate) + rotate_feedback;
+    // int16_t target_velocity_201 = (-1*drive + strafe + rotate) + rotate_feedback;
+    // int16_t target_velocity_202 = (drive + strafe + rotate) + rotate_feedback;
+    // int16_t target_velocity_203 = (drive - strafe + rotate) + rotate_feedback;
+    // int16_t target_velocity_204 = (-1*drive - strafe + rotate) + rotate_feedback;
+    int16_t target_velocity_201 = (-1*drive + strafe ) + rotate_feedback;
+    int16_t target_velocity_202 = (drive + strafe ) + rotate_feedback;
+    int16_t target_velocity_203 = (drive - strafe ) + rotate_feedback;
+    int16_t target_velocity_204 = (-1*drive - strafe ) + rotate_feedback;
 
     int16_t motor_201_vel = set_chassis_motor_velocity(201, target_velocity_201);
     int16_t motor_202_vel = set_chassis_motor_velocity(202, target_velocity_202);
@@ -156,6 +163,7 @@ void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
     }
 
     // PID for yaw
+    calculateYawAngle(ZGyroModuleAngle);
     float yaw_position_change_205 = PID_Control(GMYawEncoder.ecd_angle, (float)real_angle_yaw, &YawPositionPID);
     float yaw_velocity_change_205 = PID_Control((float)MPU6050_Real_Data.Gyro_Z, yaw_position_change_205, &YawSpeedPID);
     // float yaw_velocity_change_205 = PID_Control((float)MPU6050_Real_Data.Gyro_Z, 0, &YawSpeedPID);
@@ -174,8 +182,8 @@ static uint32_t time_tick_1ms = 0;
 void Control_Task(void)
 {
     time_tick_1ms++;
-    // WorkStateFSM();
-    // WorkStateSwitchProcess();
+    WorkStateFSM();
+    WorkStateSwitchProcess();
     // //启动后根据磁力计的数据初始化四元数
     // // Initialize quaternion coordinate from magnetometer
   	// if(time_tick_1ms <100) { Init_Quaternion(); }
@@ -189,60 +197,59 @@ void Control_Task(void)
     yaw_Position = max_min_angle(yaw_Position, GMYawEncoder.motor);
     pitch_Position = max_min_angle(pitch_Position, GMPitchEncoder.motor);
     set_Pitch_Yaw_Position(pitch_Position, yaw_Position);
-    //chassis motor control every 4mss
-  	//if(time_tick_1ms%4 == 0)
-  	//{
-  		  CMControlLoop();
-  	//}
+	  CMControlLoop();
 }
 
 void WorkStateFSM(void)
 {
     lastWorkState = workState;
-    // switch(workState)
-    // {
-    // 		case PREPARE_STATE:
-    // 		{
-    //   			if(GetInputMode() == STOP || Is_Serious_Error())
-    //   			{
-    //   				workState = STOP_STATE;
-    //   			}
-    //   			else if(time_tick_1ms > PREPARE_TIME_TICK_MS)
-    //   			{
-    //   				workState = NORMAL_STATE;
-    //   			}
-    // 		}break;
-    // 		case NORMAL_STATE:
-    // 		{
-    //   			if(GetInputMode() == STOP || Is_Serious_Error())
-    //   			{
-    //   				workState = STOP_STATE;
-    //   			}
-    //   			else if((!IsRemoteBeingAction() ||(Get_Lost_Error(LOST_ERROR_RC) == LOST_ERROR_RC)) && GetShootState() != SHOOTING)
-    //   			{
-    //   				workState = STANDBY_STATE;
-    //   			}
-		//     }break;
-    // 		case STANDBY_STATE:
-    // 		{
-    //   			if(GetInputMode() == STOP || Is_Serious_Error())
-    //   			{
-    //   				workState = STOP_STATE;
-    //   			}
-    //   			else if(IsRemoteBeingAction() || (GetShootState()==SHOOTING) || GetFrictionState() == FRICTION_WHEEL_START_TURNNING)
-    //   			{
-    //   				workState = NORMAL_STATE;
-    //   			}
-    // 		}break;
-    // 		case STOP_STATE:
-    // 		{
-    //   			if(GetInputMode() != STOP && !Is_Serious_Error())
-    //   			{
-    //   				workState = PREPARE_STATE;
-    //   			}
-    // 		}break;
-    //     default: {}
-    // }
+    switch(workState)
+    {
+    		case PREPARE_STATE:
+    		{
+      			// if(GetInputMode() == STOP || Is_Serious_Error())
+      			// {
+      			// 	workState = STOP_STATE;
+      			// }
+      			// else
+            if(time_tick_1ms > PREPARE_TIME_TICK_MS)
+      			{
+      				workState = NORMAL_STATE;
+      			}
+    		}break;
+    		case NORMAL_STATE:
+    		{
+      			// if(GetInputMode() == STOP || Is_Serious_Error())
+      			// {
+      			// 	workState = STOP_STATE;
+      			// }
+      			// else
+            // ||(Get_Lost_Error(LOST_ERROR_RC) == LOST_ERROR_RC))
+            if((!IsRemoteBeingAction() && GetShootState() != SHOOTING)
+      			{
+      				workState = STANDBY_STATE;
+      			}
+		    }break;
+    		case STANDBY_STATE:
+    		{
+      			// if(GetInputMode() == STOP || Is_Serious_Error())
+      			// {
+      			// 	workState = STOP_STATE;
+      			// }
+      			else if(IsRemoteBeingAction() || (GetShootState()==SHOOTING))
+      			{
+      				workState = NORMAL_STATE;
+      			}
+    		}break;
+    		// case STOP_STATE:
+    		// {
+      	// 		if(GetInputMode() != STOP && !Is_Serious_Error())
+      	// 		{
+      	// 			workState = PREPARE_STATE;
+      	// 		}
+    		// }break;
+        default: {}
+    }
 }
 
 static void WorkStateSwitchProcess(void)
@@ -250,9 +257,89 @@ static void WorkStateSwitchProcess(void)
     // If switch from other state to prepare state, initialize all parameters
   	if((lastWorkState != workState) && (workState == PREPARE_STATE))
   	{
-    		// ControtLoopTaskInit();
-    		// RemoteTaskInit();
+    		ControlLoopTaskInit();
   	}
+}
+
+void ControlLoopTaskInit()
+{
+    // initialize the counting for time
+    time_tick_1ms = 0;
+    // restart the working state
+    SetWorkState(PREPARE_STATE);
+    // initialize gimbal angle
+    pitch_Position = 0;
+    yaw_Position = 0;
+    // restart the friction wheels
+    // Set the duty cycle to 1000 to initialize the motor controller for friction wheels
+    PWM1 = 1000;
+    PWM2 = 1000;
+    delay_ms(1000);
+    // turn on the friction wheels
+    PWM1 = 1550;
+    PWM2 = 1550;
+    // initialize the chassis motors
+    Motor_Reset_Can_2();
+}
+
+void calculateYawAngle(float ZGyroModuleAngle) {
+    ZGyroModuleAngle = (data_usart_3.packet.mpu_z / KAL_CONST_Z + measured_yaw_angle_401)\
+                        * 6283 / 360;
+}
+
+static int16_t GimbalYawControlModeSwitch(float real_angle_yaw, PID_Regulator_t * yawPositionPID)
+{
+  	static uint8_t normalFlag = 0;
+  	static uint8_t standbyFlag = 1;
+  	static uint32_t modeChangeDelayCnt = 0;
+  	static float angleSave = 0.0f;    // Saved angle for switching mode
+    static int16_t output;
+  	switch(GetWorkState())
+  	{
+    		case PREPARE_STATE:
+    		{
+      			output = PID_Control(GMYawEncoder.ecd_angle, 0, yawPositionPID);
+      			angleSave = ZGyroModuleAngle;
+    		}break;
+    		case NORMAL_STATE:
+    		{
+      			if(standbyFlag == 1)
+      			{
+        				standbyFlag = 0;
+        				normalFlag = 1;
+        				yaw_Position = angleSave;   // change the global variable to the last saved ZGyroModuleAngle
+        				modeChangeDelayCnt = 0;     // clear the delay
+      			}
+            output = PID_Control(ZGyroModuleAngle, yaw_Position, yawPositionPID);
+            // TODO: get the angle value out of the on board MPU6050
+            // angleSave = yaw_angle;
+            angleSave = ZGyroModuleAngle; // 2016.8.11 this need to be the on board MPU6050 to correct
+    		}break;
+    		case STANDBY_STATE:   //IMU模式
+    		{
+    			modeChangeDelayCnt++;
+    			if(modeChangeDelayCnt < STATE_SWITCH_DELAY_TICK)    //delay的这段时间与NORMAL_STATE一样
+    			{
+    				GMYPositionPID.ref = GimbalRef.yaw_angle_dynamic_ref;   //设定给定值
+    				GMYPositionPID.fdb = ZGyroModuleAngle; 					//设定反馈值
+    				angleSave = yaw_angle;
+    			}
+    			else     //delay时间到，切换模式到IMU
+    			{
+    				if(normalFlag == 1)   //修改模式标志
+    				{
+    					normalFlag = 0;
+    					standbyFlag = 1;
+    					GimbalRef.yaw_angle_dynamic_ref = angleSave;    //保存的是delay时间段内保存的
+    				}
+    				GMYPositionPID.ref = GimbalRef.yaw_angle_dynamic_ref;   //设定给定值
+    				GMYPositionPID.fdb = yaw_angle; 					//设定反馈值
+    				angleSave = ZGyroModuleAngle;           //IMU模式时，保存ZGyro的值供模式切换时修改给定值使用
+    			}
+    		}break;
+    		default: break;
+  	}
+    return output;
 }
 
 static int16_t max_min_angle(int16_t user_input, volatile motor_mapping_t * motor)
