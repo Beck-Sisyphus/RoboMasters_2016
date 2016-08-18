@@ -230,19 +230,57 @@ int main(int /*argc*/, char** /*argv*/)
 	}
 	i++;
     }
-    imwrite("image.jpg", cameraFrame);
-    stream1.set(CV_CAP_PROP_FRAME_WIDTH,540);
-    stream1.set(CV_CAP_PROP_FRAME_HEIGHT,360);
-    stream1.read(cameraFrame);
-    imwrite("image2.jpg", cameraFrame);
+    int orderOfSquares[9] = {0,1,2,3,4,5,6,7,8};
+    for(int j= 0; j < 8; j++){
+	vector<Point> sq1 = (squares[orderOfSquares[j]]);
+	double minY = (sq1[0].y + sq1[1].y + sq1[2].y + sq1[3].y)/4.0;
+	int minIndex = j;
+    	for(int k = j+1; k < 9; k++){
+		vector<Point> sq2 = (squares[orderOfSquares[k]]);
+		Y = (sq2[0].y + sq2[1].y + sq2[2].y + sq2[3].y)/4.0;
+		if(Y < minY){
+			minY = 	Y;
+			minIndex = k;
+		}
+	}
+	if(minIndex != j){
+		int temp = orderOfsquare[j];
+		orderOfsquare[j] = orderOfsquare[minIndex];
+		orderOfsquare[minIndex] = temp;
+	}
+    }
+    for(int layer = 0; layer < 3; layer++){
+    	for(int j= 3*layer; j < 3*(layer+1) -1 ; j++){
+	vector<Point> sq1 = (squares[orderOfSquares[j]]);
+	double minX = (sq1[0].x + sq1[1].x + sq1[2].x + sq1[3].x)/4.0;
+	int minIndex = j;
+    	for(int k = j+1; k < 3*(layer+1); k++){
+		vector<Point> sq2 = (squares[orderOfSquares[k]]);
+		X = (sq2[0].x + sq2[1].x + sq2[2].x + sq2[3].x)/4.0;
+		if(X < minX){
+			minX = 	X;
+			minIndex = k;
+		}
+	}
+	if(minIndex != j){
+		int temp = orderOfsquare[j];
+		orderOfsquare[j] = orderOfsquare[minIndex];
+		orderOfsquare[minIndex] = temp;
+	}
+    }
+    }
+    imwrite("image.jpg", cameraFrame); //for testing, comment out when run
+    stream1.set(CV_CAP_PROP_FRAME_WIDTH,540);//for testing, comment out when run
+    stream1.set(CV_CAP_PROP_FRAME_HEIGHT,360); //for testing, comment out when run
+    stream1.read(cameraFrame);  //for testing, comment out when run
+    imwrite("image2.jpg", cameraFrame); //for testing, comment out when run
     int count[9] = {0,0,0,0,0,0,0,0,0};
     Mat cameraFrameGrey;
     cv::cvtColor(cameraFrame, cameraFrameGrey, CV_BGR2GRAY);
-    imwrite("imageG.jpg", cameraFrameGrey);
-    //Mat cameraFrameBW = cameraFrameGrey > greyThresh;
+    imwrite("imageG.jpg", cameraFrameGrey); //for testing, comment out when run
     Mat cameraFrameBW (cameraFrameGrey.size(), cameraFrameGrey.type());
     threshold(cameraFrameGrey, cameraFrameBW, 100, 255 ,THRESH_BINARY);
-    imwrite("imageBW.jpg", cameraFrameBW);
+    imwrite("imageBW.jpg", cameraFrameBW); //for testing, comment out when run
     int c = 0;
     /*for(int y = 0; y < cameraFrame.rows; y++){
     	for(int x = 0; x < cameraFrame.cols; x++){
@@ -286,11 +324,17 @@ int main(int /*argc*/, char** /*argv*/)
 		minIndex = s;
 	}	
     }
-    vector<Point> sq1 = (squares[minIndex]);
-    double center_X = (sq1[0].x + sq1[1].x + sq1[2].x + sq1[3].x)/4.0;
-    double center_Y = (sq1[0].y + sq1[1].y + sq1[2].y + sq1[3].y)/4.0;
-    cout<<"Final square "<< center_X<< " "<<center_Y<<endl;
-    //cout<<((float)(clock()-t))/CLOCKS_PER_SEC<<endl;
+    for (int j = 0; j < 9; j++){
+    	if(orderOfSquares[j] == minIndex){
+		cout <<j<<endl;
+		break;
+	}
+    }
+    /*vector<Point> sq1 = (squares[minIndex]);//for testing, comment out when run
+    double center_X = (sq1[0].x + sq1[1].x + sq1[2].x + sq1[3].x)/4.0; //for testing, comment out when run
+    double center_Y = (sq1[0].y + sq1[1].y + sq1[2].y + sq1[3].y)/4.0; //for testing, comment out when run
+    cout<<"Final square "<< center_X<< " "<<center_Y<<endl; //for testing, comment out when run
+    //cout<<((float)(clock()-t))/CLOCKS_PER_SEC<<endl;*/
     usleep(500000); 
     }
     /*
