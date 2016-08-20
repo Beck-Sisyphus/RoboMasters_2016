@@ -107,7 +107,7 @@ void Remote_Control() {
     if (remote_on) {
         // (1) read switch positions and store into state
         // s1 for robot state
-        switch (RC_Ctl.rc.s1) {
+        switch (RC_Ctl.rc.s2) {
             case RC_SW_UP:
                 robot_state = ROBOT_STATE_MANUAL;
                 break;
@@ -136,8 +136,8 @@ void Remote_Control() {
                     }
 
                     // shooting
-                    friction_motor_state = (RC_Ctl.rc.s2 == RC_SW_MID || RC_Ctl.rc.s2 == RC_SW_DOWN);
-                    feeder_motor_state = (RC_Ctl.rc.s2 == RC_SW_DOWN || RC_Ctl.mouse.press_l);
+                    //friction_motor_state = (RC_Ctl.rc.s2 == RC_SW_MID || RC_Ctl.rc.s2 == RC_SW_DOWN);
+                    feeder_motor_state = (RC_Ctl.rc.s1 == RC_SW_MID || RC_Ctl.rc.s1 == RC_SW_DOWN || RC_Ctl.mouse.press_l);
 
                     // aiming (untested) todo: limit these two
                     pitch_Position += (RC_Ctl.rc.ch1 - RC_CH_VALUE_OFFSET) / 100;
