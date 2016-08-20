@@ -102,6 +102,23 @@ typedef struct Encoder
   },\
 }\
 
+// -28 degree，135 degree
+// Last update: 2016/8/20, Beck Pang
+#define GIMBAL_SOLDIER_4 {\
+  {\
+    -489,\
+    785,\
+    1935,\
+    2883,\
+  },\
+  {\
+    -1571,\
+    1571,\
+    5932,\
+    1758,\
+  },\
+}\
+
 // 72 degree，135 degree
 #define GIMBAL_SOLDIER_5 {\
   {\
