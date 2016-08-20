@@ -131,8 +131,8 @@ void Remote_Control() {
                     } else {
                         drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
                         strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
-                        // rotate = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
-                        rotate = RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
+                        rotate = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
+                        //rotate = RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
                     }
 
                     // shooting
@@ -141,7 +141,8 @@ void Remote_Control() {
 
                     // aiming (untested) todo: limit these two
                     pitch_Position += (RC_Ctl.rc.ch1 - RC_CH_VALUE_OFFSET) / 100;
-                    yaw_Position += (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) / 100 + RC_Ctl.mouse.y * MOUSE_SENSITIVITY;
+                    //yaw_Position += (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) / 100 + RC_Ctl.mouse.y * MOUSE_SENSITIVITY;
+                    yaw_Position = 0;
                 }
                 break;
             case ROBOT_STATE_SEMI_AUTO:
