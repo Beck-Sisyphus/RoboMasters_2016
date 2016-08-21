@@ -54,9 +54,14 @@ int main(void)
     // delay_ms(1000);
     PWM2 = 1500;
     delay_ms(1000);
-    PWM1 = 1550;
-    // delay_ms(1000);
-    PWM2 = 1550;
+    if (ROBOT_SERIAL_NUMBER == 3) {
+        PWM1 = 1200;
+        PWM2 = 1200;
+    } else {
+        PWM1 = 1550;
+        // delay_ms(1000);
+        PWM2 = 1550;
+    }
     Motor_Reset_Can_2();
 		pitch_Position = 0;
     yaw_Position = 0;
