@@ -226,7 +226,9 @@ void pitchyaw_control(int16_t yaw_current, int16_t pitch_current) {
   motor_yaw_cur = yaw_current;
   motor_pitch_cur = pitch_current;
   Set_PitchYaw_Current();
-  CAN_Transmit(CAN2,&tx_pitchyaw_message);
+  if (ROBOT_SERIAL_NUMBER != 5) { // disable pitch yaw for robot 5
+    CAN_Transmit(CAN2,&tx_pitchyaw_message);
+  }
 }
 
 // controls wheels using kinematic equations

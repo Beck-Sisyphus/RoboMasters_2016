@@ -88,10 +88,17 @@ void CMControlLoop(void)
     //     strafe = 0;
     //     rotate = 0;
   	// }
+    #if (ROBOT_SERIAL_NUMBER != 5)
     int16_t target_velocity_201 = (-1*drive + strafe + rotate) + rotate_feedback;
     int16_t target_velocity_202 = (drive + strafe + rotate) + rotate_feedback;
     int16_t target_velocity_203 = (drive - strafe + rotate) + rotate_feedback;
     int16_t target_velocity_204 = (-1*drive - strafe + rotate) + rotate_feedback;
+    #else
+    int16_t target_velocity_201 = (-1*drive + strafe + rotate) + rotate_feedback;
+    int16_t target_velocity_202 = (drive + strafe + rotate) + rotate_feedback;
+    int16_t target_velocity_203 = -(drive - strafe + rotate) + rotate_feedback;
+    int16_t target_velocity_204 = -(-1*drive - strafe + rotate) + rotate_feedback;
+    #endif
 
     int16_t motor_201_vel = set_chassis_motor_velocity(201, target_velocity_201);
     int16_t motor_202_vel = set_chassis_motor_velocity(202, target_velocity_202);

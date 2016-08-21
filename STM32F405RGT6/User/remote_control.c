@@ -132,10 +132,17 @@ void Remote_Control() {
                         drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
                         if (ROBOT_SERIAL_NUMBER == 3) {
                             strafe = -(RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET);
+                        } else if (ROBOT_SERIAL_NUMBER == 5) {
+                            strafe = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET);
                         } else {
                             strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
                         }
-                        rotate = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
+
+                        if (ROBOT_SERIAL_NUMBER == 5) {
+                            rotate = -((RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY);
+                        } else {
+                            rotate = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
+                        }
                         //rotate = RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
                     }
 
@@ -188,7 +195,11 @@ void Remote_Control() {
                 }
                 break;
         }
+    } else if (ROBOT_SERIAL_NUMBER == 6) { // base nordo
+        rotate = 180;
+        drive = 300;
     }
+
     if (data_usart_3.packet.js_real_chassis_out_power > 10) {
         LED2_ON();
     } else {
