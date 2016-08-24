@@ -54,13 +54,23 @@ int main(void)
     // delay_ms(1000);
     PWM2 = 1500;
     delay_ms(1000);
-    if (ROBOT_SERIAL_NUMBER == 3) {
+
+    // set final pwm speed
+    if (ROBOT_SERIAL_NUMBER == 2) {
+        PWM1 = 1400;
+        PWM2 = 1400;
+    } else if (ROBOT_SERIAL_NUMBER == 3) {
         PWM1 = 1200;
         PWM2 = 1200;
-    } else {
+    } else if (ROBOT_SERIAL_NUMBER == 4) {
         PWM1 = 1550;
-        // delay_ms(1000);
         PWM2 = 1550;
+    } else if (ROBOT_SERIAL_NUMBER == 5) {
+        PWM1 = 1550;
+        PWM2 = 1550;
+    } else { // default
+        PWM1 = 1500;
+        PWM2 = 1500;
     }
     Motor_Reset_Can_2();
 		pitch_Position = 0;

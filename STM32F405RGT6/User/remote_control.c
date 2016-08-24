@@ -126,18 +126,28 @@ void Remote_Control() {
                     // driving
                     if (ROBOT_SERIAL_NUMBER == HERO_ROBOT_TURRET_8) {
                         drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
-                        strafe = 0;
-                        rotate = (RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET);
+                        strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
+                        rotate = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY;
                     } else {
-                        drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
+                        // drive
+                        if (ROBOT_SERIAL_NUMBER == 4) {
+                            drive = -(RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET);
+                        } else {
+                            drive = RC_Ctl.rc.ch3 - RC_CH_VALUE_OFFSET;
+                        }
+
+                        // strafe
                         if (ROBOT_SERIAL_NUMBER == 3) {
                             strafe = -(RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET);
                         } else if (ROBOT_SERIAL_NUMBER == 5) {
                             strafe = (RC_Ctl.rc.ch0 - RC_CH_VALUE_OFFSET);
+                        } else if (ROBOT_SERIAL_NUMBER == 4) {
+                            strafe = -(RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET);
                         } else {
                             strafe = RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET;
                         }
 
+                        // rotate
                         if (ROBOT_SERIAL_NUMBER == 5) {
                             rotate = -((RC_Ctl.rc.ch2 - RC_CH_VALUE_OFFSET) + RC_Ctl.mouse.x * MOUSE_SENSITIVITY);
                         } else {
