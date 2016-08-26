@@ -8,7 +8,7 @@ gimbal_mapping_t gimbal_2 = GIMBAL_SOLDIER_2;
 gimbal_mapping_t gimbal_3 = GIMBAL_SOLDIER_3;
 gimbal_mapping_t gimbal_4 = GIMBAL_SOLDIER_4;
 gimbal_mapping_t gimbal_5 = GIMBAL_SOLDIER_5;
-gimbal_mapping_t gimbal_6 = GIMBAL_DEFAULT;
+gimbal_mapping_t gimbal_6 = GIMBAL_BASE_ROBOT_6;
 gimbal_mapping_t gimbal_7 = GIMBAL_HERO_ROBOT_CANNON_7;
 gimbal_mapping_t gimbal_8 = GIMBAL_DEFAULT;
 
@@ -225,12 +225,7 @@ void pitchyaw_control(int16_t yaw_current, int16_t pitch_current) {
   PitchYaw_Address_Setup();
   motor_yaw_cur = yaw_current;
   motor_pitch_cur = pitch_current;
-  if (ROBOT_SERIAL_NUMBER == 5) {
-    motor_yaw_cur = 0;
-    motor_pitch_cur = 0;
-  } else {
-    motor_yaw_cur = 0;
-  }
+  motor_yaw_cur = 0;
   Set_PitchYaw_Current();
   CAN_Transmit(CAN2,&tx_pitchyaw_message);
 }

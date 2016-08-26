@@ -133,12 +133,7 @@ void set_Pitch_Yaw_Position(int16_t real_angle_pitch, int16_t real_angle_yaw)
             break;
         case SOLDIER_2: break;
         case SOLDIER_3: break;
-        case SOLDIER_4:
-//            PitchPositionPID.sign = 0;
-  //          PitchSpeedPID.sign = 0;
-    //        YawPositionPID.sign = 0;
-      //      YawSpeedPID.sign = 0;
-            break;
+        case SOLDIER_4: break;
         case SOLDIER_5: break;
         case BASE_ROBOT_6:
             PitchPositionPID.sign = 0;
